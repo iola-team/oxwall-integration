@@ -54,6 +54,8 @@
        * various React params to enable interesting integrations.
        */
 
+      var endpoint = 'http://ox.loc/everywhere/api/graphql';
+
       // Parse the search string to get url parameters.
       var search = window.location.search;
       var parameters = {};
@@ -109,7 +111,7 @@
       function graphQLFetcher(graphQLParams) {
         // This example expects a GraphQL server at the path /graphql.
         // Change this to point wherever you host your GraphQL server.
-        return fetch('/graphql', {
+        return fetch(endpoint, {
           method: 'post',
           headers: {
             'Accept': 'application/json',
@@ -127,7 +129,7 @@
           }
         });
       }
-
+console.log(parameters);
       // Render <GraphiQL /> into the body.
       // See the README in the top level of this module to learn more about
       // how you can customize GraphiQL by providing different values or

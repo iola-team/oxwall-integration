@@ -14,13 +14,22 @@
             "options": {
                 "symlink": true
             }
+        },
+        {
+            "type": "path",
+            "url": "./lib/graphiql-middleware",
+            "options": {
+                "symlink": true
+            }
         }
     ],
 
     "require": {
         "slim/slim": "^3.8",
         "webonyx/graphql-php": "dev-master",
-        "overblog/dataloader-php": "^0.5.2"
+        "rromanovsky/graphiql-middleware": "dev-master",
+        "overblog/dataloader-php": "^0.5.2",
+        "slim/php-view": "^2.2"
     },
     "autoload": {
         "psr-4": {
