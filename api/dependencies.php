@@ -19,9 +19,10 @@ use Everywhere\Api\Schema\Resolvers\PhotoResolver;
 use Everywhere\Api\Schema\Resolvers\CommentResolver;
 
 return [
-    GraphiQLMiddleware::class => function() {
-        return new GraphiQLMiddleware();
-    },
+    // inject dependencies to middleware
+//    GraphiQLMiddleware::class => function() {
+//        return new GraphiQLMiddleware();
+//    },
 
     PromiseAdapter::class => function() {
         return new SyncPromiseAdapter();
