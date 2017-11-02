@@ -9,7 +9,6 @@ use Everywhere\Api\Schema\Builder;
 use Everywhere\Api\Schema\TypeDecorator;
 use Everywhere\Api\Contract\Schema\BuilderInterface;
 use Everywhere\Api\Contract\Schema\TypeConfigDecoratorInterface;
-use GraphiQLMiddleware\GraphiQLMiddleware;
 use GraphQL\Server\ServerConfig;
 use GraphQL\Executor\Promise\PromiseAdapter;
 use Overblog\DataLoader\Promise\Adapter\Webonyx\GraphQL\SyncPromiseAdapter;
@@ -19,11 +18,6 @@ use Everywhere\Api\Schema\Resolvers\PhotoResolver;
 use Everywhere\Api\Schema\Resolvers\CommentResolver;
 
 return [
-    // inject dependencies to middleware
-//    GraphiQLMiddleware::class => function() {
-//        return new GraphiQLMiddleware();
-//    },
-
     PromiseAdapter::class => function() {
         return new SyncPromiseAdapter();
     },

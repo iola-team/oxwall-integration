@@ -13,5 +13,5 @@ $app;
 
 $container = $app->getContainer();
 
+$app->add(new GraphiQLMiddleware());
 $app->any("/graphql", $container->get(GraphQLMiddleware::class));
-$app->any("/graphiql")->add(GraphiQLMiddleware::class);

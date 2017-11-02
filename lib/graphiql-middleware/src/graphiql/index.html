@@ -8,6 +8,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>GraphiQL</title>
     <style>
       body {
         height: 100%;
@@ -37,14 +38,16 @@
       copy them directly into your environment, or perhaps include them in your
       favored resource bundler.
      -->
-    <link rel="stylesheet" href="./node_modules/graphiql/graphiql.css" />
-    <script src="./node_modules/graphiql/graphiql.js"></script>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/graphiql/0.8.1/graphiql.css" />
+    <script src="//cdn.jsdelivr.net/graphiql/0.8.1/graphiql.min.js"></script>
 
   </head>
   <body>
     <div id="graphiql">Loading...</div>
     <script>
+      var endpoint = '/everywhere/api/graphql'; // @TODO
 
+      /**
       /**
        * This GraphiQL example illustrates how to use some of GraphiQL's props
        * in order to enable reading and updating the URL parameters, making
@@ -53,8 +56,6 @@
        * This is only one example of this kind of feature, GraphiQL exposes
        * various React params to enable interesting integrations.
        */
-
-      var endpoint = 'http://ox.loc/everywhere/api/graphql';
 
       // Parse the search string to get url parameters.
       var search = window.location.search;
@@ -129,7 +130,7 @@
           }
         });
       }
-console.log(parameters);
+
       // Render <GraphiQL /> into the body.
       // See the README in the top level of this module to learn more about
       // how you can customize GraphiQL by providing different values or

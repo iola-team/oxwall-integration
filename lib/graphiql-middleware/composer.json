@@ -1,0 +1,21 @@
+{
+    "name": "rromanovsky/graphiql-middleware",
+    "description": "GraphiQL PSR-7 Middleware",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Roman Romanovsky",
+            "email": "rrrrromanovsky@gmail.com"
+        }
+    ],
+    "require": {
+        "psr/http-message": "^1.0"
+    },
+
+    "autoload": {
+        "psr-4": {
+            "GraphiQLMiddleware\\": "src/"
+        }
+    }
+}
