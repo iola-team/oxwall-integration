@@ -13,5 +13,7 @@ $app;
 
 $container = $app->getContainer();
 
-$app->add(new GraphiQLMiddleware());
-$app->any("/graphql", $container->get(GraphQLMiddleware::class));
+$app->get("/graphql", function($request, $response, $args) {
+    return $response;
+})->add(new GraphiQLMiddleware(['ingoreRoute' => true]));
+$app->post("/graphql", $container->get(GraphQLMiddleware::class));
