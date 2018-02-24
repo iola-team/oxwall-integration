@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "6d9e589e6d8c9374416457e98bd7805a",
-    "content-hash": "6f7978288c90ee9c9719a208d1931fff",
+    "hash": "53911432fef3810e9a55d0ce2d576693",
+    "content-hash": "0c936693f0cb637487e7881df58b4b59",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -328,16 +328,16 @@
         },
         {
             "name": "rromanovsky/graphiql-middleware",
-            "version": "0.1.1",
+            "version": "0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rromanovsky/graphiql-middleware.git",
-                "reference": "ad9c488969559315acc8d90920ebd588ba02a384"
+                "reference": "3e9c4b31ae53337fcdd49c0d039c5f65f83956df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rromanovsky/graphiql-middleware/zipball/ad9c488969559315acc8d90920ebd588ba02a384",
-                "reference": "ad9c488969559315acc8d90920ebd588ba02a384",
+                "url": "https://api.github.com/repos/rromanovsky/graphiql-middleware/zipball/3e9c4b31ae53337fcdd49c0d039c5f65f83956df",
+                "reference": "3e9c4b31ae53337fcdd49c0d039c5f65f83956df",
                 "shasum": ""
             },
             "require": {
@@ -369,7 +369,7 @@
                 "psr",
                 "psr-7"
             ],
-            "time": "2017-11-04 10:57:29"
+            "time": "2017-11-08 20:37:51"
         },
         {
             "name": "slim/slim",
