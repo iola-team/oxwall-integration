@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "51dde5f688b79cb108ec483d7560f0c7",
+    "content-hash": "46d89b6946da4c1577a4e70a6d1908b5",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -507,12 +507,17 @@
         },
         {
             "name": "webonyx/graphql-php",
-            "version": "dev-master",
+            "version": "v0.11.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webonyx/graphql-php.git",
+                "reference": "b97cad0f4a50131c85d9224e8e36ebbcf1c6b425"
+            },
             "dist": {
-                "type": "path",
-                "url": "./lib/graphql-php",
-                "reference": "fbbbb92033dce301efab42cab5c53139a379f035",
-                "shasum": null
+                "type": "zip",
+                "url": "https://api.github.com/repos/webonyx/graphql-php/zipball/b97cad0f4a50131c85d9224e8e36ebbcf1c6b425",
+                "reference": "b97cad0f4a50131c85d9224e8e36ebbcf1c6b425",
+                "shasum": ""
             },
             "require": {
                 "ext-mbstring": "*",
@@ -535,25 +540,17 @@
                     "GraphQL\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "GraphQL\\Tests\\": "tests/",
-                    "GraphQL\\Benchmarks\\": "benchmarks/",
-                    "GraphQL\\Examples\\Blog\\": "examples/01-blog/Blog/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "MIT"
+                "BSD"
             ],
             "description": "A PHP port of GraphQL reference implementation",
             "homepage": "https://github.com/webonyx/graphql-php",
             "keywords": [
-                "API",
+                "api",
                 "graphql"
             ],
-            "transport-options": {
-                "symlink": true
-            }
+            "time": "2017-12-12T09:03:21+00:00"
         },
         {
             "name": "zendframework/zend-authentication",
@@ -666,9 +663,7 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "webonyx/graphql-php": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
