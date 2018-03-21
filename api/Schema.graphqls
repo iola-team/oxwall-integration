@@ -9,18 +9,39 @@ type Mutation {
 
 type Query {
     me: User
-    users(offset: Int = 0, count: Int = 10): [User]
-    user(id: ID!): User
+    users(offset: Int = 0, count: Int = 10): UserConnection!
 }
 
 scalar Date
+
+interface Node {
+    id: ID!
+}
+
+interface Edge {
+    node: Node!
+    cursor: String!
+}
+
+interface Connection {
+    pageInfo: PageInfo!
+    edges: [Edge]
+    totalCount: Int
+}
+
+type PageInfo {
+    hasNextPage: Boolean!
+    hasPreviousPage: Boolean!
+    startCursor: String
+    endCursor: String
+}
 
 type SingInPayload {
     accessToken: String
     user: User
 }
 
-type User {
+type User implements Node {
     id: ID!
     name: String!
     email: String!
@@ -31,6 +52,16 @@ type User {
     photos(offset: Int = 0, count: Int = 10): [Photo]
 }
 
+type UserEdge implements Edge {
+    node: User!
+    cursor: String!
+}
+
+type UserConnection implements Connection {
+    pageInfo: PageInfo!
+    edges: [UserEdge]
+    totalCount: Int
+}
 
 enum AvatarSize {
     SMALL
@@ -38,12 +69,12 @@ enum AvatarSize {
     BIG
 }
 
-type Avatar {
+type Avatar implements Node {
     id: ID!
     url(size: AvatarSize = SMALL): String!
 }
 
-type Photo {
+type Photo implements Node {
     id: ID!
     src: String!
     owner: User!
@@ -51,7 +82,7 @@ type Photo {
     comments(offset: Int = 0, count: Int = 10): [Comment]
 }
 
-type Comment {
+type Comment implements Node {
     id: ID!
     text: String!
 }

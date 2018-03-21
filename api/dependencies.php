@@ -18,6 +18,8 @@ use Everywhere\Api\Contract\Schema\ViewerInterface;
 use Everywhere\Api\Middleware\AuthMiddleware;
 use Everywhere\Api\Middleware\GraphQLMiddleware;
 use Everywhere\Api\Middleware\AuthenticationMiddleware;
+use Everywhere\Api\Schema\Resolvers\UserConnectionResolver;
+use Everywhere\Api\Schema\Resolvers\UserEdgeResolver;
 use Everywhere\Api\Schema\TypeConfigDecorators\AggregateTypeConfigDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\ObjectTypeConfigDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\ScalarTypeConfigDecorator;
@@ -179,6 +181,18 @@ return [
         return new UserResolver(
             $container->getIntegration()->getUsersRepository(),
             $container[DataLoaderFactory::class]
+        );
+    },
+
+    UserConnectionResolver::class => function(ContainerInterface $container) {
+        return new UserConnectionResolver(
+            $container->getIntegration()->getUsersRepository()
+        );
+    },
+
+    UserEdgeResolver::class => function(ContainerInterface $container) {
+        return new UserEdgeResolver(
+            $container[UserResolver::class]
         );
     },
 
