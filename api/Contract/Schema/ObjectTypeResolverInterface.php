@@ -4,7 +4,7 @@ namespace Everywhere\Api\Contract\Schema;
 
 use GraphQL\Type\Definition\ResolveInfo;
 
-interface ResolverInterface
+interface ObjectTypeResolverInterface
 {
     public function resolve($root, $args, ContextInterface $context, ResolveInfo $info);
 }

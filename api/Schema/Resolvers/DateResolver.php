@@ -1,10 +1,10 @@
 <?php
 
-namespace Everywhere\Api\Schema\Types\Scalars;
+namespace Everywhere\Api\Schema\Resolvers;
 
-use Everywhere\Api\Contract\Schema\Types\ScalarTypeInterface;
+use Everywhere\Api\Contract\Schema\ScalarTypeResolverInterface;
 
-class Date implements ScalarTypeInterface
+class DateResolver implements ScalarTypeResolverInterface
 {
     protected $format = \DateTime::ISO8601;
 

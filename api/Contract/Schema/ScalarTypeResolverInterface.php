@@ -1,8 +1,8 @@
 <?php
 
-namespace Everywhere\Api\Contract\Schema\Types;
+namespace Everywhere\Api\Contract\Schema;
 
-interface ScalarTypeInterface
+interface ScalarTypeResolverInterface
 {
     /**
      * Serializes an internal value to include in a response.

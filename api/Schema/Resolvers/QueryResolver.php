@@ -10,6 +10,7 @@ namespace Everywhere\Api\Schema\Resolvers;
 
 use Everywhere\Api\Contract\Integration\UsersRepositoryInterface;
 use Everywhere\Api\Contract\Schema\ContextInterface;
+use Everywhere\Api\Contract\Schema\ObjectResolverInterface;
 use Everywhere\Api\Contract\Schema\ResolverInterface;
 use Everywhere\Api\Entities\User;
 use Everywhere\Api\Schema\CompositeResolver;
@@ -51,6 +52,10 @@ class QueryResolver extends CompositeResolver
 
         $this->addFieldResolver("users", function($root, $args) use($usersRepository) {
             return $usersRepository->findAllIds($args);
+        });
+
+        $this->addFieldResolver("node", function($root, $args) use($usersRepository) {
+            return $args["id"];
         });
     }
 }

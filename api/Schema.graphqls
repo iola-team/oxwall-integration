@@ -10,6 +10,7 @@ type Mutation {
 type Query {
     me: User
     users(offset: Int = 0, count: Int = 10): UserConnection!
+    node(id: ID!): Node
 }
 
 scalar Date
