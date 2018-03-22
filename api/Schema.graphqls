@@ -11,16 +11,21 @@ type Query {
     me: User
     users(offset: Int = 0, count: Int = 10): [User]
     user(id: ID!): User
+    node(id: ID!): Node
 }
 
 scalar Date
+
+interface Node {
+    id: ID!
+}
 
 type SingInPayload {
     accessToken: String
     user: User
 }
 
-type User {
+type User implements Node {
     id: ID!
     name: String!
     email: String!
@@ -38,12 +43,12 @@ enum AvatarSize {
     BIG
 }
 
-type Avatar {
+type Avatar implements Node {
     id: ID!
     url(size: AvatarSize = SMALL): String!
 }
 
-type Photo {
+type Photo implements Node {
     id: ID!
     src: String!
     owner: User!
@@ -51,7 +56,7 @@ type Photo {
     comments(offset: Int = 0, count: Int = 10): [Comment]
 }
 
-type Comment {
+type Comment implements Node {
     id: ID!
     text: String!
 }

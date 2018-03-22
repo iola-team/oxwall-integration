@@ -2,9 +2,10 @@
 
 namespace Everywhere\Api\Schema\TypeConfigDecorators;
 
+use Everywhere\Api\Contract\Entities\EntityInterface;
 use Everywhere\Api\Contract\Schema\IDFactoryInterface;
 use Everywhere\Api\Contract\Schema\IDObjectInterface;
-use Everywhere\Api\Contract\Schema\ResolverInterface;
+use Everywhere\Api\Contract\Schema\ObjectTypeResolverInterface;
 use Everywhere\Api\Contract\Schema\TypeConfigDecoratorInterface;
 use Everywhere\Api\Schema\AbstractTypeConfigDecorator;
 use GraphQL\Executor\Promise\PromiseAdapter;
@@ -12,7 +13,9 @@ use GraphQL\Error\InvariantViolation;
 use GraphQL\Language\AST\Node;
 use GraphQL\Language\AST\NodeKind;
 use GraphQL\Type\Definition\IDType;
+use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
+use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\WrappingType;
 use GraphQL\Utils\Utils;
 
@@ -62,11 +65,9 @@ class ObjectTypeConfigDecorator extends AbstractTypeConfigDecorator
         return array_map($this->getResolver, $resolvers);
     }
 
-    protected function getFinalType($wrappedType)
+    protected function getFinalType($type)
     {
-        return $wrappedType instanceof WrappingType
-            ? $wrappedType->getWrappedType(true)
-            : $wrappedType;
+        return Type::getNamedType($type);
     }
 
     protected function normalizeArgument($value, $configs)
@@ -74,11 +75,13 @@ class ObjectTypeConfigDecorator extends AbstractTypeConfigDecorator
         $finalType = $this->getFinalType($configs["type"]);
 
         if ($finalType instanceof IDType) {
+            $toIDObject = function($id) {
+                return $this->idFactory->createFromGlobalId($id);
+            };
+
             $value = is_array($value)
-                ? array_map(function($id) {
-                    return $this->idFactory->createFromGlobalId($id)->getId();
-                }, $value)
-                : $this->idFactory->createFromGlobalId($value)->getId();
+                ? array_map($toIDObject, $value)
+                : $toIDObject($value);
         }
 
         return $value;
@@ -87,6 +90,16 @@ class ObjectTypeConfigDecorator extends AbstractTypeConfigDecorator
     protected function normalizeValue($value, ResolveInfo $info)
     {
         $finalType = $this->getFinalType($info->returnType);
+
+        if ($finalType instanceof ObjectType) {
+            $toIDObject = function($id) use ($finalType) {
+                return $this->idFactory->create($finalType->name, $id);
+            };
+
+            return is_array($value)
+                ? array_map($toIDObject, $value)
+                : $toIDObject($value);
+        }
 
         if ($finalType instanceof IDType) {
             return $this->idFactory->create($info->parentType->name, $value);
@@ -97,13 +110,7 @@ class ObjectTypeConfigDecorator extends AbstractTypeConfigDecorator
 
     protected function normalizeRoot($value)
     {
-        if (is_array($value)) {
-            return array_map(function($value) {
-                return $value instanceof IDObjectInterface ? $value->getId() : $value;
-            }, $value);
-        }
-
-        return $value instanceof IDObjectInterface ? $value->getId() : $value;
+        return $value;
     }
 
     private function decorateField($parentTypeName, $fieldName, $configs) {
@@ -129,10 +136,10 @@ class ObjectTypeConfigDecorator extends AbstractTypeConfigDecorator
             $normalizedRoot = $this->normalizeRoot($root);
 
             /**
-             * @var $resolver ResolverInterface
+             * @var $resolver ObjectTypeResolverInterface
              */
             foreach ($resolvers as $resolver) {
-                if (!$resolver || !$resolver instanceof ResolverInterface) {
+                if (!$resolver || !$resolver instanceof ObjectTypeResolverInterface) {
                     throw new InvariantViolation(
                         "Resolver for `" . Utils::printSafe($info->parentType) . "` type was not found or invalid"
                     );
