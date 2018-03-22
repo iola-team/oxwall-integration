@@ -9,9 +9,9 @@
 namespace Everywhere\Api\Schema;
 
 use Everywhere\Api\Contract\Entities\EntityInterface;
-use Everywhere\Api\Contract\Integration\EntitySourceInterface;
 use Everywhere\Api\Contract\Schema\ContextInterface;
 use Everywhere\Api\Contract\Schema\DataLoaderInterface;
+use Everywhere\Api\Contract\Schema\IDObjectInterface;
 use GraphQL\Error\InvariantViolation;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Utils\Utils;
@@ -45,7 +45,7 @@ class EntityResolver extends CompositeResolver
         if ($this->isEntity($root)) {
             $id = $root->getId();
             $this->entityLoader->prime($id, $root);
-        } else if ($id instanceof IDObject) {
+        } else if ($id instanceof IDObjectInterface) {
             $id = $id->getId();
         }
 
