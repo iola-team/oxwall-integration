@@ -70,7 +70,7 @@ class ObjectTypeConfigDecorator extends AbstractTypeConfigDecorator
         return Type::getNamedType($type);
     }
 
-    protected function normalizeArgument($value, $configs)
+    protected function normalizeArgument($value, $configs, ResolveInfo $info)
     {
         $finalType = $this->getFinalType($configs["type"]);
 
@@ -98,7 +98,7 @@ class ObjectTypeConfigDecorator extends AbstractTypeConfigDecorator
         return $value;
     }
 
-    protected function normalizeRoot($value)
+    protected function normalizeRoot($value, ResolveInfo $info)
     {
         return $value;
     }
@@ -120,10 +120,10 @@ class ObjectTypeConfigDecorator extends AbstractTypeConfigDecorator
             foreach ($args as $name => $value) {
                 $argConfig = $configs["args"][$name];
 
-                $normalizedArgs[$name] = $this->normalizeArgument($value, $argConfig);
+                $normalizedArgs[$name] = $this->normalizeArgument($value, $argConfig, $info);
             }
 
-            $normalizedRoot = $this->normalizeRoot($root);
+            $normalizedRoot = $this->normalizeRoot($root, $info);
 
             /**
              * @var $resolver ObjectTypeResolverInterface
