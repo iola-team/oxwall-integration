@@ -9,9 +9,9 @@
 namespace Everywhere\Api\Schema;
 
 use Everywhere\Api\Contract\Entities\EntityInterface;
-use Everywhere\Api\Contract\Integration\EntitySourceInterface;
 use Everywhere\Api\Contract\Schema\ContextInterface;
 use Everywhere\Api\Contract\Schema\DataLoaderInterface;
+use Everywhere\Api\Contract\Schema\IDObjectInterface;
 use GraphQL\Error\InvariantViolation;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Utils\Utils;
@@ -28,6 +28,10 @@ class EntityResolver extends CompositeResolver
         parent::__construct($fieldResolvers);
 
         $this->entityLoader = $entityLoader;
+
+        $this->addFieldResolver("id", function(EntityInterface $entity) {
+            return $entity->getId();
+        });
     }
 
     protected function isEntity($value)
@@ -41,6 +45,8 @@ class EntityResolver extends CompositeResolver
         if ($this->isEntity($root)) {
             $id = $root->getId();
             $this->entityLoader->prime($id, $root);
+        } else if ($id instanceof IDObjectInterface) {
+            $id = $id->getId();
         }
 
         return $this->entityLoader->load($id)->then(function($entity) use ($info, $args, $context) {
@@ -50,7 +56,7 @@ class EntityResolver extends CompositeResolver
                 );
             }
 
-            return $this->resolveField($entity, $info->fieldName, $args, $context);
+            return $this->resolveField($entity, $info->fieldName, $args, $context, $info);
         });
     }
 
@@ -59,12 +65,13 @@ class EntityResolver extends CompositeResolver
      * @param $fieldName
      * @param $args
      * @param $context
+     * @param $info
      *
      * @return null
      */
-    protected function resolveField($entity, $fieldName, $args, ContextInterface $context)
+    protected function resolveField($entity, $fieldName, $args, ContextInterface $context, ResolveInfo $info)
     {
-        $value = parent::resolveField($entity, $fieldName, $args, $context);
+        $value = parent::resolveField($entity, $fieldName, $args, $context, $info);
 
         if ($value !== $this->undefined()) {
             return $value;

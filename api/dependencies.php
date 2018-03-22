@@ -18,7 +18,10 @@ use Everywhere\Api\Contract\Schema\ViewerInterface;
 use Everywhere\Api\Middleware\AuthMiddleware;
 use Everywhere\Api\Middleware\GraphQLMiddleware;
 use Everywhere\Api\Middleware\AuthenticationMiddleware;
+use Everywhere\Api\Schema\Resolvers\DateResolver;
+use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\TypeConfigDecorators\AggregateTypeConfigDecorator;
+use Everywhere\Api\Schema\TypeConfigDecorators\InterfaceTypeConfigDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\ObjectTypeConfigDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\ScalarTypeConfigDecorator;
 use Everywhere\Api\Schema\Context;
@@ -31,7 +34,6 @@ use Everywhere\Api\Schema\Resolvers\AuthenticationResolver;
 use Everywhere\Api\Schema\Resolvers\AvatarResolver;
 use Everywhere\Api\Contract\Schema\BuilderInterface;
 use Everywhere\Api\Contract\Schema\TypeConfigDecoratorInterface;
-use Everywhere\Api\Schema\Types\Scalars\Date;
 use Everywhere\Api\Schema\Viewer;
 use GraphQL\Server\ServerConfig;
 use GraphQL\Executor\Promise\PromiseAdapter;
@@ -74,17 +76,23 @@ return [
     },
 
     TypeConfigDecoratorInterface::class => function(ContainerInterface $container) {
+        $resolversMap = $container->getSettings()["schema"]["resolvers"];
         $resolveClass = function($className) use ($container) {
             return $container->has($className) ? $container[$className] : null;
         };
 
         $scalarTypeDecorator = new ScalarTypeConfigDecorator(
-            $container->getSettings()["schema"]["scalars"],
+            $resolversMap,
+            $resolveClass
+        );
+
+        $interfaceTypeDecorator = new InterfaceTypeConfigDecorator(
+            $resolversMap,
             $resolveClass
         );
 
         $objectTypeDecorator = new ObjectTypeConfigDecorator(
-            $container->getSettings()["schema"]["resolvers"],
+            $resolversMap,
             $resolveClass,
             $container[IDFactoryInterface::class],
             $container[PromiseAdapter::class]
@@ -92,12 +100,17 @@ return [
 
         return new AggregateTypeConfigDecorator([
             $scalarTypeDecorator,
+            $interfaceTypeDecorator,
             $objectTypeDecorator
         ]);
     },
 
-    Date::class => function(ContainerInterface $container) {
-        return new Date();
+    DateResolver::class => function(ContainerInterface $container) {
+        return new DateResolver();
+    },
+
+    NodeResolver::class => function(ContainerInterface $container) {
+        return new NodeResolver();
     },
 
     DataLoaderFactory::class => function(ContainerInterface $container) {

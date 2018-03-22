@@ -14,6 +14,7 @@ use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
 use Everywhere\Api\Contract\Schema\DataLoaderInterface;
 use Everywhere\Api\Schema\EntityResolver;
 use GraphQL\Executor\Promise\Promise;
+use GraphQL\Type\Definition\ResolveInfo;
 
 class UserResolver extends EntityResolver
 {
@@ -57,10 +58,11 @@ class UserResolver extends EntityResolver
      * @param $fieldName
      * @param $args
      * @param ContextInterface $context
+     * @param $info
      *
      * @return Promise|null
      */
-    protected function resolveField($user, $fieldName, $args, ContextInterface $context)
+    protected function resolveField($user, $fieldName, $args, ContextInterface $context, ResolveInfo $info)
     {
         switch ($fieldName) {
             case "friends":
@@ -76,7 +78,7 @@ class UserResolver extends EntityResolver
                 return $this->avatarLoader->load($user->id, $args);
 
             default:
-                return parent::resolveField($user, $fieldName, $args, $context);
+                return parent::resolveField($user, $fieldName, $args, $context, $info);
         }
     }
 }

@@ -21,16 +21,16 @@ class CompositeResolver extends AbstractResolver
         $this->resolvers[$fieldName] = $resolver;
     }
 
-    protected function resolveField($root, $fieldName, $args, ContextInterface $context) {
+    protected function resolveField($root, $fieldName, $args, ContextInterface $context, ResolveInfo $info) {
         if (empty($this->resolvers[$fieldName])) {
             return $this->undefined();
         }
 
-        return call_user_func($this->resolvers[$fieldName], $root, $args, $context);
+        return call_user_func($this->resolvers[$fieldName], $root, $args, $context, $info);
     }
 
     public function resolve($root, $args, ContextInterface $context, ResolveInfo $info)
     {
-        return $this->resolveField($root, $info->fieldName, $args, $context);
+       return $this->resolveField($root, $info->fieldName, $args, $context, $info);
     }
 }
