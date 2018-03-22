@@ -18,7 +18,7 @@ use GraphQL\Type\Definition\ResolveInfo;
 
 class UserConnectionResolver extends CompositeResolver
 {
-    public function __construct(DataLoaderInterface $nodeLoader, DataLoaderInterface $countLoader)
+    public function __construct()
     {
         parent::__construct();
 
