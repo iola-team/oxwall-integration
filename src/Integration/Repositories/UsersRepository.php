@@ -61,6 +61,11 @@ class UsersRepository implements UsersRepositoryInterface
         return \BOL_UserService::getInstance()->findLatestUserIdsList($args["offset"], $args["count"]);
     }
 
+    public function countAll()
+    {
+        return \BOL_UserService::getInstance()->count();
+    }
+
     public function findFriends($userIds, array $args)
     {
         $this->counter++;

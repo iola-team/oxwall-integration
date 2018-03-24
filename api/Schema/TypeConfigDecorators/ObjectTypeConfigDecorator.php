@@ -91,7 +91,10 @@ class ObjectTypeConfigDecorator extends AbstractTypeConfigDecorator
     {
         $finalType = $this->getFinalType($info->returnType);
 
-        if ($finalType instanceof IDType) {
+        if ($finalType instanceof IDType
+            && !$value instanceof IDObjectInterface
+            && !is_array($value)
+        ) {
             return $this->idFactory->create($info->parentType->name, $value);
         }
 
