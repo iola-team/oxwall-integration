@@ -4,6 +4,7 @@ namespace Everywhere\Api\Schema;
 
 use Everywhere\Api\Contract\Schema\ConnectionObjectInterface;
 use GraphQL\Error\InvariantViolation;
+use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\Utils;
 
 class ConnectionObject implements ConnectionObjectInterface
@@ -13,8 +14,12 @@ class ConnectionObject implements ConnectionObjectInterface
     protected $itemsGetter;
     protected $countGetter;
 
-    public function __construct($root, $arguments, callable $itemsGetter = null, callable $countGetter = null)
-    {
+    public function __construct(
+        $root,
+        $arguments,
+        callable $itemsGetter = null,
+        callable $countGetter = null
+    ) {
         $this->root = $root;
         $this->arguments = $arguments;
         $this->itemsGetter = $itemsGetter;

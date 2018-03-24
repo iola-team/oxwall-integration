@@ -15,37 +15,6 @@ use GraphQL\Type\Definition\ResolveInfo;
 
 class RelayConnectionResolver extends CompositeResolver
 {
-    /**
-     * @var DataLoaderInterface
-     */
-    protected $itemsLoader;
-
-    /**
-     * @var DataLoaderInterface
-     */
-    protected $countLoader;
-
-    public function __construct(DataLoaderFactoryInterface $dataLoaderFactory)
-    {
-        parent::__construct();
-
-        $this->itemsLoader = $dataLoaderFactory->create(function($connections, $args) {
-            $connection = reset($connections);
-
-            return [
-                (string) $connection => $this->getItems($connection, $args)
-            ];
-        });
-
-        $this->countLoader = $dataLoaderFactory->create(function($connections, $args) {
-            $connection = reset($connections);
-
-            return [
-                (string) $connection => $this->getCount($connection, $args)
-            ];
-        });
-    }
-
     private function sanitizeArguments($arguments)
     {
         $sanitized = array_diff_key((array) $arguments, array_flip([
@@ -121,7 +90,7 @@ class RelayConnectionResolver extends CompositeResolver
     private function getEdges(ConnectionObjectInterface $connection)
     {
         $arguments = $connection->getArguments();
-        $itemsPromise = $this->itemsLoader->load($connection, $this->buildArguments($arguments));
+        $itemsPromise = $this->getItems($connection, $this->buildArguments($arguments));
 
         return $itemsPromise->then(function($items) use($arguments) {
             $edges = [];
@@ -149,25 +118,17 @@ class RelayConnectionResolver extends CompositeResolver
             return $value;
         }
 
-        $edgesPromise = $this->getEdges($connection);
-
-        $edgesPromise->then(function($edges) {
-            return $edges;
-        });
-
         switch ($info->fieldName) {
             case "pageInfo":
-                return $edgesPromise->then(function($edges) {
+                return $this->getEdges($connection)->then(function($edges) {
                     return $this->buildPageInfo($edges);
                 });
 
             case "edges":
-                return $edgesPromise;
+                return $this->getEdges($connection);
 
             case "totalCount":
-                return $this->countLoader->load(
-                    $connection, $this->sanitizeArguments($connection->getArguments())
-                );
+                return $this->getCount($connection, $this->sanitizeArguments($connection->getArguments()));
         }
 
         return $value;

@@ -12,13 +12,16 @@ use Everywhere\Api\Contract\Auth\AuthenticationServiceInterface;
 use Everywhere\Api\Contract\Auth\IdentityServiceInterface;
 use Everywhere\Api\Contract\Auth\IdentityStorageInterface;
 use Everywhere\Api\Contract\Auth\TokenBuilderInterface;
+use Everywhere\Api\Contract\Schema\ConnectionFactoryInterface;
 use Everywhere\Api\Contract\Schema\ContextInterface;
+use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
 use Everywhere\Api\Contract\Schema\DataLoaderInterface;
 use Everywhere\Api\Contract\Schema\IDFactoryInterface;
 use Everywhere\Api\Contract\Schema\ViewerInterface;
 use Everywhere\Api\Middleware\AuthMiddleware;
 use Everywhere\Api\Middleware\GraphQLMiddleware;
 use Everywhere\Api\Middleware\AuthenticationMiddleware;
+use Everywhere\Api\Schema\ConnectionFactory;
 use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
@@ -74,6 +77,12 @@ return [
 
     IDFactoryInterface::class => function(ContainerInterface $container) {
         return new IDFactory();
+    },
+
+    ConnectionFactoryInterface::class => function(ContainerInterface $container) {
+        return new ConnectionFactory(
+            $container[DataLoaderFactory::class]
+        );
     },
 
     TypeConfigDecoratorInterface::class => function(ContainerInterface $container) {
@@ -179,7 +188,10 @@ return [
     // Resolvers
 
     QueryResolver::class => function(ContainerInterface $container) {
-        return new QueryResolver($container->getIntegration()->getUsersRepository());
+        return new QueryResolver(
+            $container[ConnectionFactoryInterface::class],
+            $container->getIntegration()->getUsersRepository()
+        );
     },
 
     UserResolver::class => function(ContainerInterface $container) {
@@ -190,9 +202,7 @@ return [
     },
 
     RelayConnectionResolver::class => function(ContainerInterface $container) {
-        return new RelayConnectionResolver(
-            $container[DataLoaderFactory::class]
-        );
+        return new RelayConnectionResolver();
     },
 
     PhotoResolver::class => function(ContainerInterface $container) {
