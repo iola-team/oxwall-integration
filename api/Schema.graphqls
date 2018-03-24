@@ -9,11 +9,12 @@ type Mutation {
 
 type Query {
     me: User
-    users(offset: Int = 0, count: Int = 10): UserConnection!
+    users(first: Int = 10, after: Cursor): UserConnection!
     node(id: ID!): Node
 }
 
 scalar Date
+scalar Cursor
 
 interface Node {
     id: ID!
@@ -21,7 +22,7 @@ interface Node {
 
 interface Edge {
     node: Node!
-    cursor: String!
+    cursor: Cursor!
 }
 
 interface Connection {
@@ -33,8 +34,8 @@ interface Connection {
 type PageInfo {
     hasNextPage: Boolean!
     hasPreviousPage: Boolean!
-    startCursor: String
-    endCursor: String
+    startCursor: Cursor
+    endCursor: Cursor
 }
 
 type SingInPayload {
@@ -55,7 +56,7 @@ type User implements Node {
 
 type UserEdge implements Edge {
     node: User!
-    cursor: String!
+    cursor: Cursor!
 }
 
 type UserConnection implements Connection {

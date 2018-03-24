@@ -13,15 +13,16 @@ use Everywhere\Api\Contract\Auth\IdentityServiceInterface;
 use Everywhere\Api\Contract\Auth\IdentityStorageInterface;
 use Everywhere\Api\Contract\Auth\TokenBuilderInterface;
 use Everywhere\Api\Contract\Schema\ContextInterface;
+use Everywhere\Api\Contract\Schema\DataLoaderInterface;
 use Everywhere\Api\Contract\Schema\IDFactoryInterface;
 use Everywhere\Api\Contract\Schema\ViewerInterface;
 use Everywhere\Api\Middleware\AuthMiddleware;
 use Everywhere\Api\Middleware\GraphQLMiddleware;
 use Everywhere\Api\Middleware\AuthenticationMiddleware;
+use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
-use Everywhere\Api\Schema\Resolvers\UserConnectionResolver;
-use Everywhere\Api\Schema\Resolvers\UserEdgeResolver;
+use Everywhere\Api\Schema\RelayConnectionResolver;
 use Everywhere\Api\Schema\TypeConfigDecorators\AggregateTypeConfigDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\InterfaceTypeConfigDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\ObjectTypeConfigDecorator;
@@ -29,8 +30,6 @@ use Everywhere\Api\Schema\TypeConfigDecorators\ScalarTypeConfigDecorator;
 use Everywhere\Api\Schema\Context;
 use Everywhere\Api\Schema\DataLoaderFactory;
 use Everywhere\Api\Schema\Builder;
-use Everywhere\Api\Schema\DefaultResolver;
-use Everywhere\Api\Schema\EntityLoaderFactory;
 use Everywhere\Api\Schema\IDFactory;
 use Everywhere\Api\Schema\Resolvers\AuthenticationResolver;
 use Everywhere\Api\Schema\Resolvers\AvatarResolver;
@@ -111,19 +110,16 @@ return [
         return new DateResolver();
     },
 
+    CursorResolver::class => function(ContainerInterface $container) {
+        return new CursorResolver();
+    },
+
     NodeResolver::class => function(ContainerInterface $container) {
         return new NodeResolver();
     },
 
     DataLoaderFactory::class => function(ContainerInterface $container) {
         return new DataLoaderFactory(
-            $container[PromiseAdapter::class],
-            $container[ContextInterface::class]
-        );
-    },
-
-    EntityLoaderFactory::class => function(ContainerInterface $container) {
-        return new EntityLoaderFactory(
             $container[PromiseAdapter::class],
             $container[ContextInterface::class]
         );
@@ -182,10 +178,6 @@ return [
 
     // Resolvers
 
-    DefaultResolver::class => function(ContainerInterface $container) {
-        return new DefaultResolver();
-    },
-
     QueryResolver::class => function(ContainerInterface $container) {
         return new QueryResolver($container->getIntegration()->getUsersRepository());
     },
@@ -197,15 +189,9 @@ return [
         );
     },
 
-    UserConnectionResolver::class => function(ContainerInterface $container) {
-        return new UserConnectionResolver(
-            $container->getIntegration()->getUsersRepository()
-        );
-    },
-
-    UserEdgeResolver::class => function(ContainerInterface $container) {
-        return new UserEdgeResolver(
-            $container[UserResolver::class]
+    RelayConnectionResolver::class => function(ContainerInterface $container) {
+        return new RelayConnectionResolver(
+            $container[DataLoaderFactory::class]
         );
     },
 

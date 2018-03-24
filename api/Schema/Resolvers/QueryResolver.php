@@ -14,6 +14,8 @@ use Everywhere\Api\Contract\Schema\ObjectResolverInterface;
 use Everywhere\Api\Contract\Schema\ResolverInterface;
 use Everywhere\Api\Entities\User;
 use Everywhere\Api\Schema\CompositeResolver;
+use Everywhere\Api\Schema\ConnectionObject;
+use Everywhere\Api\Schema\ConnectionResult;
 use GraphQL\Type\Definition\ResolveInfo;
 
 class QueryResolver extends CompositeResolver
@@ -26,32 +28,17 @@ class QueryResolver extends CompositeResolver
             return $context->getViewer()->getUserId();
         });
 
-//        $this->addFieldResolver("users", function($root, $args) use($usersRepository) {
-//            $edges = array_map(function($id) {
-//
-//                return [
-//                    "cursor" => "Cursor:$id",
-//                    "node" => $id,
-//                ];
-//
-//            }, $usersRepository->findAllIds($args));
-//
-//            return [
-//                "totalCount" => function() use ($usersRepository) {
-//                    return $usersRepository->countAll();
-//                },
-//                "edges" => $edges,
-//                "pageInfo" => [
-//                    "hasNextPage" => true,
-//                    "hasPreviousPage" => false,
-//                    "startCursor" => reset($edges)["cursor"],
-//                    "endCursor" => end($edges)["cursor"]
-//                ]
-//            ];
-//        });
-
         $this->addFieldResolver("users", function($root, $args) use($usersRepository) {
-            return $usersRepository->findAllIds($args);
+            return new ConnectionObject(
+                $root,
+                $args,
+                function($args) use($usersRepository) {
+                    return $usersRepository->findAllIds($args);
+                },
+                function($args) use($usersRepository) {
+                    return $usersRepository->countAll($args);
+                }
+            );
         });
 
         $this->addFieldResolver("node", function($root, $args) use($usersRepository) {

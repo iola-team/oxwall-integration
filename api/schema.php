@@ -1,13 +1,13 @@
 <?php
 namespace Everywhere\Api;
 
+use Everywhere\Api\Schema\RelayConnectionResolver;
 use Everywhere\Api\Schema\Resolvers\AuthenticationResolver;
 use Everywhere\Api\Schema\Resolvers\AvatarResolver;
+use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\Resolvers\QueryResolver;
-use Everywhere\Api\Schema\Resolvers\UserConnectionResolver;
-use Everywhere\Api\Schema\Resolvers\UserEdgeResolver;
 use Everywhere\Api\Schema\Resolvers\UserResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoResolver;
 use Everywhere\Api\Schema\Resolvers\CommentResolver;
@@ -21,8 +21,7 @@ return [
         "Query" => QueryResolver::class,
 
         "User" => UserResolver::class,
-        "UserConnection" => UserConnectionResolver::class,
-        "UserEdge" => UserEdgeResolver::class,
+        "UserConnection" => RelayConnectionResolver::class,
 
         "Photo" => PhotoResolver::class,
         "Comment" => CommentResolver::class,
@@ -30,6 +29,7 @@ return [
 
         // Scalar types
         "Date" => DateResolver::class,
+        "Cursor" => CursorResolver::class,
 
         // Interface types
         'Node' => NodeResolver::class,
@@ -39,5 +39,5 @@ return [
         "Mutation" => [
             AuthenticationResolver::class,
         ]
-    ],
+    ]
 ];
