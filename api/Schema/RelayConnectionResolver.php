@@ -63,14 +63,17 @@ class RelayConnectionResolver extends CompositeResolver
         ];
     }
 
-    protected function buildPageInfo($edges)
+    protected function buildPageInfo($items, $arguments)
     {
+        $finalArgs = $this->buildArguments($arguments);
+        $edges = $this->buildEdges($items, $arguments);
+
         $last = end($edges);
         $first = reset($edges);
 
         return [
-            "hasNextPage" => true,
-            "hasPreviousPage" => false,
+            "hasNextPage" => count($items) > count($edges),
+            "hasPreviousPage" => $finalArgs["offset"] > 0,
             "startCursor" => empty($first) ? null : $first["cursor"],
             "endCursor" => empty($last) ? null : $last["cursor"],
         ];
@@ -92,20 +95,32 @@ class RelayConnectionResolver extends CompositeResolver
         return $connection->getItems($arguments);
     }
 
-    private function getEdges(ConnectionObjectInterface $connection)
+    private function getItemsWithOverflow(ConnectionObjectInterface $connection)
     {
-        $arguments = $connection->getArguments();
-        $itemsPromise = $this->getItems($connection, $this->buildArguments($arguments));
+        $arguments = $this->buildArguments($connection->getArguments());
+        $arguments["count"] += 1;
 
-        return $itemsPromise->then(function($items) use($arguments) {
-            $edges = [];
-            foreach ($items as $index => $item) {
-                $cursor = $this->buildCursor($item, $arguments, $index);
-                $edges[] = $this->buildEdge($item, $cursor);
-            }
+        return $this->getItems($connection, $arguments);
+    }
 
-            return $edges;
-        });
+    private function sliceItems($items, $arguments)
+    {
+        $finalArgs = $this->buildArguments($arguments);
+
+        return array_slice($items, 0, $finalArgs["count"]);
+    }
+
+    private function buildEdges($items, $arguments)
+    {
+        $slicedItems = $this->sliceItems($items, $arguments);
+
+        $edges = [];
+        foreach ($slicedItems as $index => $item) {
+            $cursor = $this->buildCursor($item, $arguments, $index);
+            $edges[] = $this->buildEdge($item, $cursor);
+        }
+
+        return $edges;
     }
 
     /**
@@ -123,17 +138,21 @@ class RelayConnectionResolver extends CompositeResolver
             return $value;
         }
 
+        $connectionArgs = $connection->getArguments();
+
         switch ($info->fieldName) {
             case "pageInfo":
-                return $this->getEdges($connection)->then(function($edges) {
-                    return $this->buildPageInfo($edges);
+                return $this->getItemsWithOverflow($connection)->then(function($items) use($connectionArgs) {
+                    return $this->buildPageInfo($items, $connectionArgs);
                 });
 
             case "edges":
-                return $this->getEdges($connection);
+                return $this->getItemsWithOverflow($connection)->then(function($items) use($connectionArgs) {
+                    return $this->buildEdges($items, $connectionArgs);
+                });
 
             case "totalCount":
-                return $this->getCount($connection, $this->sanitizeArguments($connection->getArguments()));
+                return $this->getCount($connection, $this->sanitizeArguments($connectionArgs));
         }
 
         return $value;

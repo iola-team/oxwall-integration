@@ -63,7 +63,7 @@ class UsersRepository implements UsersRepositoryInterface
 
     public function countAll()
     {
-        return \BOL_UserService::getInstance()->count();
+        return \BOL_UserService::getInstance()->count(true);
     }
 
     public function findFriends($userIds, array $args)
