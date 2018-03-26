@@ -15,37 +15,42 @@ use GraphQL\Type\Definition\ResolveInfo;
 
 class RelayConnectionResolver extends CompositeResolver
 {
-    private function sanitizeArguments($arguments)
+    private function sanitizeArguments($arguments, $blackList = [])
     {
-        $sanitized = array_diff_key((array) $arguments, array_flip([
+        $sanitized = array_diff_key((array) $arguments, array_flip(array_merge([
             "first",
             "after",
             "last",
             "before"
-        ]));
+        ], $blackList)));
 
         return $sanitized;
     }
 
     protected function buildArguments($arguments) {
-        $newArguments = empty($arguments["after"]) ? $arguments : $arguments["after"];
+        $newArguments = empty($arguments["after"])
+            ? $this->sanitizeArguments($arguments)
+            : (array) $arguments["after"];
 
         return array_merge(
             [
                 "offset" => 0,
                 "count" => $arguments["first"]
             ],
-            $this->sanitizeArguments($newArguments)
+            $newArguments
         );
     }
 
     protected function buildCursor($item, $arguments, $index)
     {
+        $cursor = isset($arguments["after"]) ? $arguments["after"] : [
+            "offset" => 0
+        ];
+
         return array_merge(
             $this->sanitizeArguments($arguments),
             [
-                "offset" => $index + 1,
-                "count" => $arguments["first"]
+                "offset" => $cursor["offset"] + $index + 1
             ]
         );
     }

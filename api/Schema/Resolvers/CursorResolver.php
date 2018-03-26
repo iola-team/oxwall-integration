@@ -21,13 +21,13 @@ class CursorResolver implements ScalarTypeResolverInterface
             );
         }
 
-        return json_decode(base64_decode($value));
+        return json_decode(base64_decode($value), true);
     }
 
     public function parseLiteral($ast)
     {
         if ($ast instanceof StringValueNode) {
-            return json_decode(base64_decode($ast->value));
+            return json_decode(base64_decode($ast->value), true);
         }
 
         return null;
