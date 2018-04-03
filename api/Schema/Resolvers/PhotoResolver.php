@@ -28,6 +28,10 @@ class PhotoResolver extends EntityResolver
         }, []);
 
         $resolvers = [
+            "owner" => function(Photo $photo) {
+                return $photo->userId;
+            },
+
             "comments" => function(Photo $photo, $args) use($commentsLoader) {
                 return $commentsLoader->load($photo->id, $args);
             }

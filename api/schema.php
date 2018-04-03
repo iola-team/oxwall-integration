@@ -8,6 +8,7 @@ use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\Resolvers\QueryResolver;
+use Everywhere\Api\Schema\Resolvers\UserInfoResolver;
 use Everywhere\Api\Schema\Resolvers\UserResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoResolver;
 use Everywhere\Api\Schema\Resolvers\CommentResolver;
@@ -21,7 +22,10 @@ return [
         "Query" => QueryResolver::class,
 
         "User" => UserResolver::class,
+        "UserInfo" => UserInfoResolver::class,
         "UserConnection" => RelayConnectionResolver::class,
+        "UserFriendsConnection" => RelayConnectionResolver::class,
+        "UserPhotoConnection" => RelayConnectionResolver::class,
 
         "Photo" => PhotoResolver::class,
         "Comment" => CommentResolver::class,

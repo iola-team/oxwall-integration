@@ -10,7 +10,9 @@ namespace Everywhere\Oxwall\Integration\Repositories;
 
 use Everywhere\Api\Contract\Integration\UsersRepositoryInterface;
 use Everywhere\Api\Entities\Avatar;
+use Everywhere\Api\Entities\Photo;
 use Everywhere\Api\Entities\User;
+use OW;
 
 class UsersRepository implements UsersRepositoryInterface
 {
@@ -56,9 +58,16 @@ class UsersRepository implements UsersRepositoryInterface
 
     public function findAllIds(array $args)
     {
-        $this->counter++;
+        $searchFields = [];
 
-        return \BOL_UserService::getInstance()->findLatestUserIdsList($args["offset"], $args["count"]);
+        if (isset($args["search"])) {
+            $displayNameField = OW::getConfig()->getValue('base', 'display_name_question');
+            $searchFields[$displayNameField] = $args["search"];
+        }
+
+        $userIds = \BOL_UserService::getInstance()->findUserIdListByQuestionValues($searchFields, $args["offset"], $args["count"]);
+
+        return $userIds;
     }
 
     public function countAll()
@@ -77,18 +86,36 @@ class UsersRepository implements UsersRepositoryInterface
         return $out;
     }
 
-    public function findPhotos($userIds, array $args)
+    public function countFriends($ids, array $args)
     {
-        $items = \PHOTO_BOL_PhotoService::getInstance()->findPhotoListByUserIdList($userIds, 1, $args["count"]);
         $out = [];
+        foreach ($ids as $id) {
+            $out[$id] = \FRIENDS_BOL_Service::getInstance()->countFriends($id);
+        }
 
+        return $out;
+    }
+
+    public function findPhotos($ids, array $args)
+    {
+        $items = \PHOTO_BOL_PhotoDao::getInstance()->findPhotoListByUserIdList($ids, $args["offset"], $args["count"]);
+        $out = [];
         foreach ($items as $item) {
             $userId = (int) $item["userId"];
             $userItems = empty($out[$userId]) ? [] : $out[$userId];
-
-            $userItems[] = $item["id"];
-
+            $userItems[] = (int) $item["id"];
             $out[$userId] = $userItems;
+        }
+
+        return $out;
+    }
+
+    public function countPhotos($ids, array $args)
+    {
+        $out = [];
+
+        foreach ($ids as $id) {
+            $out[$id] = \PHOTO_BOL_PhotoService::getInstance()->countUserPhotos($id);
         }
 
         return $out;
@@ -105,6 +132,26 @@ class UsersRepository implements UsersRepositoryInterface
          */
         foreach ($avatars as $avatar) {
             $out[$avatar->userId] = $avatar->id;
+        }
+
+        return $out;
+    }
+
+    public function getInfo($ids, array $args)
+    {
+        $mapInfoToQuestion = [
+            "line1" => OW::getConfig()->getValue('base', 'display_name_question'),
+            "line2" => "email",
+            "about" => "field_aff1910847312babd2834f91eee934fe",
+            "location" => "326fcde5fad55adb56e57044418f8b5d"
+        ];
+
+        $questionName = $mapInfoToQuestion[$args["name"]];
+        $data = \BOL_QuestionService::getInstance()->getQuestionData($ids, [$questionName]);
+
+        $out = [];
+        foreach ($data as $userId => $values) {
+            $out[$userId] = empty($values[$questionName]) ? null : $values[$questionName];
         }
 
         return $out;

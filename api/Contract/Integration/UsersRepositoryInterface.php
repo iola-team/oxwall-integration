@@ -33,6 +33,13 @@ interface UsersRepositoryInterface extends AuthRepositoryInterface
 
     /**
      * @param $ids
+     * @param array $args
+     * @return mixed
+     */
+    public function countFriends($ids, array $args);
+
+    /**
+     * @param $ids
      * @param $args
      * @return mixed
      */
@@ -43,5 +50,19 @@ interface UsersRepositoryInterface extends AuthRepositoryInterface
      * @param array $args
      * @return mixed
      */
+    public function countPhotos($ids, array $args);
+
+    /**
+     * @param $ids
+     * @param array $args
+     * @return mixed
+     */
     public function findAvatars($ids, array $args);
+
+    /**
+     * @param $ids
+     * @param array $args
+     * @return mixed
+     */
+    public function getInfo($ids, array $args);
 }
