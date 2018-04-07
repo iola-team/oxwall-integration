@@ -14,10 +14,10 @@ class Photo extends AbstractEntity
     /**
      * @var string
      */
-    public $src;
+    public $url;
 
     /**
      * @var int
      */
-    public $owner;
+    public $userId;
 }

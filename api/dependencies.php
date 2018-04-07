@@ -26,6 +26,7 @@ use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\RelayConnectionResolver;
+use Everywhere\Api\Schema\Resolvers\UserInfoResolver;
 use Everywhere\Api\Schema\TypeConfigDecorators\AggregateTypeConfigDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\InterfaceTypeConfigDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\ObjectTypeConfigDecorator;
@@ -196,6 +197,14 @@ return [
 
     UserResolver::class => function(ContainerInterface $container) {
         return new UserResolver(
+            $container->getIntegration()->getUsersRepository(),
+            $container[DataLoaderFactory::class],
+            $container[ConnectionFactoryInterface::class]
+        );
+    },
+
+    UserInfoResolver::class => function(ContainerInterface $container) {
+        return new UserInfoResolver(
             $container->getIntegration()->getUsersRepository(),
             $container[DataLoaderFactory::class]
         );

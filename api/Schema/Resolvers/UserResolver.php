@@ -9,6 +9,7 @@
 namespace Everywhere\Api\Schema\Resolvers;
 
 use Everywhere\Api\Contract\Integration\UsersRepositoryInterface;
+use Everywhere\Api\Contract\Schema\ConnectionFactoryInterface;
 use Everywhere\Api\Contract\Schema\ContextInterface;
 use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
 use Everywhere\Api\Contract\Schema\DataLoaderInterface;
@@ -26,31 +27,68 @@ class UserResolver extends EntityResolver
     /**
      * @var DataLoaderInterface
      */
+    protected $friendCountsLoader;
+
+    /**
+     * @var DataLoaderInterface
+     */
     protected $photosLoader;
+
+    /**
+     * @var DataLoaderInterface
+     */
+    protected $photoCountsLoader;
 
     /**
      * @var DataLoaderInterface
      */
     protected $avatarLoader;
 
-    public function __construct(UsersRepositoryInterface $usersRepository, DataLoaderFactoryInterface $loaderFactory) {
+    /**
+     * @var DataLoaderInterface
+     */
+    protected $infoLoader;
+
+    /**
+     * @var ConnectionFactoryInterface
+     */
+    protected $connectionFactory;
+
+    public function __construct(
+        UsersRepositoryInterface $usersRepository,
+        DataLoaderFactoryInterface $loaderFactory,
+        ConnectionFactoryInterface $connectionFactory
+    ) {
         parent::__construct(
             $loaderFactory->create(function($ids, $args, $context) use($usersRepository) {
                 return $usersRepository->findByIds($ids);
             })
         );
 
+        $this->connectionFactory = $connectionFactory;
         $this->friendListLoader = $loaderFactory->create(function($ids, $args, $context) use($usersRepository) {
             return $usersRepository->findFriends($ids, $args);
+        }, []);
+
+        $this->friendCountsLoader = $loaderFactory->create(function($ids, $args, $context) use($usersRepository) {
+            return $usersRepository->countFriends($ids, $args);
         }, []);
 
         $this->photosLoader = $loaderFactory->create(function($ids, $args, $context) use($usersRepository) {
             return $usersRepository->findPhotos($ids, $args);
         }, []);
 
+        $this->photoCountsLoader = $loaderFactory->create(function($ids, $args, $context) use($usersRepository) {
+            return $usersRepository->countPhotos($ids, $args);
+        });
+
         $this->avatarLoader = $loaderFactory->create(function($ids, $args, $context) use($usersRepository) {
             return $usersRepository->findAvatars($ids, $args);
-        }, null);
+        });
+
+        $this->infoLoader = $loaderFactory->create(function($ids, $args, $context) use($usersRepository) {
+            return $usersRepository->getInfo($ids, $args);
+        });
     }
 
     /**
@@ -60,22 +98,46 @@ class UserResolver extends EntityResolver
      * @param ContextInterface $context
      * @param $info
      *
-     * @return Promise|null
+     * @return mixed
      */
     protected function resolveField($user, $fieldName, $args, ContextInterface $context, ResolveInfo $info)
     {
         switch ($fieldName) {
             case "friends":
-                return $this->friendListLoader->load($user->id, $args);
+                return $this->connectionFactory->create(
+                    $user,
+                    $args,
+                    function($args) use($user) {
+                        return $this->friendListLoader->load($user->id, $args);
+                    },
+                    function($args) use($user) {
+                        return $this->friendCountsLoader->load($user->id, $args);
+                    }
+                 );
 
             case "comments":
                 return $this->commentsLoader->load($user->id, $args);
 
             case "photos":
-                return $this->photosLoader->load($user->id, $args);
+                return $this->connectionFactory->create(
+                    $user,
+                    $args,
+                    function($args) use($user) {
+                        return $this->photosLoader->load($user->id, $args);
+                    },
+                    function($args) use($user) {
+                        return $this->photoCountsLoader->load($user->id, $args);
+                    }
+                );
 
             case "avatar":
                 return $this->avatarLoader->load($user->id, $args);
+
+            /**
+             * Pass user entity as root value to UserInfo resolver
+             */
+            case "info":
+                return $user;
 
             default:
                 return parent::resolveField($user, $fieldName, $args, $context, $info);

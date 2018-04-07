@@ -9,7 +9,7 @@ type Mutation {
 
 type Query {
     me: User
-    users(first: Int = 10, after: Cursor): UserConnection!
+    users(first: Int = 10, after: Cursor, search: String = ""): UserConnection!
     node(id: ID!): Node
 }
 
@@ -27,7 +27,7 @@ interface Edge {
 
 interface Connection {
     pageInfo: PageInfo!
-    edges: [Edge]
+    edges: [Edge!]!
     totalCount: Int
 }
 
@@ -49,9 +49,17 @@ type User implements Node {
     email: String!
     activityTime: Date!
 
+    info: UserInfo!
+
     avatar: Avatar
-    friends(offset: Int = 0, count: Int = 10): [User]
-    photos(offset: Int = 0, count: Int = 10): [Photo]
+    friends(first: Int = 10, after: Cursor): UserFriendsConnection!
+    photos(first: Int = 10, after: Cursor): UserPhotoConnection!
+}
+
+type UserInfo {
+    headline: String,
+    location: String,
+    about: String,
 }
 
 type UserEdge implements Edge {
@@ -61,7 +69,24 @@ type UserEdge implements Edge {
 
 type UserConnection implements Connection {
     pageInfo: PageInfo!
-    edges: [UserEdge]
+    edges: [UserEdge!]!
+    totalCount: Int
+}
+
+type UserFriendsConnection implements Connection {
+    pageInfo: PageInfo!
+    edges: [UserEdge!]!
+    totalCount: Int
+}
+
+type PhotoEdge implements Edge {
+    node: Photo!
+    cursor: Cursor!
+}
+
+type UserPhotoConnection implements Connection {
+    pageInfo: PageInfo!
+    edges: [PhotoEdge!]!
     totalCount: Int
 }
 
@@ -78,7 +103,7 @@ type Avatar implements Node {
 
 type Photo implements Node {
     id: ID!
-    src: String!
+    url: String!
     owner: User!
 
     comments(offset: Int = 0, count: Int = 10): [Comment]

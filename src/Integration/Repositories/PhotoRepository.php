@@ -19,10 +19,9 @@ class PhotoRepository implements PhotoRepositoryInterface
         $out = [];
 
         foreach ($items as $item) {
-            $photo = new Photo();
-            $photo->id = (int) $item["id"];
-            $photo->src = $item["url"];
-            $photo->owner = (int) $item["userId"];
+            $photo = new Photo((int) $item["id"]);
+            $photo->url = $item["url"];
+            $photo->userId = (int) $item["userId"];
 
             $out[$photo->id] = $photo;
         }
