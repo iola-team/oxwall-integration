@@ -57,8 +57,7 @@ type User implements Node {
 }
 
 type UserInfo {
-    line1: String,
-    line2: String,
+    headline: String,
     location: String,
     about: String,
 }

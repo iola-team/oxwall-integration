@@ -140,8 +140,7 @@ class UsersRepository implements UsersRepositoryInterface
     public function getInfo($ids, array $args)
     {
         $mapInfoToQuestion = [
-            "line1" => OW::getConfig()->getValue('base', 'display_name_question'),
-            "line2" => "email",
+            "headline" => "email",
             "about" => "field_aff1910847312babd2834f91eee934fe",
             "location" => "326fcde5fad55adb56e57044418f8b5d"
         ];
