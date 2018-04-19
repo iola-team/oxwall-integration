@@ -21,11 +21,13 @@ use Everywhere\Api\Contract\Schema\ViewerInterface;
 use Everywhere\Api\Middleware\AuthMiddleware;
 use Everywhere\Api\Middleware\GraphQLMiddleware;
 use Everywhere\Api\Middleware\AuthenticationMiddleware;
+use Everywhere\Api\Middleware\UploadMiddleware;
 use Everywhere\Api\Schema\ConnectionFactory;
 use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\RelayConnectionResolver;
+use Everywhere\Api\Schema\Resolvers\UploadResolver;
 use Everywhere\Api\Schema\Resolvers\UserInfoResolver;
 use Everywhere\Api\Schema\TypeConfigDecorators\AggregateTypeConfigDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\InterfaceTypeConfigDecorator;
@@ -76,6 +78,10 @@ return [
         );
     },
 
+    UploadMiddleware::class => function(ContainerInterface $container) {
+        return new UploadMiddleware();
+    },
+
     IDFactoryInterface::class => function(ContainerInterface $container) {
         return new IDFactory();
     },
@@ -122,6 +128,10 @@ return [
 
     CursorResolver::class => function(ContainerInterface $container) {
         return new CursorResolver();
+    },
+
+    UploadResolver::class => function(ContainerInterface $container) {
+        return new UploadResolver();
     },
 
     NodeResolver::class => function(ContainerInterface $container) {

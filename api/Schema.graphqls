@@ -15,6 +15,7 @@ type Query {
 
 scalar Date
 scalar Cursor
+scalar Upload
 
 interface Node {
     id: ID!
