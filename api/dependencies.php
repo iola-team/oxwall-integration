@@ -25,6 +25,7 @@ use Everywhere\Api\Middleware\UploadMiddleware;
 use Everywhere\Api\Schema\ConnectionFactory;
 use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
+use Everywhere\Api\Schema\Resolvers\FileMutationResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\RelayConnectionResolver;
 use Everywhere\Api\Schema\Resolvers\UploadResolver;
@@ -37,7 +38,7 @@ use Everywhere\Api\Schema\Context;
 use Everywhere\Api\Schema\DataLoaderFactory;
 use Everywhere\Api\Schema\Builder;
 use Everywhere\Api\Schema\IDFactory;
-use Everywhere\Api\Schema\Resolvers\AuthenticationResolver;
+use Everywhere\Api\Schema\Resolvers\AuthMutationResolver;
 use Everywhere\Api\Schema\Resolvers\AvatarResolver;
 use Everywhere\Api\Contract\Schema\BuilderInterface;
 use Everywhere\Api\Contract\Schema\TypeConfigDecoratorInterface;
@@ -245,10 +246,14 @@ return [
         );
     },
 
-    AuthenticationResolver::class => function(ContainerInterface $container) {
-        return new AuthenticationResolver(
+    AuthMutationResolver::class => function(ContainerInterface $container) {
+        return new AuthMutationResolver(
             $container[AuthenticationServiceInterface::class],
             $container[TokenBuilderInterface::class]
         );
+    },
+
+    FileMutationResolver::class => function(ContainerInterface $container) {
+        return new FileMutationResolver();
     },
 ];

@@ -7,7 +7,7 @@ use Everywhere\Api\Contract\Auth\TokenBuilderInterface;
 use Everywhere\Api\Contract\Schema\ContextInterface;
 use Everywhere\Api\Schema\CompositeResolver;
 
-class AuthenticationResolver extends CompositeResolver
+class AuthMutationResolver extends CompositeResolver
 {
     /**
      * @var AuthenticationServiceInterface
