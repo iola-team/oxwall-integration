@@ -22,7 +22,7 @@ class AvatarResolver extends EntityResolver
         parent::__construct($entityLoader, [
             "url" => function(Avatar $avatar, $args) use ($urlLoader) {
                 return $urlLoader->load($avatar->id, $args);
-            }
+            },
         ]);
     }
 }

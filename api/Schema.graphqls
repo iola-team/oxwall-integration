@@ -3,8 +3,15 @@ schema {
     mutation: Mutation
 }
 
+scalar Date
+scalar Cursor
+scalar Upload
+
 type Mutation {
     signInUser(login: String!, password: String!): SingInPayload!
+
+    addUserAvatar(userId: ID!, file: Upload!): Avatar!
+    deleteUserAvatar(id: ID!): Boolean!
 }
 
 type Query {
@@ -12,9 +19,6 @@ type Query {
     users(first: Int = 10, after: Cursor, search: String = ""): UserConnection!
     node(id: ID!): Node
 }
-
-scalar Date
-scalar Cursor
 
 interface Node {
     id: ID!

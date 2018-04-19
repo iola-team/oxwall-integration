@@ -41,6 +41,13 @@ class EntityResolver extends CompositeResolver
 
     public function resolve($root, $args, ContextInterface $context, ResolveInfo $info)
     {
+        /**
+         * If $root value is null might mean that we currently processing a mutation
+         */
+        if ($root === null) {
+            return $this->resolveField(null, $info->fieldName, $args, $context, $info);
+        }
+
         $id = $root;
         if ($this->isEntity($root)) {
             $id = $root->getId();

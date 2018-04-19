@@ -21,11 +21,15 @@ use Everywhere\Api\Contract\Schema\ViewerInterface;
 use Everywhere\Api\Middleware\AuthMiddleware;
 use Everywhere\Api\Middleware\GraphQLMiddleware;
 use Everywhere\Api\Middleware\AuthenticationMiddleware;
+use Everywhere\Api\Middleware\UploadMiddleware;
 use Everywhere\Api\Schema\ConnectionFactory;
+use Everywhere\Api\Schema\Resolvers\AvatarMutationResolver;
 use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
+use Everywhere\Api\Schema\Resolvers\FileMutationResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\RelayConnectionResolver;
+use Everywhere\Api\Schema\Resolvers\UploadResolver;
 use Everywhere\Api\Schema\Resolvers\UserInfoResolver;
 use Everywhere\Api\Schema\TypeConfigDecorators\AggregateTypeConfigDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\InterfaceTypeConfigDecorator;
@@ -35,7 +39,7 @@ use Everywhere\Api\Schema\Context;
 use Everywhere\Api\Schema\DataLoaderFactory;
 use Everywhere\Api\Schema\Builder;
 use Everywhere\Api\Schema\IDFactory;
-use Everywhere\Api\Schema\Resolvers\AuthenticationResolver;
+use Everywhere\Api\Schema\Resolvers\AuthMutationResolver;
 use Everywhere\Api\Schema\Resolvers\AvatarResolver;
 use Everywhere\Api\Contract\Schema\BuilderInterface;
 use Everywhere\Api\Contract\Schema\TypeConfigDecoratorInterface;
@@ -74,6 +78,10 @@ return [
         return new GraphQLMiddleware(
             $container[ServerConfig::class]
         );
+    },
+
+    UploadMiddleware::class => function(ContainerInterface $container) {
+        return new UploadMiddleware();
     },
 
     IDFactoryInterface::class => function(ContainerInterface $container) {
@@ -122,6 +130,10 @@ return [
 
     CursorResolver::class => function(ContainerInterface $container) {
         return new CursorResolver();
+    },
+
+    UploadResolver::class => function(ContainerInterface $container) {
+        return new UploadResolver();
     },
 
     NodeResolver::class => function(ContainerInterface $container) {
@@ -235,10 +247,16 @@ return [
         );
     },
 
-    AuthenticationResolver::class => function(ContainerInterface $container) {
-        return new AuthenticationResolver(
+    AuthMutationResolver::class => function(ContainerInterface $container) {
+        return new AuthMutationResolver(
             $container[AuthenticationServiceInterface::class],
             $container[TokenBuilderInterface::class]
+        );
+    },
+
+    AvatarMutationResolver::class => function(ContainerInterface $container) {
+        return new AvatarMutationResolver(
+            $container->getIntegration()->getAvatarRepository()
         );
     },
 ];
