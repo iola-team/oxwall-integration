@@ -4,6 +4,7 @@ namespace Everywhere\Oxwall\Integration\Repositories;
 
 use Everywhere\Api\Contract\Integration\AvatarRepositoryInterface;
 use Everywhere\Api\Entities\Avatar;
+use Psr\Http\Message\UploadedFileInterface;
 
 class AvatarRepository implements AvatarRepositoryInterface
 {
@@ -51,5 +52,31 @@ class AvatarRepository implements AvatarRepositoryInterface
         }
 
         return $out;
+    }
+
+    public function addAvatar(array $args)
+    {
+        /**
+         * @var $file UploadedFileInterface
+         */
+        $file = $args["file"];
+        $userId = $args["userId"];
+
+        $tmpAvatarPath = $this->avatarService->getTempAvatarPath(uniqid(), 3);
+        $file->moveTo($tmpAvatarPath);
+
+        if (!$this->avatarService->setUserAvatar($userId, $tmpAvatarPath, [])) {
+            return null;
+        }
+
+        unlink($tmpAvatarPath);
+        $avatarDto = $this->avatarService->findByUserId($userId);
+
+        return $avatarDto ? $avatarDto->id : null;
+    }
+
+    public function deleteAvatar(array $args)
+    {
+        return $this->avatarService->deleteAvatarById($args["id"]);
     }
 }

@@ -9,7 +9,9 @@ scalar Upload
 
 type Mutation {
     signInUser(login: String!, password: String!): SingInPayload!
-    uploadFiles(files: [Upload!]!): [String]
+
+    addUserAvatar(userId: ID!, file: Upload!): Avatar!
+    deleteUserAvatar(id: ID!): Boolean!
 }
 
 type Query {

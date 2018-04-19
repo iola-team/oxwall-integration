@@ -3,6 +3,7 @@ namespace Everywhere\Api;
 
 use Everywhere\Api\Schema\RelayConnectionResolver;
 use Everywhere\Api\Schema\Resolvers\AuthMutationResolver;
+use Everywhere\Api\Schema\Resolvers\AvatarMutationResolver;
 use Everywhere\Api\Schema\Resolvers\AvatarResolver;
 use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
@@ -45,7 +46,7 @@ return [
 
         "Mutation" => [
             AuthMutationResolver::class,
-            FileMutationResolver::class,
+            AvatarMutationResolver::class,
         ]
     ]
 ];

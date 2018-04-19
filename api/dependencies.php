@@ -23,6 +23,7 @@ use Everywhere\Api\Middleware\GraphQLMiddleware;
 use Everywhere\Api\Middleware\AuthenticationMiddleware;
 use Everywhere\Api\Middleware\UploadMiddleware;
 use Everywhere\Api\Schema\ConnectionFactory;
+use Everywhere\Api\Schema\Resolvers\AvatarMutationResolver;
 use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
 use Everywhere\Api\Schema\Resolvers\FileMutationResolver;
@@ -253,7 +254,9 @@ return [
         );
     },
 
-    FileMutationResolver::class => function(ContainerInterface $container) {
-        return new FileMutationResolver();
+    AvatarMutationResolver::class => function(ContainerInterface $container) {
+        return new AvatarMutationResolver(
+            $container->getIntegration()->getAvatarRepository()
+        );
     },
 ];
