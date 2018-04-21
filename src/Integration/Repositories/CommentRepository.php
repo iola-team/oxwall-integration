@@ -1,10 +1,10 @@
 <?php
 namespace Everywhere\Oxwall\Integration\Repositories;
 
-use Everywhere\Api\Contract\Integration\CommentsRepositoryInterface;
+use Everywhere\Api\Contract\Integration\CommentRepositoryInterface;
 use Everywhere\Api\Entities\Comment;
 
-class CommentRepository implements CommentsRepositoryInterface
+class CommentRepository implements CommentRepositoryInterface
 {
     public function findByIds($ids)
     {

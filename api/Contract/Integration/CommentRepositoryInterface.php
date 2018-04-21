@@ -1,7 +1,7 @@
 <?php
 namespace Everywhere\Api\Contract\Integration;
 
-interface CommentsRepositoryInterface
+interface CommentRepositoryInterface
 {
     /**
      * @param array $ids

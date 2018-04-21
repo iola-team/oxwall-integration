@@ -2,7 +2,7 @@
 
 namespace Everywhere\Api\Schema;
 
-use Everywhere\Api\Contract\Integration\UsersRepositoryInterface;
+use Everywhere\Api\Contract\Integration\UserRepositoryInterface;
 use Everywhere\Api\Contract\Schema\ConnectionObjectInterface;
 use Everywhere\Api\Contract\Schema\ContextInterface;
 use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;

@@ -159,7 +159,7 @@ return [
 
     AuthenticationAdapterInterface::class => function(ContainerInterface $container) {
         return new AuthenticationAdapter(
-            $container->getIntegration()->getUsersRepository(),
+            $container->getIntegration()->getUserRepository(),
             $container[IdentityServiceInterface::class]
         );
     },
@@ -203,13 +203,13 @@ return [
     QueryResolver::class => function(ContainerInterface $container) {
         return new QueryResolver(
             $container[ConnectionFactoryInterface::class],
-            $container->getIntegration()->getUsersRepository()
+            $container->getIntegration()->getUserRepository()
         );
     },
 
     UserResolver::class => function(ContainerInterface $container) {
         return new UserResolver(
-            $container->getIntegration()->getUsersRepository(),
+            $container->getIntegration()->getUserRepository(),
             $container[DataLoaderFactory::class],
             $container[ConnectionFactoryInterface::class]
         );
@@ -217,7 +217,7 @@ return [
 
     UserInfoResolver::class => function(ContainerInterface $container) {
         return new UserInfoResolver(
-            $container->getIntegration()->getUsersRepository(),
+            $container->getIntegration()->getUserRepository(),
             $container[DataLoaderFactory::class]
         );
     },
@@ -235,7 +235,7 @@ return [
 
     CommentResolver::class => function(ContainerInterface $container) {
         return new CommentResolver(
-            $container->getIntegration()->getCommentsRepository(),
+            $container->getIntegration()->getCommentRepository(),
             $container[DataLoaderFactory::class]
         );
     },

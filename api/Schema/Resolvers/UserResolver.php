@@ -8,7 +8,7 @@
 
 namespace Everywhere\Api\Schema\Resolvers;
 
-use Everywhere\Api\Contract\Integration\UsersRepositoryInterface;
+use Everywhere\Api\Contract\Integration\UserRepositoryInterface;
 use Everywhere\Api\Contract\Schema\ConnectionFactoryInterface;
 use Everywhere\Api\Contract\Schema\ContextInterface;
 use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
@@ -55,39 +55,39 @@ class UserResolver extends EntityResolver
     protected $connectionFactory;
 
     public function __construct(
-        UsersRepositoryInterface $usersRepository,
+        UserRepositoryInterface $userRepository,
         DataLoaderFactoryInterface $loaderFactory,
         ConnectionFactoryInterface $connectionFactory
     ) {
         parent::__construct(
-            $loaderFactory->create(function($ids, $args, $context) use($usersRepository) {
-                return $usersRepository->findByIds($ids);
+            $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
+                return $userRepository->findByIds($ids);
             })
         );
 
         $this->connectionFactory = $connectionFactory;
-        $this->friendListLoader = $loaderFactory->create(function($ids, $args, $context) use($usersRepository) {
-            return $usersRepository->findFriends($ids, $args);
+        $this->friendListLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
+            return $userRepository->findFriends($ids, $args);
         }, []);
 
-        $this->friendCountsLoader = $loaderFactory->create(function($ids, $args, $context) use($usersRepository) {
-            return $usersRepository->countFriends($ids, $args);
+        $this->friendCountsLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
+            return $userRepository->countFriends($ids, $args);
         }, []);
 
-        $this->photosLoader = $loaderFactory->create(function($ids, $args, $context) use($usersRepository) {
-            return $usersRepository->findPhotos($ids, $args);
+        $this->photosLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
+            return $userRepository->findPhotos($ids, $args);
         }, []);
 
-        $this->photoCountsLoader = $loaderFactory->create(function($ids, $args, $context) use($usersRepository) {
-            return $usersRepository->countPhotos($ids, $args);
+        $this->photoCountsLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
+            return $userRepository->countPhotos($ids, $args);
         });
 
-        $this->avatarLoader = $loaderFactory->create(function($ids, $args, $context) use($usersRepository) {
-            return $usersRepository->findAvatars($ids, $args);
+        $this->avatarLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
+            return $userRepository->findAvatars($ids, $args);
         });
 
-        $this->infoLoader = $loaderFactory->create(function($ids, $args, $context) use($usersRepository) {
-            return $usersRepository->getInfo($ids, $args);
+        $this->infoLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
+            return $userRepository->getInfo($ids, $args);
         });
     }
 

@@ -8,7 +8,7 @@
 
 namespace Everywhere\Api\Schema\Resolvers;
 
-use Everywhere\Api\Contract\Integration\UsersRepositoryInterface;
+use Everywhere\Api\Contract\Integration\UserRepositoryInterface;
 use Everywhere\Api\Contract\Schema\ContextInterface;
 use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
 use Everywhere\Api\Contract\Schema\DataLoaderInterface;
@@ -23,11 +23,11 @@ class UserInfoResolver extends CompositeResolver
      */
     protected $infoLoader;
 
-    public function __construct(UsersRepositoryInterface $usersRepository, DataLoaderFactoryInterface $loaderFactory) {
+    public function __construct(UserRepositoryInterface $userRepository, DataLoaderFactoryInterface $loaderFactory) {
         parent::__construct();
 
-        $this->infoLoader = $loaderFactory->create(function($ids, $args, $context) use($usersRepository) {
-            return $usersRepository->getInfo($ids, $args);
+        $this->infoLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
+            return $userRepository->getInfo($ids, $args);
         });
     }
 

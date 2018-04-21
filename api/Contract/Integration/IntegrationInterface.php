@@ -11,9 +11,9 @@ namespace Everywhere\Api\Contract\Integration;
 interface IntegrationInterface
 {
     /**
-     * @return UsersRepositoryInterface
+     * @return UserRepositoryInterface
      */
-    public function getUsersRepository();
+    public function getUserRepository();
 
     /**
      * @return PhotoRepositoryInterface
@@ -21,9 +21,9 @@ interface IntegrationInterface
     public function getPhotoRepository();
 
     /**
-     * @return CommentsRepositoryInterface
+     * @return CommentRepositoryInterface
      */
-    public function getCommentsRepository();
+    public function getCommentRepository();
 
     /**
      * @return AvatarRepositoryInterface
