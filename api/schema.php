@@ -11,8 +11,9 @@ use Everywhere\Api\Schema\Resolvers\FileMutationResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\Resolvers\QueryResolver;
 use Everywhere\Api\Schema\Resolvers\UploadResolver;
-use Everywhere\Api\Schema\Resolvers\UserInfoResolver;
 use Everywhere\Api\Schema\Resolvers\UserResolver;
+use Everywhere\Api\Schema\Resolvers\UserInfoResolver;
+use Everywhere\Api\Schema\Resolvers\UserMutationResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoResolver;
 use Everywhere\Api\Schema\Resolvers\CommentResolver;
 
@@ -47,6 +48,7 @@ return [
         "Mutation" => [
             AuthMutationResolver::class,
             AvatarMutationResolver::class,
+            UserMutationResolver::class,
         ]
     ]
 ];

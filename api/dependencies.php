@@ -31,6 +31,7 @@ use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\RelayConnectionResolver;
 use Everywhere\Api\Schema\Resolvers\UploadResolver;
 use Everywhere\Api\Schema\Resolvers\UserInfoResolver;
+use Everywhere\Api\Schema\Resolvers\UserMutationResolver;
 use Everywhere\Api\Schema\TypeConfigDecorators\AggregateTypeConfigDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\InterfaceTypeConfigDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\ObjectTypeConfigDecorator;
@@ -219,6 +220,14 @@ return [
         return new UserInfoResolver(
             $container->getIntegration()->getUserRepository(),
             $container[DataLoaderFactory::class]
+        );
+    },
+
+    UserMutationResolver::class => function(ContainerInterface $container) {
+        return new UserMutationResolver(
+            $container->getIntegration()->getUserRepository(),
+            $container[IdentityServiceInterface::class],
+            $container[TokenBuilderInterface::class]
         );
     },
 

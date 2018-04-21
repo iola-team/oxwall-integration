@@ -9,6 +9,7 @@ scalar Upload
 
 type Mutation {
     signInUser(login: String!, password: String!): SingInPayload!
+    signUpUser(name: String!, login: String!, password: String!): SingInPayload!
 
     addUserAvatar(userId: ID!, file: Upload!): Avatar!
     deleteUserAvatar(id: ID!): Boolean!

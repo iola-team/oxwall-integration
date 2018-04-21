@@ -18,6 +18,10 @@ class UserRepository implements UserRepositoryInterface
 {
     public $counter = 0;
 
+    public function create($args) {
+        var_dump($args);
+    }
+
     public function authenticate($identity, $password)
     {
         $result = \OW_Auth::getInstance()->authenticate(

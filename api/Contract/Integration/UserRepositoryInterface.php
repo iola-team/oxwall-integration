@@ -11,6 +11,12 @@ namespace Everywhere\Api\Contract\Integration;
 interface UserRepositoryInterface extends AuthRepositoryInterface
 {
     /**
+     * @param array $args
+     * @return <User>
+     */
+    public function create($args);
+
+    /**
      * @param array $ids
      * @return array<User>
      */
