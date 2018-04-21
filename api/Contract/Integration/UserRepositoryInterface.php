@@ -8,7 +8,7 @@
 
 namespace Everywhere\Api\Contract\Integration;
 
-interface UsersRepositoryInterface extends AuthRepositoryInterface
+interface UserRepositoryInterface extends AuthRepositoryInterface
 {
     /**
      * @param array $ids

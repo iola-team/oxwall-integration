@@ -8,13 +8,13 @@
 
 namespace Everywhere\Oxwall\Integration\Repositories;
 
-use Everywhere\Api\Contract\Integration\UsersRepositoryInterface;
+use Everywhere\Api\Contract\Integration\UserRepositoryInterface;
 use Everywhere\Api\Entities\Avatar;
 use Everywhere\Api\Entities\Photo;
 use Everywhere\Api\Entities\User;
 use OW;
 
-class UsersRepository implements UsersRepositoryInterface
+class UserRepository implements UserRepositoryInterface
 {
     public $counter = 0;
 

@@ -8,7 +8,7 @@
 
 namespace Everywhere\Api\Schema\Resolvers;
 
-use Everywhere\Api\Contract\Integration\UsersRepositoryInterface;
+use Everywhere\Api\Contract\Integration\UserRepositoryInterface;
 use Everywhere\Api\Contract\Schema\ConnectionFactoryInterface;
 use Everywhere\Api\Contract\Schema\ContextInterface;
 use Everywhere\Api\Contract\Schema\ObjectResolverInterface;
@@ -23,7 +23,7 @@ class QueryResolver extends CompositeResolver
 {
     public function __construct(
         ConnectionFactoryInterface $connectionFactory,
-        UsersRepositoryInterface $usersRepository
+        UserRepositoryInterface $userRepository
     ) {
         parent::__construct();
 
@@ -31,20 +31,20 @@ class QueryResolver extends CompositeResolver
             return $context->getViewer()->getUserId();
         });
 
-        $this->addFieldResolver("users", function($root, $args) use($usersRepository, $connectionFactory) {
+        $this->addFieldResolver("users", function($root, $args) use($userRepository, $connectionFactory) {
             return $connectionFactory->create(
                 $root,
                 $args,
-                function($args) use($usersRepository) {
-                    return $usersRepository->findAllIds($args);
+                function($args) use($userRepository) {
+                    return $userRepository->findAllIds($args);
                 },
-                function($args) use($usersRepository) {
-                    return $usersRepository->countAll($args);
+                function($args) use($userRepository) {
+                    return $userRepository->countAll($args);
                 }
             );
         });
 
-        $this->addFieldResolver("node", function($root, $args) use($usersRepository) {
+        $this->addFieldResolver("node", function($root, $args) use($userRepository) {
             return $args["id"];
         });
     }
