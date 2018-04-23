@@ -31,7 +31,6 @@ use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\RelayConnectionResolver;
 use Everywhere\Api\Schema\Resolvers\UploadResolver;
 use Everywhere\Api\Schema\Resolvers\UserInfoResolver;
-use Everywhere\Api\Schema\Resolvers\UserMutationResolver;
 use Everywhere\Api\Schema\TypeConfigDecorators\AggregateTypeConfigDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\InterfaceTypeConfigDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\ObjectTypeConfigDecorator;
@@ -223,14 +222,6 @@ return [
         );
     },
 
-    UserMutationResolver::class => function(ContainerInterface $container) {
-        return new UserMutationResolver(
-            $container->getIntegration()->getUserRepository(),
-            $container[IdentityServiceInterface::class],
-            $container[TokenBuilderInterface::class]
-        );
-    },
-
     RelayConnectionResolver::class => function(ContainerInterface $container) {
         return new RelayConnectionResolver();
     },
@@ -259,7 +250,8 @@ return [
     AuthMutationResolver::class => function(ContainerInterface $container) {
         return new AuthMutationResolver(
             $container[AuthenticationServiceInterface::class],
-            $container[TokenBuilderInterface::class]
+            $container[TokenBuilderInterface::class],
+            $container->getIntegration()->getUserRepository()
         );
     },
 

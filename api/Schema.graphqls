@@ -7,14 +7,6 @@ scalar Date
 scalar Cursor
 scalar Upload
 
-type Mutation {
-    signInUser(login: String!, password: String!): SingInPayload!
-    signUpUser(name: String!, login: String!, password: String!): SingInPayload!
-
-    addUserAvatar(userId: ID!, file: Upload!): Avatar!
-    deleteUserAvatar(id: ID!): Boolean!
-}
-
 type Query {
     me: User
     users(first: Int = 10, after: Cursor, search: String = ""): UserConnection!
@@ -43,10 +35,37 @@ type PageInfo {
     endCursor: Cursor
 }
 
-type SingInPayload {
+#############
+# MUTATIONS #
+#############
+
+type Mutation {
+    signInUser(login: String!, password: String!): AuthPayload!
+    signUpUser(input: SignUpUserInput): AuthPayload!
+
+    addUserAvatar(userId: ID!, file: Upload!): Avatar!
+    deleteUserAvatar(id: ID!): Boolean!
+}
+
+#input SignInUserInput {
+#  login: String!
+#  password: String!
+#}
+
+input SignUpUserInput {
+  name: String!
+  login: String!
+  password: String!
+}
+
+type AuthPayload {
     accessToken: String
     user: User
 }
+
+#########
+# TYPES #
+#########
 
 type User implements Node {
     id: ID!

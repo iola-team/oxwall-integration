@@ -19,7 +19,15 @@ class UserRepository implements UserRepositoryInterface
     public $counter = 0;
 
     public function create($args) {
-        var_dump($args);
+        $userDto = \BOL_UserService::getInstance()->createUser($args["name"], $args["password"], $args["login"]);
+
+        $user = new User();
+        $user->id = $userDto->id;
+        $user->name = \BOL_UserService::getInstance()->getDisplayName($userDto->id);
+        $user->email = $userDto->email;
+        $user->activityTime = (int) $userDto->activityStamp;
+
+        return $user;
     }
 
     public function authenticate($identity, $password)
