@@ -3,6 +3,7 @@
 namespace Everywhere\Api\Schema\Resolvers;
 
 use Everywhere\Api\Contract\Auth\AuthenticationServiceInterface;
+use Everywhere\Api\Contract\Auth\IdentityServiceInterface;
 use Everywhere\Api\Contract\Auth\TokenBuilderInterface;
 use Everywhere\Api\Contract\Schema\ContextInterface;
 use Everywhere\Api\Schema\CompositeResolver;
@@ -28,6 +29,7 @@ class AuthMutationResolver extends CompositeResolver
     public function __construct(
         AuthenticationServiceInterface $authService,
         TokenBuilderInterface $tokenBuilder,
+        IdentityServiceInterface $identityService,
         UserRepositoryInterface $userRepository
     ) {
         parent::__construct([
@@ -37,14 +39,17 @@ class AuthMutationResolver extends CompositeResolver
 
         $this->authService = $authService;
         $this->tokenBuilder = $tokenBuilder;
+        $this->identityService = $identityService;
         $this->userRepository = $userRepository;
     }
 
     public function resolveSignUp($root, $args, ContextInterface $context) {
-        $user = $this->userRepository->create($args["input"]); // $args["input"] validation?
+        $user = $this->userRepository->create($args["input"]); // @TODO: $args["input"] validation?
+        // @TODO: handle errors such as "Duplicate username!" or "Duplicate email!"
+        $identity = $this->identityService->create($user->id); // @TODO: $issueTime and $expirationTime for token?
 
         return [
-            "accessToken" => 'kaboom',
+            "accessToken" => $this->tokenBuilder->build($identity),
             "user" => $user
         ];
     }
