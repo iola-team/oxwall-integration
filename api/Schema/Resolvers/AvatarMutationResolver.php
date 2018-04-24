@@ -12,16 +12,29 @@ class AvatarMutationResolver extends CompositeResolver
     {
         parent::__construct([
             "addUserAvatar" => function($root, $args) use ($avatarRepository) {
-                return $avatarRepository->addAvatar([
+                $avatar = $avatarRepository->addAvatar([
                     "userId" => $args["userId"]->getId(),
                     "file" => $args["file"]
                 ]);
+
+                return [
+                    "node" => $avatar,
+                    "user" => $args["userId"],
+                ];
             },
 
             "deleteUserAvatar" => function($root, $args) use ($avatarRepository) {
-                return $avatarRepository->deleteAvatar([
-                    "id" => $args["id"]->getId()
+                $realId = $args["id"]->getId();
+                $avatar = $avatarRepository->findByIds([$realId])[$realId];
+
+                $avatarRepository->deleteAvatar([
+                    "id" => $avatar->id
                 ]);
+
+                return [
+                    "deletedId" => $args["id"],
+                    "user" => $avatar->userId
+                ];
             }
         ]);
     }

@@ -2,6 +2,7 @@
 
 namespace Everywhere\Api\Schema\Resolvers;
 
+use Everywhere\Api\Auth\IdentityService;
 use Everywhere\Api\Contract\Auth\AuthenticationServiceInterface;
 use Everywhere\Api\Contract\Auth\TokenBuilderInterface;
 use Everywhere\Api\Contract\Schema\ContextInterface;

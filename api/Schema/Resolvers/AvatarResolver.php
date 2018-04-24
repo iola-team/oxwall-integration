@@ -23,6 +23,10 @@ class AvatarResolver extends EntityResolver
             "url" => function(Avatar $avatar, $args) use ($urlLoader) {
                 return $urlLoader->load($avatar->id, $args);
             },
+
+            "user" => function(Avatar $avatar) {
+                return $avatar->userId;
+            }
         ]);
     }
 }
