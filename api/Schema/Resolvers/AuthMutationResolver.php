@@ -2,6 +2,7 @@
 
 namespace Everywhere\Api\Schema\Resolvers;
 
+use GraphQL\Error\UserError;
 use Everywhere\Api\Contract\Auth\AuthenticationServiceInterface;
 use Everywhere\Api\Contract\Auth\IdentityServiceInterface;
 use Everywhere\Api\Contract\Auth\TokenBuilderInterface;
@@ -44,14 +45,24 @@ class AuthMutationResolver extends CompositeResolver
     }
 
     public function resolveSignUp($root, $args, ContextInterface $context) {
-        $user = $this->userRepository->create($args["input"]); // @TODO: $args["input"] validation?
-        // @TODO: handle errors such as "Duplicate username!" or "Duplicate email!"
-        $identity = $this->identityService->create($user->id); // @TODO: $issueTime and $expirationTime for token?
+        try {
+            $user = $this->userRepository->create($args["input"]);
+            $identity = $this->identityService->create($user->id);
 
-        return [
-            "accessToken" => $this->tokenBuilder->build($identity),
-            "user" => $user
-        ];
+            return [
+                "accessToken" => $this->tokenBuilder->build($identity),
+                "user" => $user,
+            ];
+        } catch (\Exception $error) {
+            switch ($error->getMessage()) {
+                case "Duplicate username!":
+                    throw new UserError("Duplicate name");
+                    break;
+                case "Duplicate email!":
+                    throw new UserError("Duplicate email");
+                    break;
+            }
+        }
     }
 
     public function resolveSignIn($root, $args, ContextInterface $context) {

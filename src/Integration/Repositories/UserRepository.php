@@ -23,7 +23,7 @@ class UserRepository implements UserRepositoryInterface
 
         $user = new User();
         $user->id = $userDto->id;
-        $user->name = \BOL_UserService::getInstance()->getDisplayName($userDto->id);
+        $user->name = $userDto->username;
         $user->email = $userDto->email;
         $user->activityTime = (int) $userDto->activityStamp;
 
