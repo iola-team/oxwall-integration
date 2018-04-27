@@ -220,13 +220,15 @@ return [
         );
     },
 
-    Relay\EdgeFactory::class => function(ContainerInterface $container) {
-        return new Relay\EdgeFactory();
+    Relay\DefaultEdgeFactory::class => function(ContainerInterface $container) {
+        return new Relay\DefaultEdgeFactory(
+            $container[PromiseAdapter::class]
+        );
     },
 
     Relay\ConnectionResolver::class => function(ContainerInterface $container) {
         return new Relay\ConnectionResolver(
-            $container[Relay\EdgeFactory::class]
+            $container[Relay\DefaultEdgeFactory::class]
         );
     },
 

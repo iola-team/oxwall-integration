@@ -7,29 +7,30 @@ use Everywhere\Api\Contract\Entities\EntityInterface;
 interface EdgeFactoryInterface
 {
     /**
-     * Create an edge object based on provided entity object and connection arguments
+     * Creates an edge object based on provided entity object and connection arguments
+     * Creates default cursor if $node was not provided
      *
+     * @param array $filter
      * @param EntityInterface|string $node
-     * @param $filterArguments
      * @return EdgeObjectInterface
      */
-    public function create($node, $filterArguments);
+    public function create($filter, $node = null);
 
     /**
      * Creates an edge object for an entity after a cursor
      *
+     * @param array $cursor
      * @param EntityInterface|string $node
-     * @param $cursor
      * @return EdgeObjectInterface
      */
-    public function createBefore($node, $cursor);
+    public function createBefore($cursor, $node);
 
     /**
      * Creates an edge object for an entity before a cursor
      *
+     * @param array $cursor
      * @param EntityInterface|string $node
-     * @param $cursor
      * @return EdgeObjectInterface
      */
-    public function createAfter($node, $cursor);
+    public function createAfter($cursor, $node);
 }

@@ -43,6 +43,7 @@ interface Edge {
 
 interface Connection {
     pageInfo: PageInfo!
+    metaInfo: ConnectionMetaInfo!
     edges: [Edge!]!
     totalCount: Int
 }
@@ -52,6 +53,10 @@ type PageInfo {
     hasPreviousPage: Boolean!
     startCursor: Cursor
     endCursor: Cursor
+}
+
+type ConnectionMetaInfo {
+    firstCursor: Cursor!
 }
 
 type SingInPayload {
@@ -87,18 +92,21 @@ type UserEdge implements Edge {
 
 type UserConnection implements Connection {
     pageInfo: PageInfo!
+    metaInfo: ConnectionMetaInfo!
     edges: [UserEdge!]!
     totalCount: Int
 }
 
 type UserFriendsConnection implements Connection {
     pageInfo: PageInfo!
+    metaInfo: ConnectionMetaInfo!
     edges: [UserEdge!]!
     totalCount: Int
 }
 
 type UserPhotoConnection implements Connection {
     pageInfo: PageInfo!
+    metaInfo: ConnectionMetaInfo!
     edges: [PhotoEdge!]!
     totalCount: Int
 }

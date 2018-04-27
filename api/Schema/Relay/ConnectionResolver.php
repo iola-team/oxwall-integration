@@ -53,27 +53,45 @@ class ConnectionResolver extends CompositeResolver
 
     private function getEdges($items, ConnectionObjectInterface $connection)
     {
-        $cursor = $this->getPagination($connection)["after"];
-
         $edges = [];
-        foreach ($items as $index => $item) {
-            $edge = $cursor
-                ? $this->edgeFactory->createAfter($item, $cursor)
-                : $this->edgeFactory->create($item, $this->getFilter($connection));
-
-            $cursor = $edge->getCursor();
-            $edges[] = $edge;
+        $firstItem = array_shift($items);
+        $after = $this->getPagination($connection)["after"];
+        $filter = $after ? $after : $this->getFilter($connection);
+        
+        if ($firstItem) {
+            $firstEdge = $this->edgeFactory->createAfter($filter, $firstItem);
+            $edges[] = $firstEdge;
+        } else {
+            $firstEdge = $this->edgeFactory->create($filter);
         }
 
-        return $edges;
+        $resultPromise = $firstEdge->getCursor();
+
+        foreach ($items as $index => $item) {
+            $resultPromise = $resultPromise->then(function($cursor) use($item, &$edges) {
+                $edge = $this->edgeFactory->createAfter($cursor, $item);
+                $edges[] = $edge;
+
+                return $edge->getCursor();
+            });
+        }
+
+        return $resultPromise->then(function() use(&$edges) {
+            return $edges;
+        });
     }
 
     private function getItemsWithOverflow(ConnectionObjectInterface $connection)
     {
         $pagination = $this->getPagination($connection);
         $filter = $this->getFilter($connection);
-        $offset = $pagination["after"] ? $pagination["after"]["offset"] + 1 : 0;
+        $offset = 0;
         $count = $pagination['first'] + 1;
+
+        if ($pagination["after"]) {
+            $offset = $pagination["after"]["offset"] + 1;
+            $filter = $pagination["after"];
+        }
 
         return $this->getItems(
             $connection,
@@ -86,26 +104,41 @@ class ConnectionResolver extends CompositeResolver
     private function getPageInfo($items, ConnectionObjectInterface $connection)
     {
         $count = $this->getPagination($connection)["first"];
-        $edges = $this->getEdges(
+        $edgesPromise = $this->getEdges(
             array_slice($items, 0, $count),
             $connection
         );
 
-        /**
-         * @var $last EdgeObject
-         */
-        $last = end($edges);
+        return $edgesPromise->then(function($edges) use($items) {
+            /**
+             * @var $last EdgeObject
+             */
+            $last = end($edges);
 
-        /**
-         * @var $first EdgeObject
-         */
-        $first = reset($edges);
+            /**
+             * @var $first EdgeObject
+             */
+            $first = reset($edges);
+
+            $hasPreviousPage = empty($first) ? false : $first->getCursor()->then(function($cursor) {
+                return $cursor["offset"] > 0;
+            });
+
+            return [
+                "hasNextPage" => count($items) > count($edges),
+                "hasPreviousPage" => $hasPreviousPage,
+                "startCursor" => empty($first) ? null : $first->getCursor(),
+                "endCursor" => empty($last) ? null : $last->getCursor()
+            ];
+        });
+    }
+
+    private function getMeta(ConnectionObjectInterface $connection)
+    {
+        $firstEdgePlaceholder = $this->edgeFactory->create($this->getFilter($connection));
 
         return [
-            "hasNextPage" => count($items) > count($edges),
-            "hasPreviousPage" => empty($first) ? false : $first->getCursor()["offset"] > 0,
-            "startCursor" => empty($first) ? null : $first->getCursor(),
-            "endCursor" => empty($last) ? null : $last->getCursor()
+            "firstCursor" => $firstEdgePlaceholder->getCursor()
         ];
     }
 
@@ -119,10 +152,10 @@ class ConnectionResolver extends CompositeResolver
      */
     protected function getItems(ConnectionObjectInterface $connection, array $filter, $offset, $count)
     {
-        return $connection->getItems(array_merge([
+        return $connection->getItems(array_merge($filter, [
             "offset" => $offset,
             "count" => $count
-        ], $filter));
+        ]));
     }
 
     /**
@@ -159,6 +192,9 @@ class ConnectionResolver extends CompositeResolver
                 return $this->getItemsWithOverflow($connection)->then(function($items) use($connection) {
                     return $this->getPageInfo($items, $connection);
                 });
+
+            case "metaInfo":
+                return $this->getMeta($connection);
 
             case "edges":
                 return $this->getItemsWithOverflow($connection)->then(function($items) use($connection) {
