@@ -13,6 +13,7 @@ class ConnectionObject implements ConnectionObjectInterface
     protected $arguments;
     protected $itemsGetter;
     protected $countGetter;
+    protected $itemDecorator;
 
     public function __construct(
         $root,
@@ -54,7 +55,7 @@ class ConnectionObject implements ConnectionObjectInterface
 
     public function getArguments()
     {
-        return $this->arguments;
+        return (array) $this->arguments;
     }
 
     public function getRoot()

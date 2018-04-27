@@ -18,17 +18,15 @@ use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
 use Everywhere\Api\Contract\Schema\DataLoaderInterface;
 use Everywhere\Api\Contract\Schema\IDFactoryInterface;
 use Everywhere\Api\Contract\Schema\ViewerInterface;
-use Everywhere\Api\Middleware\AuthMiddleware;
 use Everywhere\Api\Middleware\GraphQLMiddleware;
 use Everywhere\Api\Middleware\AuthenticationMiddleware;
 use Everywhere\Api\Middleware\UploadMiddleware;
 use Everywhere\Api\Schema\ConnectionFactory;
+use Everywhere\Api\Schema\Relay;
 use Everywhere\Api\Schema\Resolvers\AvatarMutationResolver;
 use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
-use Everywhere\Api\Schema\Resolvers\FileMutationResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
-use Everywhere\Api\Schema\RelayConnectionResolver;
 use Everywhere\Api\Schema\Resolvers\UploadResolver;
 use Everywhere\Api\Schema\Resolvers\UserInfoResolver;
 use Everywhere\Api\Schema\TypeConfigDecorators\AggregateTypeConfigDecorator;
@@ -222,8 +220,16 @@ return [
         );
     },
 
-    RelayConnectionResolver::class => function(ContainerInterface $container) {
-        return new RelayConnectionResolver();
+    Relay\DefaultEdgeFactory::class => function(ContainerInterface $container) {
+        return new Relay\DefaultEdgeFactory(
+            $container[PromiseAdapter::class]
+        );
+    },
+
+    Relay\ConnectionResolver::class => function(ContainerInterface $container) {
+        return new Relay\ConnectionResolver(
+            $container[Relay\DefaultEdgeFactory::class]
+        );
     },
 
     PhotoResolver::class => function(ContainerInterface $container) {
