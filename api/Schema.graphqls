@@ -40,17 +40,17 @@ type PageInfo {
 #############
 
 type Mutation {
-    signInUser(login: String!, password: String!): AuthPayload!
-    signUpUser(input: SignUpUserInput): AuthPayload!
+    signInUser(input: SignInUserInput!): AuthPayload!
+    signUpUser(input: SignUpUserInput!): AuthPayload!
 
     addUserAvatar(userId: ID!, file: Upload!): Avatar!
     deleteUserAvatar(id: ID!): Boolean!
 }
 
-#input SignInUserInput {
-#  login: String!
-#  password: String!
-#}
+input SignInUserInput {
+  login: String!
+  password: String!
+}
 
 input SignUpUserInput {
   name: String!

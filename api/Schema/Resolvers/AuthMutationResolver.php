@@ -67,8 +67,8 @@ class AuthMutationResolver extends CompositeResolver
 
     public function resolveSignIn($root, $args, ContextInterface $context) {
         $adapter = $this->authService->getAdapter();
-        $adapter->setIdentity($args["login"]);
-        $adapter->setCredential($args["password"]);
+        $adapter->setIdentity($args["input"]["login"]);
+        $adapter->setCredential($args["input"]["password"]);
 
         $result = $this->authService->authenticate();
 
