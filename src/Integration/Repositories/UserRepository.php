@@ -18,12 +18,31 @@ class UserRepository implements UserRepositoryInterface
 {
     public $counter = 0;
 
+    public function displayNameConvert($displayName, $postfix = 0)
+    {
+        $displayName = \URLify::filter($displayName);
+        $result = $displayName . (empty($postfix) ? '' : $postfix);
+
+        if (\BOL_UserService::getInstance()->isExistUserName($result)) {
+            $postfix++;
+
+            return $this->displayNameConvert($displayName, $postfix);
+        }
+
+        return $result;
+    }
+
     public function create($args) {
-        $userDto = \BOL_UserService::getInstance()->createUser($args["name"], $args["password"], $args["login"]);
+        $displayNameValue = $this->displayNameConvert($args["name"]);
+        $displayNameField = OW::getConfig()->getValue("base", "display_name_question");
+        $questionsData = [$displayNameField => $displayNameValue];
+
+        $userDto = \BOL_UserService::getInstance()->createUser($displayNameValue, $args["password"], $args["email"]);
+        \BOL_QuestionService::getInstance()->saveQuestionsData($questionsData, $userDto->id);
 
         $user = new User();
         $user->id = $userDto->id;
-        $user->name = $userDto->username;
+        $user->name = \BOL_UserService::getInstance()->getDisplayName($userDto->id);
         $user->email = $userDto->email;
         $user->activityTime = (int) $userDto->activityStamp;
 

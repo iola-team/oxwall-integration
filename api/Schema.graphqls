@@ -48,13 +48,13 @@ type Mutation {
 }
 
 input SignInUserInput {
-  login: String!
+  email: String!
   password: String!
 }
 
 input SignUpUserInput {
   name: String!
-  login: String!
+  email: String!
   password: String!
 }
 

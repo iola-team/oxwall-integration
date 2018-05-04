@@ -51,7 +51,7 @@ class AuthMutationResolver extends CompositeResolver
 
             return [
                 "accessToken" => $this->tokenBuilder->build($identity),
-                "user" => $user,
+                "user" => $identity->userId,
             ];
         } catch (\Exception $error) {
             switch ($error->getMessage()) {
@@ -67,7 +67,7 @@ class AuthMutationResolver extends CompositeResolver
 
     public function resolveSignIn($root, $args, ContextInterface $context) {
         $adapter = $this->authService->getAdapter();
-        $adapter->setIdentity($args["input"]["login"]);
+        $adapter->setIdentity($args["input"]["email"]);
         $adapter->setCredential($args["input"]["password"]);
 
         $result = $this->authService->authenticate();
