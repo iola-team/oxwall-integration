@@ -24,7 +24,7 @@ interface ConnectionObjectInterface
     public function getCount($arguments = null);
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getArguments();
 }

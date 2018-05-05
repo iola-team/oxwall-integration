@@ -17,6 +17,18 @@ interface Node {
     id: ID!
 }
 
+interface DeletePayload {
+    deletedId: ID!
+}
+
+interface UpdatePayload {
+    node: Node!
+}
+
+interface CreatePayload {
+    node: Node!
+}
+
 interface Edge {
     node: Node!
     cursor: Cursor!
@@ -24,16 +36,11 @@ interface Edge {
 
 interface Connection {
     pageInfo: PageInfo!
+    metaInfo: ConnectionMetaInfo!
     edges: [Edge!]!
     totalCount: Int
 }
 
-type PageInfo {
-    hasNextPage: Boolean!
-    hasPreviousPage: Boolean!
-    startCursor: Cursor
-    endCursor: Cursor
-}
 
 #############
 # MUTATIONS #
@@ -43,8 +50,8 @@ type Mutation {
     signInUser(input: SignInUserInput!): AuthPayload!
     signUpUser(input: SignUpUserInput!): AuthPayload!
 
-    addUserAvatar(userId: ID!, file: Upload!): Avatar!
-    deleteUserAvatar(id: ID!): Boolean!
+    addUserAvatar(userId: ID!, file: Upload!): AvatarCreatePayload!
+    deleteUserAvatar(id: ID!): AvatarDeletePayload!
 }
 
 input SignInUserInput {
@@ -66,6 +73,17 @@ type AuthPayload {
 #########
 # TYPES #
 #########
+
+type ConnectionMetaInfo {
+    firstCursor: Cursor!
+}
+
+type PageInfo {
+    hasNextPage: Boolean!
+    hasPreviousPage: Boolean!
+    startCursor: Cursor
+    endCursor: Cursor
+}
 
 type User implements Node {
     id: ID!
@@ -93,26 +111,26 @@ type UserEdge implements Edge {
 
 type UserConnection implements Connection {
     pageInfo: PageInfo!
+    metaInfo: ConnectionMetaInfo!
     edges: [UserEdge!]!
     totalCount: Int
 }
 
 type UserFriendsConnection implements Connection {
     pageInfo: PageInfo!
+    metaInfo: ConnectionMetaInfo!
     edges: [UserEdge!]!
     totalCount: Int
 }
 
-type PhotoEdge implements Edge {
-    node: Photo!
-    cursor: Cursor!
-}
-
 type UserPhotoConnection implements Connection {
     pageInfo: PageInfo!
+    metaInfo: ConnectionMetaInfo!
     edges: [PhotoEdge!]!
     totalCount: Int
 }
+
+
 
 enum AvatarSize {
     SMALL
@@ -123,15 +141,36 @@ enum AvatarSize {
 type Avatar implements Node {
     id: ID!
     url(size: AvatarSize = SMALL): String!
+
+    user: User!
 }
+
+type AvatarDeletePayload implements DeletePayload {
+    deletedId: ID!
+    user: User!
+}
+
+type AvatarCreatePayload implements CreatePayload {
+    node: Avatar!
+    user: User!
+}
+
+
 
 type Photo implements Node {
     id: ID!
     url: String!
-    owner: User!
 
+    user: User!
     comments(offset: Int = 0, count: Int = 10): [Comment]
 }
+
+type PhotoEdge implements Edge {
+    node: Photo!
+    cursor: Cursor!
+}
+
+
 
 type Comment implements Node {
     id: ID!

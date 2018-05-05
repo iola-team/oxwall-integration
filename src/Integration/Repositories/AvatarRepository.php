@@ -33,7 +33,10 @@ class AvatarRepository implements AvatarRepositoryInterface
          * @var $avatarDto \BOL_Avatar
          */
         foreach ($avatarDtos as $avatarDto) {
-            $out[$avatarDto->id] = new Avatar($avatarDto->id);
+            $avatar = new Avatar($avatarDto->id);
+            $avatar->userId = $avatarDto->userId;
+
+            $out[$avatarDto->id] = $avatar;
         }
 
         return $out;

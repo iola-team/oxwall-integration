@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: skambalin
- * Date: 21.10.17
- * Time: 17.00
- */
 
 namespace Everywhere\Api\Schema\Resolvers;
 
@@ -28,7 +22,7 @@ class PhotoResolver extends EntityResolver
         }, []);
 
         $resolvers = [
-            "owner" => function(Photo $photo) {
+            "user" => function(Photo $photo) {
                 return $photo->userId;
             },
 
