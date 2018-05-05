@@ -20,7 +20,7 @@ class UserRepository implements UserRepositoryInterface
 
     public function displayNameConvert($displayName, $postfix = 0)
     {
-        $displayName = \URLify::filter($displayName);
+        $displayName = preg_replace('/-/', '_', \URLify::filter($displayName));
         $result = $displayName . (empty($postfix) ? '' : $postfix);
 
         if (\BOL_UserService::getInstance()->isExistUserName($result)) {
