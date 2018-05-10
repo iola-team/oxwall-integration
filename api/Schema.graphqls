@@ -9,7 +9,7 @@ scalar Upload
 
 type Query {
     me: User
-    users(first: Int = 10, after: Cursor, search: String = ""): UserConnection!
+    users(first: Int = 10, after: Cursor, search: String = "", email: String = ""): UserConnection!
     node(id: ID!): Node
 }
 
@@ -42,9 +42,6 @@ interface Connection {
 }
 
 
-#############
-# MUTATIONS #
-#############
 
 type Mutation {
     signInUser(input: SignInUserInput!): AuthPayload!
@@ -55,7 +52,7 @@ type Mutation {
 }
 
 input SignInUserInput {
-  email: String!
+  login: String!
   password: String!
 }
 
@@ -70,9 +67,7 @@ type AuthPayload {
     user: User
 }
 
-#########
-# TYPES #
-#########
+
 
 type ConnectionMetaInfo {
     firstCursor: Cursor!

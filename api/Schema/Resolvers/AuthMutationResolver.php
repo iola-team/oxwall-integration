@@ -44,7 +44,8 @@ class AuthMutationResolver extends CompositeResolver
         $this->userRepository = $userRepository;
     }
 
-    public function resolveSignUp($root, $args, ContextInterface $context) {
+    public function resolveSignUp($root, $args, ContextInterface $context)
+    {
         try {
             $user = $this->userRepository->create($args["input"]);
             $identity = $this->identityService->create($user->id);
@@ -54,20 +55,18 @@ class AuthMutationResolver extends CompositeResolver
                 "user" => $identity->userId,
             ];
         } catch (\Exception $error) {
-            switch ($error->getMessage()) {
-                case "Duplicate username!":
-                    throw new UserError("Duplicate name");
-                    break;
-                case "Duplicate email!":
-                    throw new UserError("Duplicate email");
+            switch ($error->getCode()) {
+                case -5: // "Duplicate email!"
+                    throw new UserError("Duplicate email", $error->getCode());
                     break;
             }
         }
     }
 
-    public function resolveSignIn($root, $args, ContextInterface $context) {
+    public function resolveSignIn($root, $args, ContextInterface $context)
+    {
         $adapter = $this->authService->getAdapter();
-        $adapter->setIdentity($args["input"]["email"]);
+        $adapter->setIdentity($args["input"]["login"]);
         $adapter->setCredential($args["input"]["password"]);
 
         $result = $this->authService->authenticate();

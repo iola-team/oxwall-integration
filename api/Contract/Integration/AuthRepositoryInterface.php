@@ -12,10 +12,10 @@ namespace Everywhere\Api\Contract\Integration;
 interface AuthRepositoryInterface
 {
     /**
-     * @param string $email
+     * @param string $login
      * @param string $password
      *
      * @return mixed
      */
-    public function authenticate($email, $password);
+    public function authenticate($login, $password);
 }

@@ -32,7 +32,8 @@ class UserRepository implements UserRepositoryInterface
         return $result;
     }
 
-    public function create($args) {
+    public function create($args)
+    {
         $displayNameValue = $this->displayNameConvert($args["name"]);
         $displayNameField = OW::getConfig()->getValue("base", "display_name_question");
         $questionsData = [$displayNameField => $displayNameValue];
@@ -94,6 +95,10 @@ class UserRepository implements UserRepositoryInterface
         if (isset($args["search"])) {
             $displayNameField = OW::getConfig()->getValue('base', 'display_name_question');
             $searchFields[$displayNameField] = $args["search"];
+        }
+
+        if (isset($args["email"])) {
+            $searchFields["email"] = $args["email"];
         }
 
         $userIds = \BOL_UserService::getInstance()->findUserIdListByQuestionValues($searchFields, $args["offset"], $args["count"]);
