@@ -46,21 +46,13 @@ class AuthMutationResolver extends CompositeResolver
 
     public function resolveSignUp($root, $args, ContextInterface $context)
     {
-        try {
-            $user = $this->userRepository->create($args["input"]);
-            $identity = $this->identityService->create($user->id);
+        $user = $this->userRepository->create($args["input"]);
+        $identity = $this->identityService->create($user->id);
 
-            return [
-                "accessToken" => $this->tokenBuilder->build($identity),
-                "user" => $identity->userId,
-            ];
-        } catch (\Exception $error) {
-            switch ($error->getCode()) {
-                case -5: // "Duplicate email!"
-                    throw new UserError("Duplicate email", $error->getCode());
-                    break;
-            }
-        }
+        return [
+            "accessToken" => $this->tokenBuilder->build($identity),
+            "user" => $identity->userId,
+        ];
     }
 
     public function resolveSignIn($root, $args, ContextInterface $context)

@@ -28,7 +28,11 @@ interface UserRepositoryInterface extends AuthRepositoryInterface
      */
     public function findAllIds(array $args);
 
-    public function countAll();
+    /**
+     * @param array $args
+     * @return array
+     */
+    public function countAll(array $args);
 
     /**
      * @param $ids

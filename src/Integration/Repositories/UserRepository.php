@@ -106,8 +106,12 @@ class UserRepository implements UserRepositoryInterface
         return $userIds;
     }
 
-    public function countAll()
+    public function countAll(array $args)
     {
+        if (isset($args["email"])) {
+            return \BOL_UserService::getInstance()->isExistEmail($args["email"]) ? 1 : 0;
+        }
+
         return \BOL_UserService::getInstance()->count(true);
     }
 
