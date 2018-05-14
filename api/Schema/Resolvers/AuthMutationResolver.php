@@ -2,11 +2,13 @@
 
 namespace Everywhere\Api\Schema\Resolvers;
 
-use Everywhere\Api\Auth\IdentityService;
+use GraphQL\Error\UserError;
 use Everywhere\Api\Contract\Auth\AuthenticationServiceInterface;
+use Everywhere\Api\Contract\Auth\IdentityServiceInterface;
 use Everywhere\Api\Contract\Auth\TokenBuilderInterface;
 use Everywhere\Api\Contract\Schema\ContextInterface;
 use Everywhere\Api\Schema\CompositeResolver;
+use Everywhere\Api\Contract\Integration\UserRepositoryInterface;
 
 class AuthMutationResolver extends CompositeResolver
 {
@@ -20,20 +22,44 @@ class AuthMutationResolver extends CompositeResolver
      */
     protected $tokenBuilder;
 
-    public function __construct(AuthenticationServiceInterface $authService, TokenBuilderInterface $tokenBuilder)
-    {
+    /**
+     * @var UserRepositoryInterface
+     */
+    protected $userRepository;
+
+    public function __construct(
+        AuthenticationServiceInterface $authService,
+        TokenBuilderInterface $tokenBuilder,
+        IdentityServiceInterface $identityService,
+        UserRepositoryInterface $userRepository
+    ) {
         parent::__construct([
+            "signUpUser" => [$this, "resolveSignUp"],
             "signInUser" => [$this, "resolveSignIn"]
         ]);
 
         $this->authService = $authService;
         $this->tokenBuilder = $tokenBuilder;
+        $this->identityService = $identityService;
+        $this->userRepository = $userRepository;
     }
 
-    public function resolveSignIn($root, $args, ContextInterface $context) {
+    public function resolveSignUp($root, $args, ContextInterface $context)
+    {
+        $user = $this->userRepository->create($args["input"]);
+        $identity = $this->identityService->create($user->id);
+
+        return [
+            "accessToken" => $this->tokenBuilder->build($identity),
+            "user" => $identity->userId,
+        ];
+    }
+
+    public function resolveSignIn($root, $args, ContextInterface $context)
+    {
         $adapter = $this->authService->getAdapter();
-        $adapter->setIdentity($args["login"]);
-        $adapter->setCredential($args["password"]);
+        $adapter->setIdentity($args["input"]["login"]);
+        $adapter->setCredential($args["input"]["password"]);
 
         $result = $this->authService->authenticate();
 

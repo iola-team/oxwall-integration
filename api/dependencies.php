@@ -256,7 +256,9 @@ return [
     AuthMutationResolver::class => function(ContainerInterface $container) {
         return new AuthMutationResolver(
             $container[AuthenticationServiceInterface::class],
-            $container[TokenBuilderInterface::class]
+            $container[TokenBuilderInterface::class],
+            $container[IdentityServiceInterface::class],
+            $container->getIntegration()->getUserRepository()
         );
     },
 

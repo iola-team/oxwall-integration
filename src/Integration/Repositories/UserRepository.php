@@ -18,6 +18,38 @@ class UserRepository implements UserRepositoryInterface
 {
     public $counter = 0;
 
+    public function convertDisplayName($displayName, $postfix = 0)
+    {
+        $displayName = preg_replace('/-/', '_', \URLify::filter($displayName));
+        $result = $displayName . (empty($postfix) ? '' : $postfix);
+
+        if (\BOL_UserService::getInstance()->isExistUserName($result)) {
+            $postfix++;
+
+            return $this->convertDisplayName($displayName, $postfix);
+        }
+
+        return $result;
+    }
+
+    public function create($args)
+    {
+        $displayNameValue = $this->convertDisplayName($args["name"]);
+        $displayNameField = OW::getConfig()->getValue("base", "display_name_question");
+        $questionsData = [$displayNameField => $displayNameValue];
+
+        $userDto = \BOL_UserService::getInstance()->createUser($displayNameValue, $args["password"], $args["email"]);
+        \BOL_QuestionService::getInstance()->saveQuestionsData($questionsData, $userDto->id);
+
+        $user = new User();
+        $user->id = $userDto->id;
+        $user->name = \BOL_UserService::getInstance()->getDisplayName($userDto->id);
+        $user->email = $userDto->email;
+        $user->activityTime = (int) $userDto->activityStamp;
+
+        return $user;
+    }
+
     public function authenticate($identity, $password)
     {
         $result = \OW_Auth::getInstance()->authenticate(
@@ -65,13 +97,21 @@ class UserRepository implements UserRepositoryInterface
             $searchFields[$displayNameField] = $args["search"];
         }
 
+        if (isset($args["email"])) {
+            $searchFields["email"] = $args["email"];
+        }
+
         $userIds = \BOL_UserService::getInstance()->findUserIdListByQuestionValues($searchFields, $args["offset"], $args["count"]);
 
         return $userIds;
     }
 
-    public function countAll()
+    public function countAll(array $args)
     {
+        if (isset($args["email"])) {
+            return \BOL_UserService::getInstance()->isExistEmail($args["email"]) ? 1 : 0;
+        }
+
         return \BOL_UserService::getInstance()->count(true);
     }
 

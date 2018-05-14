@@ -11,6 +11,12 @@ namespace Everywhere\Api\Contract\Integration;
 interface UserRepositoryInterface extends AuthRepositoryInterface
 {
     /**
+     * @param array $args
+     * @return <User>
+     */
+    public function create($args);
+
+    /**
      * @param array $ids
      * @return array<User>
      */
@@ -22,7 +28,11 @@ interface UserRepositoryInterface extends AuthRepositoryInterface
      */
     public function findAllIds(array $args);
 
-    public function countAll();
+    /**
+     * @param array $args
+     * @return array
+     */
+    public function countAll(array $args);
 
     /**
      * @param $ids
