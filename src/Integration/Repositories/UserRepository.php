@@ -18,7 +18,7 @@ class UserRepository implements UserRepositoryInterface
 {
     public $counter = 0;
 
-    public function displayNameConvert($displayName, $postfix = 0)
+    public function convertDisplayName($displayName, $postfix = 0)
     {
         $displayName = preg_replace('/-/', '_', \URLify::filter($displayName));
         $result = $displayName . (empty($postfix) ? '' : $postfix);
@@ -26,7 +26,7 @@ class UserRepository implements UserRepositoryInterface
         if (\BOL_UserService::getInstance()->isExistUserName($result)) {
             $postfix++;
 
-            return $this->displayNameConvert($displayName, $postfix);
+            return $this->convertDisplayName($displayName, $postfix);
         }
 
         return $result;
@@ -34,7 +34,7 @@ class UserRepository implements UserRepositoryInterface
 
     public function create($args)
     {
-        $displayNameValue = $this->displayNameConvert($args["name"]);
+        $displayNameValue = $this->convertDisplayName($args["name"]);
         $displayNameField = OW::getConfig()->getValue("base", "display_name_question");
         $questionsData = [$displayNameField => $displayNameValue];
 
