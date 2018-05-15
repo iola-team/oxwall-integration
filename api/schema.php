@@ -8,6 +8,7 @@ use Everywhere\Api\Schema\Resolvers\AvatarResolver;
 use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
+use Everywhere\Api\Schema\Resolvers\PhotoMutationResolver;
 use Everywhere\Api\Schema\Resolvers\QueryResolver;
 use Everywhere\Api\Schema\Resolvers\UploadResolver;
 use Everywhere\Api\Schema\Resolvers\UserResolver;
@@ -45,6 +46,7 @@ return [
         "Mutation" => [
             AuthMutationResolver::class,
             AvatarMutationResolver::class,
-        ]
+            PhotoMutationResolver::class
+        ],
     ]
 ];

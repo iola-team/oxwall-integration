@@ -27,9 +27,11 @@ use Everywhere\Api\Schema\Resolvers\AvatarMutationResolver;
 use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
+use Everywhere\Api\Schema\Resolvers\PhotoMutationResolver;
 use Everywhere\Api\Schema\Resolvers\UploadResolver;
 use Everywhere\Api\Schema\Resolvers\UserInfoResolver;
 use Everywhere\Api\Schema\TypeConfigDecorators\AggregateTypeConfigDecorator;
+use Everywhere\Api\Schema\TypeConfigDecorators\InputTypeDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\InterfaceTypeConfigDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\ObjectTypeConfigDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\ScalarTypeConfigDecorator;
@@ -265,6 +267,12 @@ return [
     AvatarMutationResolver::class => function(ContainerInterface $container) {
         return new AvatarMutationResolver(
             $container->getIntegration()->getAvatarRepository()
+        );
+    },
+
+    PhotoMutationResolver::class => function(ContainerInterface $container) {
+        return new PhotoMutationResolver(
+            $container->getIntegration()->getPhotoRepository()
         );
     },
 ];

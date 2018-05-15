@@ -13,6 +13,7 @@ use GraphQL\Error\InvariantViolation;
 use GraphQL\Language\AST\Node;
 use GraphQL\Language\AST\NodeKind;
 use GraphQL\Type\Definition\IDType;
+use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
@@ -70,18 +71,34 @@ class ObjectTypeConfigDecorator extends AbstractTypeConfigDecorator
         return Type::getNamedType($type);
     }
 
+    protected function normalizeID($value)
+    {
+        $toIDObject = function($id) {
+            return $id instanceof IDObjectInterface
+                ? $id
+                : $this->idFactory->createFromGlobalId($id);
+        };
+
+        return is_array($value)
+            ? array_map($toIDObject, $value)
+            : $toIDObject($value);
+    }
+
     protected function normalizeArgument($value, $configs, ResolveInfo $info)
     {
         $finalType = $this->getFinalType($configs["type"]);
 
         if ($finalType instanceof IDType) {
-            $toIDObject = function($id) {
-                return $this->idFactory->createFromGlobalId($id);
-            };
+            $value = $this->normalizeID($value);
+        }
 
-            $value = is_array($value)
-                ? array_map($toIDObject, $value)
-                : $toIDObject($value);
+        if ($finalType instanceof InputObjectType) {
+            foreach ($value as $name => $fieldValue) {
+                $filedType = $finalType->getField($name)->getType();
+                if ($this->getFinalType($filedType) instanceof IDType) {
+                    $value[$name] = $this->normalizeID($fieldValue);
+                }
+            }
         }
 
         return $value;

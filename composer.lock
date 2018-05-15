@@ -4,9 +4,61 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "41ba44dda8bb9237aebe26ff658c5419",
-    "content-hash": "50929d70e19c7464df2bac96630773d3",
+    "content-hash": "179291d7bfb2dda4d0c04a38799db562",
     "packages": [
+        {
+            "name": "alroniks/dtms",
+            "version": "v0.5.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Alroniks/dtms.git",
+                "reference": "fc48c95868feface8b769dd956509b54c5dd8ab5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Alroniks/dtms/zipball/fc48c95868feface8b769dd956509b54c5dd8ab5",
+                "reference": "fc48c95868feface8b769dd956509b54c5dd8ab5",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "alroniks\\dtms\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ivan Klimchuk",
+                    "email": "ivan@klimchuk.com",
+                    "homepage": "http://klimchuk.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Classes for manipulate dates and intervals with microseconds precision",
+            "homepage": "http://alroniks.github.io/dtms",
+            "keywords": [
+                "date",
+                "datetime",
+                "fractions",
+                "interval",
+                "iso8601",
+                "microseconds",
+                "milliseconds",
+                "ms",
+                "time"
+            ],
+            "time": "2015-08-26T15:24:59+00:00"
+        },
         {
             "name": "container-interop/container-interop",
             "version": "1.2.0",
@@ -36,7 +88,7 @@
             ],
             "description": "Promoting the interoperability of container objects (DIC, SL, etc.)",
             "homepage": "https://github.com/container-interop/container-interop",
-            "time": "2017-02-14 19:40:03"
+            "time": "2017-02-14T19:40:03+00:00"
         },
         {
             "name": "firebase/php-jwt",
@@ -82,7 +134,7 @@
             ],
             "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
             "homepage": "https://github.com/firebase/php-jwt",
-            "time": "2017-06-27 22:17:23"
+            "time": "2017-06-27T22:17:23+00:00"
         },
         {
             "name": "jbroadway/urlify",
@@ -136,7 +188,7 @@
                 "url",
                 "urlify"
             ],
-            "time": "2017-01-03 20:12:54"
+            "time": "2017-01-03T20:12:54+00:00"
         },
         {
             "name": "nikic/fast-route",
@@ -182,7 +234,7 @@
                 "router",
                 "routing"
             ],
-            "time": "2018-02-13 20:26:39"
+            "time": "2018-02-13T20:26:39+00:00"
         },
         {
             "name": "overblog/dataloader-php",
@@ -237,7 +289,7 @@
                 "caching",
                 "dataLoader"
             ],
-            "time": "2017-08-18 17:10:51"
+            "time": "2017-08-18T17:10:51+00:00"
         },
         {
             "name": "pimple/pimple",
@@ -287,7 +339,7 @@
                 "container",
                 "dependency injection"
             ],
-            "time": "2018-01-21 07:42:36"
+            "time": "2018-01-21T07:42:36+00:00"
         },
         {
             "name": "psr/container",
@@ -336,7 +388,7 @@
                 "container-interop",
                 "psr"
             ],
-            "time": "2017-02-14 16:28:37"
+            "time": "2017-02-14T16:28:37+00:00"
         },
         {
             "name": "psr/http-message",
@@ -386,7 +438,7 @@
                 "request",
                 "response"
             ],
-            "time": "2016-08-06 14:39:51"
+            "time": "2016-08-06T14:39:51+00:00"
         },
         {
             "name": "psr/log",
@@ -433,7 +485,7 @@
                 "psr",
                 "psr-3"
             ],
-            "time": "2016-10-10 12:19:37"
+            "time": "2016-10-10T12:19:37+00:00"
         },
         {
             "name": "slim/slim",
@@ -504,7 +556,7 @@
                 "micro",
                 "router"
             ],
-            "time": "2017-11-26 19:13:09"
+            "time": "2017-11-26T19:13:09+00:00"
         },
         {
             "name": "tuupola/slim-jwt-auth",
@@ -559,7 +611,7 @@
                 "middleware",
                 "psr-7"
             ],
-            "time": "2018-04-03 06:12:18"
+            "time": "2018-04-03T06:12:18+00:00"
         },
         {
             "name": "webonyx/graphql-php",
@@ -606,7 +658,7 @@
                 "api",
                 "graphql"
             ],
-            "time": "2018-04-17 10:34:43"
+            "time": "2018-04-17T10:34:43+00:00"
         },
         {
             "name": "zendframework/zend-authentication",
@@ -668,7 +720,7 @@
                 "ZendFramework",
                 "zf"
             ],
-            "time": "2018-04-12 21:09:22"
+            "time": "2018-04-12T21:09:22+00:00"
         },
         {
             "name": "zendframework/zend-stdlib",
@@ -713,7 +765,7 @@
                 "stdlib",
                 "zf2"
             ],
-            "time": "2018-04-12 16:05:42"
+            "time": "2018-04-12T16:05:42+00:00"
         }
     ],
     "packages-dev": [],
