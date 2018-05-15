@@ -9,6 +9,8 @@
 namespace Everywhere\Api\Contract\Integration;
 
 
+use Everywhere\Api\Entities\Photo;
+
 interface PhotoRepositoryInterface
 {
     /**
@@ -22,4 +24,18 @@ interface PhotoRepositoryInterface
      * @return mixed
      */
     public function findComments($ids, array $args);
+
+    /**
+     * @param $ids
+     * @return void
+     */
+    public function deleteByIds($ids);
+
+    /**
+     *
+     * @param $userId
+     * @param array $input
+     * @return Photo
+     */
+    public function addUserPhoto($userId, array $input);
 }

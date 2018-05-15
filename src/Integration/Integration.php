@@ -16,6 +16,10 @@ use Everywhere\Oxwall\Integration\Repositories\CommentRepository;
 
 class Integration implements IntegrationInterface
 {
+    public static function getTmpDir() {
+        return \OW::getPluginManager()->getPlugin('esapi')->getPluginFilesDir();
+    }
+    
     public function getUserRepository()
     {
         return new UserRepository();

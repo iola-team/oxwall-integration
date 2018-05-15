@@ -3,10 +3,14 @@
 namespace Everywhere\Api\Schema\Resolvers;
 
 use Everywhere\Api\Contract\Schema\ScalarTypeResolverInterface;
+use GraphQL\Error\InvariantViolation;
+use GraphQL\Language\AST\StringValueNode;
+use GraphQL\Utils\Utils;
+use alroniks\dtms\DateTime;
 
 class DateResolver implements ScalarTypeResolverInterface
 {
-    protected $format = \DateTime::ISO8601;
+    protected $format = DateTime::ISO8601;
 
     /**
      * @param mixed $value
@@ -15,7 +19,7 @@ class DateResolver implements ScalarTypeResolverInterface
      */
     public function serialize($value)
     {
-        $dateTime = new \DateTime();
+        $dateTime = new DateTime();
         $dateTime->setTimestamp($value);
 
         return (string) $dateTime->format($this->format);
@@ -28,7 +32,7 @@ class DateResolver implements ScalarTypeResolverInterface
      */
     public function parseValue($value)
     {
-        $dateTime = \DateTime::createFromFormat($this->format, $value);
+        $dateTime = DateTime::createFromFormat($this->format, $value);
 
         if (!$dateTime) {
             throw new InvariantViolation(
@@ -48,7 +52,7 @@ class DateResolver implements ScalarTypeResolverInterface
     public function parseLiteral($ast)
     {
         if ($ast instanceof StringValueNode) {
-            $dateTime = new \DateTime($ast->value);
+            $dateTime = new DateTime($ast->value);
 
             return $dateTime ? $dateTime->getTimestamp() : null;
         }

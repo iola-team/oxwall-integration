@@ -138,13 +138,14 @@ class UserRepository implements UserRepositoryInterface
 
     public function findPhotos($ids, array $args)
     {
-        $items = \PHOTO_BOL_PhotoDao::getInstance()->findPhotoListByUserIdList($ids, $args["offset"], $args["count"]);
         $out = [];
-        foreach ($items as $item) {
-            $userId = (int) $item["userId"];
-            $userItems = empty($out[$userId]) ? [] : $out[$userId];
-            $userItems[] = (int) $item["id"];
-            $out[$userId] = $userItems;
+        foreach ($ids as $userId) {
+            $items = \PHOTO_BOL_PhotoDao::getInstance()->findPhotoListByUserId($userId, $args["offset"], $args["count"]);
+            foreach ($items as $item) {
+                $userItems = empty($out[$userId]) ? [] : $out[$userId];
+                $userItems[] = (int) $item["id"];
+                $out[$userId] = $userItems;
+            }
         }
 
         return $out;

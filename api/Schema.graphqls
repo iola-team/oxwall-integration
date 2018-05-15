@@ -49,6 +49,8 @@ type Mutation {
 
     addUserAvatar(userId: ID!, file: Upload!): AvatarCreatePayload!
     deleteUserAvatar(id: ID!): AvatarDeletePayload!
+    addUserPhoto(input: UserPhotoCreateInput!): UserPhotoCreatePayload!
+    deleteUserPhoto(id: ID!): UserPhotoDeletePayload!
 }
 
 input SignInUserInput {
@@ -125,6 +127,21 @@ type UserPhotoConnection implements Connection {
     totalCount: Int
 }
 
+input UserPhotoCreateInput {
+    userId: ID!
+    file: Upload!
+    uploadTime: Date
+}
+
+type UserPhotoCreatePayload implements CreatePayload {
+    user: User!
+    node: Photo!
+}
+
+type UserPhotoDeletePayload implements DeletePayload {
+    deletedId: ID!
+    user: User!
+}
 
 
 enum AvatarSize {
