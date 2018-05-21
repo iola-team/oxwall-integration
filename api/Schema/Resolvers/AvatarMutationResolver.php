@@ -8,11 +8,11 @@ use Everywhere\Api\Schema\IDObject;
 
 class AvatarMutationResolver extends CompositeResolver
 {
-    public function __construct(AvatarRepositoryInterface $avatarRepository)
+    public function __construct(AvatarRepositoryInterface $profileRepository)
     {
         parent::__construct([
-            "addUserAvatar" => function($root, $args) use ($avatarRepository) {
-                $avatar = $avatarRepository->addAvatar([
+            "addUserAvatar" => function($root, $args) use ($profileRepository) {
+                $avatar = $profileRepository->addAvatar([
                     "userId" => $args["userId"]->getId(),
                     "file" => $args["file"]
                 ]);
@@ -23,11 +23,11 @@ class AvatarMutationResolver extends CompositeResolver
                 ];
             },
 
-            "deleteUserAvatar" => function($root, $args) use ($avatarRepository) {
+            "deleteUserAvatar" => function($root, $args) use ($profileRepository) {
                 $realId = $args["id"]->getId();
-                $avatar = $avatarRepository->findByIds([$realId])[$realId];
+                $avatar = $profileRepository->findByIds([$realId])[$realId];
 
-                $avatarRepository->deleteAvatar([
+                $profileRepository->deleteAvatar([
                     "id" => $avatar->id
                 ]);
 

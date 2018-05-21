@@ -25,4 +25,9 @@ class User extends AbstractEntity
      * @var int
      */
     public $activityTime;
+
+    /**
+     * @var mixed
+     */
+    public $accountTypeId;
 }

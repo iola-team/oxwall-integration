@@ -23,13 +23,17 @@ use Everywhere\Api\Middleware\AuthenticationMiddleware;
 use Everywhere\Api\Middleware\UploadMiddleware;
 use Everywhere\Api\Schema\ConnectionFactory;
 use Everywhere\Api\Schema\Relay;
+use Everywhere\Api\Schema\Resolvers\AccountTypeResolver;
 use Everywhere\Api\Schema\Resolvers\AvatarMutationResolver;
 use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoMutationResolver;
+use Everywhere\Api\Schema\Resolvers\ProfileFieldResolver;
+use Everywhere\Api\Schema\Resolvers\ProfileFieldSectionResolver;
 use Everywhere\Api\Schema\Resolvers\UploadResolver;
 use Everywhere\Api\Schema\Resolvers\UserInfoResolver;
+use Everywhere\Api\Schema\Resolvers\UserProfileResolver;
 use Everywhere\Api\Schema\TypeConfigDecorators\AggregateTypeConfigDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\InputTypeDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\InterfaceTypeConfigDecorator;
@@ -203,7 +207,8 @@ return [
     QueryResolver::class => function(ContainerInterface $container) {
         return new QueryResolver(
             $container[ConnectionFactoryInterface::class],
-            $container->getIntegration()->getUserRepository()
+            $container->getIntegration()->getUserRepository(),
+            $container->getIntegration()->getProfileRepository()
         );
     },
 
@@ -251,6 +256,34 @@ return [
     AvatarResolver::class => function(ContainerInterface $container) {
         return new AvatarResolver(
             $container->getIntegration()->getAvatarRepository(),
+            $container[DataLoaderFactory::class]
+        );
+    },
+
+    AccountTypeResolver::class => function(ContainerInterface $container) {
+        return new AccountTypeResolver(
+            $container->getIntegration()->getProfileRepository(),
+            $container[DataLoaderFactory::class]
+        );
+    },
+
+    ProfileFieldResolver::class => function(ContainerInterface $container) {
+        return new ProfileFieldResolver(
+            $container->getIntegration()->getProfileRepository(),
+            $container[DataLoaderFactory::class]
+        );
+    },
+
+    ProfileFieldSectionResolver::class => function(ContainerInterface $container) {
+        return new ProfileFieldSectionResolver(
+            $container->getIntegration()->getProfileRepository(),
+            $container[DataLoaderFactory::class]
+        );
+    },
+
+    UserProfileResolver::class => function(ContainerInterface $container) {
+        return new UserProfileResolver(
+            $container->getIntegration()->getProfileRepository(),
             $container[DataLoaderFactory::class]
         );
     },

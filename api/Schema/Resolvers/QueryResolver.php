@@ -8,6 +8,7 @@
 
 namespace Everywhere\Api\Schema\Resolvers;
 
+use Everywhere\Api\Contract\Integration\ProfileRepositoryInterface;
 use Everywhere\Api\Contract\Integration\UserRepositoryInterface;
 use Everywhere\Api\Contract\Schema\ConnectionFactoryInterface;
 use Everywhere\Api\Contract\Schema\ContextInterface;
@@ -23,7 +24,8 @@ class QueryResolver extends CompositeResolver
 {
     public function __construct(
         ConnectionFactoryInterface $connectionFactory,
-        UserRepositoryInterface $userRepository
+        UserRepositoryInterface $userRepository,
+        ProfileRepositoryInterface $profileRepository
     ) {
         parent::__construct();
 
@@ -42,6 +44,10 @@ class QueryResolver extends CompositeResolver
                     return $userRepository->countAll($args);
                 }
             );
+        });
+
+        $this->addFieldResolver("accountTypes", function($root, $args) use($profileRepository) {
+            return $profileRepository->findAccountTypeIds();
         });
 
         $this->addFieldResolver("node", function($root, $args) use($userRepository) {

@@ -2,6 +2,7 @@
 namespace Everywhere\Api;
 
 use Everywhere\Api\Schema\Relay;
+use Everywhere\Api\Schema\Resolvers\AccountTypeResolver;
 use Everywhere\Api\Schema\Resolvers\AuthMutationResolver;
 use Everywhere\Api\Schema\Resolvers\AvatarMutationResolver;
 use Everywhere\Api\Schema\Resolvers\AvatarResolver;
@@ -9,8 +10,11 @@ use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoMutationResolver;
+use Everywhere\Api\Schema\Resolvers\ProfileFieldResolver;
+use Everywhere\Api\Schema\Resolvers\ProfileFieldSectionResolver;
 use Everywhere\Api\Schema\Resolvers\QueryResolver;
 use Everywhere\Api\Schema\Resolvers\UploadResolver;
+use Everywhere\Api\Schema\Resolvers\UserProfileResolver;
 use Everywhere\Api\Schema\Resolvers\UserResolver;
 use Everywhere\Api\Schema\Resolvers\UserInfoResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoResolver;
@@ -32,6 +36,10 @@ return [
         "Photo" => PhotoResolver::class,
         "Comment" => CommentResolver::class,
         "Avatar" => AvatarResolver::class,
+        "AccountType" => AccountTypeResolver::class,
+        "ProfileField" => ProfileFieldResolver::class,
+        "ProfileFieldSection" => ProfileFieldSectionResolver::class,
+        "UserProfile" => UserProfileResolver::class,
 
         // Scalar types
         "Date" => DateResolver::class,

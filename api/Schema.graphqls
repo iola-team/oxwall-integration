@@ -10,6 +10,7 @@ scalar Upload
 type Query {
     me: User
     users(first: Int = 10, after: Cursor, search: String = "", email: String = ""): UserConnection!
+    accountTypes: [AccountType!]!
     node(id: ID!): Node
 }
 
@@ -93,6 +94,18 @@ type User implements Node {
     avatar: Avatar
     friends(first: Int = 10, after: Cursor): UserFriendsConnection!
     photos(first: Int = 10, after: Cursor): UserPhotoConnection!
+
+    profile: UserProfile!
+}
+
+type UserProfile {
+    accountType: AccountType!
+    values: [ProfileFieldValue!]!
+}
+
+type ProfileFieldValue {
+    field: ProfileField!
+    value: String
 }
 
 type UserInfo {
@@ -143,6 +156,42 @@ type UserPhotoDeletePayload implements DeletePayload {
     user: User!
 }
 
+enum ProfileFieldPlace {
+    SIGN_UP
+    VIEW
+    EDIT
+}
+
+type AccountType implements Node {
+    id: ID!
+    label: String!
+    fields(on: ProfileFieldPlace): [ProfileField!]!
+}
+
+enum ProfileFieldPresentation {
+    TEXT
+    TEXTAREA
+    PASSWORD
+    URL
+    DATE
+    SINGLE_CHOICE
+    MULTI_CHOICE
+    SWITCH
+}
+
+type ProfileField implements Node {
+    id: ID!
+    name: String!
+    label: String!
+    presentation: ProfileFieldPresentation!
+    isRequired: Boolean!
+    section: ProfileFieldSection!
+}
+
+type ProfileFieldSection implements Node {
+    id: ID!
+    label: String!
+}
 
 enum AvatarSize {
     SMALL
