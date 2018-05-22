@@ -24,13 +24,7 @@ class ProfileMutationResolver extends CompositeResolver
 
     protected function getFinalValue($fieldValue)
     {
-        $valueVariants = array_diff_key($fieldValue, array_flip([
-            "fieldName"
-        ]));
-
-        $values = array_filter($valueVariants);
-
-        return reset($values);
+        return $fieldValue["value"];
     }
 
     public function saveFieldValue($root, $args)

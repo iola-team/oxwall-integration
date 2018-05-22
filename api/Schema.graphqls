@@ -3,6 +3,7 @@ schema {
     mutation: Mutation
 }
 
+scalar Value
 scalar Date
 scalar Cursor
 scalar Upload
@@ -193,16 +194,12 @@ type ProfileFieldSection implements Node {
 
 type ProfileFieldValue {
     field: ProfileField!
-    value: String
+    value: Value
 }
 
 input ProfileFieldValueInput {
     fieldName: String!
-    intValue: Int
-    stringValue: String
-    stringListValue: [String!]
-    intListValue: [Int!]
-    boolValue: Boolean
+    value: Value
 }
 
 input ProfileFieldSaveInput {

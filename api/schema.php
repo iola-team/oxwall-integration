@@ -20,6 +20,7 @@ use Everywhere\Api\Schema\Resolvers\UserResolver;
 use Everywhere\Api\Schema\Resolvers\UserInfoResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoResolver;
 use Everywhere\Api\Schema\Resolvers\CommentResolver;
+use Everywhere\Api\Schema\Resolvers\ValueResolver;
 
 return [
     "path" => __DIR__ . "/Schema.graphqls",
@@ -43,6 +44,7 @@ return [
         "Profile" => ProfileResolver::class,
 
         // Scalar types
+        "Value" => ValueResolver::class,
         "Date" => DateResolver::class,
         "Cursor" => CursorResolver::class,
         "Upload" => UploadResolver::class,

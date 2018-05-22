@@ -35,6 +35,7 @@ use Everywhere\Api\Schema\Resolvers\ProfileMutationResolver;
 use Everywhere\Api\Schema\Resolvers\UploadResolver;
 use Everywhere\Api\Schema\Resolvers\UserInfoResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileResolver;
+use Everywhere\Api\Schema\Resolvers\ValueResolver;
 use Everywhere\Api\Schema\TypeConfigDecorators\AggregateTypeConfigDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\InputTypeDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\InterfaceTypeConfigDecorator;
@@ -127,6 +128,10 @@ return [
             $interfaceTypeDecorator,
             $objectTypeDecorator
         ]);
+    },
+
+    ValueResolver::class => function(ContainerInterface $container) {
+        return new ValueResolver();
     },
 
     DateResolver::class => function(ContainerInterface $container) {
