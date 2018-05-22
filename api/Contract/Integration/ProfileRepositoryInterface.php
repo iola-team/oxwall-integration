@@ -48,4 +48,11 @@ interface ProfileRepositoryInterface
      * @return mixed[]
      */
     public function getFieldValuesByUserIds(array $userIds, array $fieldIds);
+
+    /**
+     * @param $userId
+     * @param array $values
+     * @return null
+     */
+    public function saveUserFieldValues($userId, array $values);
 }

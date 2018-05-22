@@ -141,8 +141,11 @@ class ProfileRepository implements ProfileRepositoryInterface
 
     public function getFieldValuesByUserIds(array $userIds, array $fieldIds)
     {
-        $data = $this->questionService->getQuestionData($userIds, $fieldIds);
+        return $this->questionService->getQuestionData($userIds, $fieldIds);
+    }
 
-        return $data;
+    public function saveUserFieldValues($userId, array $values)
+    {
+        return $this->questionService->saveQuestionsData($values, $userId);
     }
 }

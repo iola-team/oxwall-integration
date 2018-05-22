@@ -12,9 +12,10 @@ use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoMutationResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldSectionResolver;
+use Everywhere\Api\Schema\Resolvers\ProfileMutationResolver;
 use Everywhere\Api\Schema\Resolvers\QueryResolver;
 use Everywhere\Api\Schema\Resolvers\UploadResolver;
-use Everywhere\Api\Schema\Resolvers\UserProfileResolver;
+use Everywhere\Api\Schema\Resolvers\ProfileResolver;
 use Everywhere\Api\Schema\Resolvers\UserResolver;
 use Everywhere\Api\Schema\Resolvers\UserInfoResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoResolver;
@@ -39,7 +40,7 @@ return [
         "AccountType" => AccountTypeResolver::class,
         "ProfileField" => ProfileFieldResolver::class,
         "ProfileFieldSection" => ProfileFieldSectionResolver::class,
-        "UserProfile" => UserProfileResolver::class,
+        "Profile" => ProfileResolver::class,
 
         // Scalar types
         "Date" => DateResolver::class,
@@ -54,7 +55,8 @@ return [
         "Mutation" => [
             AuthMutationResolver::class,
             AvatarMutationResolver::class,
-            PhotoMutationResolver::class
+            PhotoMutationResolver::class,
+            ProfileMutationResolver::class
         ],
     ]
 ];

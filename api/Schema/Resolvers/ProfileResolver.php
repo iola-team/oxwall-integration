@@ -19,7 +19,7 @@ use Everywhere\Api\Entities\User;
 use Everywhere\Api\Schema\CompositeResolver;
 use GraphQL\Type\Definition\ResolveInfo;
 
-class UserProfileResolver extends CompositeResolver
+class ProfileResolver extends CompositeResolver
 {
     /**
      * @var DataLoaderInterface

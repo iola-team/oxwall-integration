@@ -52,6 +52,7 @@ type Mutation {
     deleteUserAvatar(id: ID!): AvatarDeletePayload!
     addUserPhoto(input: UserPhotoCreateInput!): UserPhotoCreatePayload!
     deleteUserPhoto(id: ID!): UserPhotoDeletePayload!
+    saveProfileFieldValues(input: ProfileFieldSaveInput!): ProfileFieldSavePayload!
 }
 
 input SignInUserInput {
@@ -95,17 +96,7 @@ type User implements Node {
     friends(first: Int = 10, after: Cursor): UserFriendsConnection!
     photos(first: Int = 10, after: Cursor): UserPhotoConnection!
 
-    profile: UserProfile!
-}
-
-type UserProfile {
-    accountType: AccountType!
-    values: [ProfileFieldValue!]!
-}
-
-type ProfileFieldValue {
-    field: ProfileField!
-    value: String
+    profile: Profile!
 }
 
 type UserInfo {
@@ -156,6 +147,13 @@ type UserPhotoDeletePayload implements DeletePayload {
     user: User!
 }
 
+
+
+type Profile {
+    accountType: AccountType!
+    values: [ProfileFieldValue!]!
+}
+
 enum ProfileFieldPlace {
     SIGN_UP
     VIEW
@@ -192,6 +190,30 @@ type ProfileFieldSection implements Node {
     id: ID!
     label: String!
 }
+
+type ProfileFieldValue {
+    field: ProfileField!
+    value: String
+}
+
+input ProfileFieldValueInput {
+    fieldName: String!
+    intValue: Int
+    stringValue: String
+    stringListValue: [String!]
+    intListValue: [Int!]
+    boolValue: Boolean
+}
+
+input ProfileFieldSaveInput {
+    userId: ID!
+    values: [ProfileFieldValueInput!]!
+}
+
+type ProfileFieldSavePayload {
+    user: User!
+}
+
 
 enum AvatarSize {
     SMALL
