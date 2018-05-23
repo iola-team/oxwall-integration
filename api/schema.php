@@ -12,6 +12,7 @@ use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoMutationResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldSectionResolver;
+use Everywhere\Api\Schema\Resolvers\ProfileFieldValueResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileMutationResolver;
 use Everywhere\Api\Schema\Resolvers\QueryResolver;
 use Everywhere\Api\Schema\Resolvers\UploadResolver;
@@ -40,6 +41,7 @@ return [
         "Avatar" => AvatarResolver::class,
         "AccountType" => AccountTypeResolver::class,
         "ProfileField" => ProfileFieldResolver::class,
+        "ProfileFieldValue" => ProfileFieldValueResolver::class,
         "ProfileFieldSection" => ProfileFieldSectionResolver::class,
         "Profile" => ProfileResolver::class,
 

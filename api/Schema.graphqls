@@ -176,6 +176,7 @@ enum ProfileFieldPresentation {
     SINGLE_CHOICE
     MULTI_CHOICE
     SWITCH
+    RANGE
 }
 
 type ProfileField implements Node {
@@ -192,7 +193,8 @@ type ProfileFieldSection implements Node {
     label: String!
 }
 
-type ProfileFieldValue {
+type ProfileFieldValue implements Node {
+    id: ID!
     field: ProfileField!
     value: Value
 }

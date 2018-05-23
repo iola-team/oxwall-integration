@@ -6,6 +6,7 @@ use Everywhere\Api\Contract\Integration\ProfileRepositoryInterface;
 use Everywhere\Api\Entities\AccountType;
 use Everywhere\Api\Entities\ProfileField;
 use Everywhere\Api\Entities\ProfileFieldSection;
+use Everywhere\Api\Entities\ProfileFieldValue;
 
 class ProfileRepository implements ProfileRepositoryInterface
 {
@@ -82,17 +83,19 @@ class ProfileRepository implements ProfileRepositoryInterface
     private function getPresentation($presentation)
     {
         $aliasing = [
-            "text" => ProfileField::PRESENTATION_TEXT,
-            "textarea" => ProfileField::PRESENTATION_TEXTAREA,
-            "password" => ProfileField::PRESENTATION_PASSWORD,
-            "birthdate" => ProfileField::PRESENTATION_DATE,
-            "date" =>  ProfileField::PRESENTATION_DATE,
-            "url" => ProfileField::PRESENTATION_URL,
-            "multicheckbox" => ProfileField::PRESENTATION_MULTI_CHOICE,
-            "fselect" => ProfileField::PRESENTATION_MULTI_CHOICE,
-            "radio" => ProfileField::PRESENTATION_SINGLE_CHOICE,
-            "select" => ProfileField::PRESENTATION_SINGLE_CHOICE,
-            "checkbox" => ProfileField::PRESENTATION_SWITCH
+            \BOL_QuestionService::QUESTION_PRESENTATION_TEXT => ProfileField::PRESENTATION_TEXT,
+            \BOL_QuestionService::QUESTION_PRESENTATION_TEXTAREA => ProfileField::PRESENTATION_TEXTAREA,
+            \BOL_QuestionService::QUESTION_PRESENTATION_PASSWORD => ProfileField::PRESENTATION_PASSWORD,
+            \BOL_QuestionService::QUESTION_PRESENTATION_BIRTHDATE => ProfileField::PRESENTATION_DATE,
+            \BOL_QuestionService::QUESTION_PRESENTATION_DATE =>  ProfileField::PRESENTATION_DATE,
+            \BOL_QuestionService::QUESTION_PRESENTATION_URL => ProfileField::PRESENTATION_URL,
+            \BOL_QuestionService::QUESTION_PRESENTATION_MULTICHECKBOX => ProfileField::PRESENTATION_MULTI_CHOICE,
+            \BOL_QuestionService::QUESTION_PRESENTATION_FSELECT => ProfileField::PRESENTATION_MULTI_CHOICE,
+            \BOL_QuestionService::QUESTION_PRESENTATION_RADIO => ProfileField::PRESENTATION_SINGLE_CHOICE,
+            \BOL_QuestionService::QUESTION_PRESENTATION_SELECT => ProfileField::PRESENTATION_SINGLE_CHOICE,
+            \BOL_QuestionService::QUESTION_PRESENTATION_AGE => ProfileField::PRESENTATION_SINGLE_CHOICE,
+            \BOL_QuestionService::QUESTION_PRESENTATION_CHECKBOX => ProfileField::PRESENTATION_SWITCH,
+            \BOL_QuestionService::QUESTION_PRESENTATION_RANGE => ProfileField::PRESENTATION_RANGE
         ];
 
         return $aliasing[$presentation];
@@ -139,9 +142,95 @@ class ProfileRepository implements ProfileRepositoryInterface
         return $out;
     }
 
-    public function getFieldValuesByUserIds(array $userIds, array $fieldIds)
+    /**
+     * Fetches profile field values by list of virtual ids ("[\"fieldId\", \"userId\"]")
+     *
+     * @param string[] $ids
+     * @return ProfileFieldValue[]
+     */
+    public function findFieldValuesByIds($ids)
     {
-        return $this->questionService->getQuestionData($userIds, $fieldIds);
+        $parsedIds = array_map("json_decode", $ids);
+        $userIds = array_unique(array_map("array_pop", $parsedIds));
+        $fields = array_unique(array_map("array_shift", $parsedIds));
+
+        $questions = $this->questionService->findQuestionByNameList($fields);
+        $questionValues = $this->questionService->findQuestionsValuesByQuestionNameList($fields);
+        $data = $this->questionService->getQuestionData($userIds, $fields);
+        $out = [];
+
+        foreach ($ids as $index => $id) {
+            list($fieldId, $userId) = $parsedIds[$index];
+
+            $value = empty($data[$userId][$fieldId])
+                ? null :
+                $this->convertQuestionValue(
+                    $questions[$fieldId],
+                    $data[$userId][$fieldId],
+                    empty($questionValues[$fieldId]) ? [] : $questionValues[$fieldId]["values"]
+                );
+
+            $fieldValue = new ProfileFieldValue($id);
+            $fieldValue->fieldId = $fieldId;
+            $fieldValue->value = $value;
+
+            $out[$id] = $fieldValue;
+        }
+
+        return $out;
+    }
+
+    private function convertQuestionValue(\BOL_Question $question, $value, $questionValues)
+    {
+        $type = $question->type;
+
+        if ($question->name === "joinStamp") {
+            return new \DateTime("@" . $value);
+        }
+
+        switch ($type) {
+            case \BOL_QuestionService::QUESTION_VALUE_TYPE_SELECT:
+            case \BOL_QuestionService::QUESTION_VALUE_TYPE_FSELECT:
+            case \BOL_QuestionService::QUESTION_VALUE_TYPE_MULTISELECT:
+                $out = [];
+
+                /**
+                 * @var $valueDto \BOL_QuestionValue
+                 */
+                foreach ($questionValues as $valueDto) {
+                    if (intval($value) & intval($valueDto->value)) {
+                        $out[] = (string) $valueDto->value;
+                    }
+                }
+
+                return $out;
+
+            case \BOL_QuestionService::QUESTION_VALUE_TYPE_DATETIME:
+                return new \DateTime($value);
+        }
+
+        return $value;
+    }
+
+    /**
+     * Oxwall do not have special entities for profile field values
+     * We will generated virtual ids ("[\"fieldId\", \"userId\"]") for them
+     *
+     * @param string[] $userIds
+     * @param string[] $fieldIds
+     * @return string[]
+     */
+    public function findFieldValuesIds(array $userIds, array $fieldIds)
+    {
+        $out = [];
+        foreach ($userIds as $userId) {
+            $out[$userId] = [];
+            foreach ($fieldIds as $id) {
+                $out[$userId][] = json_encode([$id, $userId]);
+            }
+        }
+
+        return $out;
     }
 
     public function saveUserFieldValues($userId, array $values)

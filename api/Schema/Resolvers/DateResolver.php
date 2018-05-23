@@ -13,22 +13,30 @@ class DateResolver implements ScalarTypeResolverInterface
     protected $format = DateTime::ISO8601;
 
     /**
-     * @param mixed $value
+     * @param \DateTime $value
      *
-     * @return mixed|void
+     * @return string
      */
     public function serialize($value)
     {
-        $dateTime = new DateTime();
-        $dateTime->setTimestamp($value);
+        if (is_int($value)) {
+            $value = (new DateTime())->setTimestamp($value);
+        }
 
-        return (string) $dateTime->format($this->format);
+        if (!$value instanceof \DateTime) {
+            throw new InvariantViolation(
+                "Date type can only represent `DateTime` instance or unix timestamp value, but received: "
+                . Utils::printSafe($value)
+            );
+        }
+
+        return $value->format($this->format);
     }
 
     /**
      * @param mixed $value
      *
-     * @return mixed|void
+     * @return \DateTime
      */
     public function parseValue($value)
     {
@@ -41,20 +49,20 @@ class DateResolver implements ScalarTypeResolverInterface
             );
         }
 
-        return $dateTime->getTimestamp();
+        return $dateTime;
     }
 
     /**
      * @param \GraphQL\Language\AST\Node $ast
      *
-     * @return mixed|void
+     * @return \DateTime|null
      */
     public function parseLiteral($ast)
     {
         if ($ast instanceof StringValueNode) {
-            $dateTime = new DateTime($ast->value);
+            $dateTime = DateTime::createFromFormat($this->format, $ast->value);
 
-            return $dateTime ? $dateTime->getTimestamp() : null;
+            return $dateTime ? $dateTime : null;
         }
 
         return null;

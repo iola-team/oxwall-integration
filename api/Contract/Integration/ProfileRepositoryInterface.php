@@ -5,6 +5,7 @@ namespace Everywhere\Api\Contract\Integration;
 use Everywhere\Api\Entities\AccountType;
 use Everywhere\Api\Entities\ProfileField;
 use Everywhere\Api\Entities\ProfileFieldSection;
+use Everywhere\Api\Entities\ProfileFieldValue;
 
 interface ProfileRepositoryInterface
 {
@@ -43,11 +44,17 @@ interface ProfileRepositoryInterface
     public function findFieldSectionsByIds(array $ids);
 
     /**
-     * @param array $userIds
-     * @param array $fieldIds
-     * @return mixed[]
+     * @param string[] $ids
+     * @return ProfileFieldValue[]
      */
-    public function getFieldValuesByUserIds(array $userIds, array $fieldIds);
+    public function findFieldValuesByIds($ids);
+
+    /**
+     * @param string[] $userIds
+     * @param string[] $fieldIds
+     * @return string[]
+     */
+    public function findFieldValuesIds(array $userIds, array $fieldIds);
 
     /**
      * @param $userId

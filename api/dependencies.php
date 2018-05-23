@@ -31,6 +31,7 @@ use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoMutationResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldSectionResolver;
+use Everywhere\Api\Schema\Resolvers\ProfileFieldValueResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileMutationResolver;
 use Everywhere\Api\Schema\Resolvers\UploadResolver;
 use Everywhere\Api\Schema\Resolvers\UserInfoResolver;
@@ -275,6 +276,13 @@ return [
 
     ProfileFieldResolver::class => function(ContainerInterface $container) {
         return new ProfileFieldResolver(
+            $container->getIntegration()->getProfileRepository(),
+            $container[DataLoaderFactory::class]
+        );
+    },
+
+    ProfileFieldValueResolver::class => function(ContainerInterface $container) {
+        return new ProfileFieldValueResolver(
             $container->getIntegration()->getProfileRepository(),
             $container[DataLoaderFactory::class]
         );

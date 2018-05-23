@@ -12,6 +12,7 @@ class ProfileField extends AbstractEntity
     const PRESENTATION_SINGLE_CHOICE = "SINGLE_CHOICE";
     const PRESENTATION_MULTI_CHOICE = "MULTI_CHOICE";
     const PRESENTATION_SWITCH = "SWITCH";
+    const PRESENTATION_RANGE = "RANGE";
 
     /**
      * @var string
