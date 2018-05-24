@@ -38,4 +38,9 @@ class ProfileField extends AbstractEntity
      * @var mixed
      */
     public $sectionId;
+
+    /**
+     * @var array
+     */
+    public $configs;
 }

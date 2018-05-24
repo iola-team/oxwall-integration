@@ -167,6 +167,8 @@ type AccountType implements Node {
     fields(on: ProfileFieldPlace): [ProfileField!]!
 }
 
+directive @presentation(list: [ProfileFieldPresentation!]!) on OBJECT | INPUT_FIELD_DEFINITION | FIELD_DEFINITION
+
 enum ProfileFieldPresentation {
     TEXT
     TEXTAREA
@@ -179,6 +181,26 @@ enum ProfileFieldPresentation {
     RANGE
 }
 
+type ProfileFieldTextConfigs @presentation(list: [TEXT, TEXTAREA, PASSWORD, URL]) {
+    regexp: String
+}
+
+type ProfileFieldListConfigsItem {
+    label: String!
+    value: String!
+}
+
+type ProfileFieldListConfigs @presentation(list: [SINGLE_CHOICE, MULTI_CHOICE]) {
+    items: [ProfileFieldListConfigsItem!]!
+}
+
+type ProfileFieldDateConfigs @presentation(list: [DATE]) {
+    minDate: Date!
+    maxDate: Date!
+}
+
+union ProfileFieldConfigs = ProfileFieldTextConfigs | ProfileFieldListConfigs | ProfileFieldDateConfigs
+
 type ProfileField implements Node {
     id: ID!
     name: String!
@@ -186,6 +208,7 @@ type ProfileField implements Node {
     presentation: ProfileFieldPresentation!
     isRequired: Boolean!
     section: ProfileFieldSection!
+    configs: ProfileFieldConfigs
 }
 
 type ProfileFieldSection implements Node {
@@ -197,19 +220,19 @@ type ProfileFieldValue implements Node {
     id: ID!
     field: ProfileField!
 
-    booleanValue: Boolean
-    stringValue: String
-    arrayValue: [String!]
-    dateValue: Date
+    booleanValue: Boolean @presentation(list: [SWITCH])
+    stringValue: String @presentation(list: [TEXT, TEXTAREA, PASSWORD, URL])
+    arrayValue: [String!] @presentation(list: [SINGLE_CHOICE, MULTI_CHOICE])
+    dateValue: Date @presentation(list: [DATE])
 }
 
 input ProfileFieldValueInput {
     fieldId: ID!
 
-    booleanValue: Boolean
-    stringValue: String
-    arrayValue: [String!]
-    dateValue: Date
+    booleanValue: Boolean @presentation(list: [SWITCH])
+    stringValue: String @presentation(list: [TEXT, TEXTAREA, PASSWORD, URL])
+    arrayValue: [String!] @presentation(list: [SINGLE_CHOICE, MULTI_CHOICE])
+    dateValue: Date @presentation(list: [DATE])
 }
 
 input ProfileFieldSaveInput {

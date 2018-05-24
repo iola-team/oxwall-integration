@@ -20,5 +20,13 @@ class ProfileFieldResolver extends EntityResolver
         $this->addFieldResolver('section', function(ProfileField $field) {
             return $field->sectionId;
         });
+
+        $this->addFieldResolver('configs', function(ProfileField $field) {
+            return [
+                "_presentation_" => $field->presentation,
+                "minDate" => new \DateTime(),
+                "maxDate" => new \DateTime()
+            ];
+        });
     }
 }

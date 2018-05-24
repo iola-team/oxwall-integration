@@ -12,13 +12,12 @@ use Everywhere\Api\Entities\ProfileFieldValue;
 use Everywhere\Api\Schema\CompositeResolver;
 use Everywhere\Api\Schema\EntityResolver;
 use GraphQL\Error\InvariantViolation;
+use GraphQL\Executor\Values;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Utils\Utils;
 
 class ProfileFieldValueResolver extends EntityResolver
 {
-    use ProfileFiledValuePropertiesTrait;
-
     /**
      * @var DataLoaderInterface
      */
@@ -40,13 +39,6 @@ class ProfileFieldValueResolver extends EntityResolver
         });
     }
 
-    public function resolveValue(ProfileField $field, $valueName, $value)
-    {
-        $propNames = $this->getAllowedValueProperties($field->presentation);
-
-        return in_array($valueName, $propNames) ? $value : null;
-    }
-
     /**
      * @param ProfileFieldValue $root
      * @param string $fieldName
@@ -55,15 +47,22 @@ class ProfileFieldValueResolver extends EntityResolver
      * @param ResolveInfo $info
      *
      * @return mixed
+     * @throws
      */
     public function resolveField($root, $fieldName, $args, ContextInterface $context, ResolveInfo $info)
     {
-        if (array_key_exists($fieldName, $this->valueProps)) {
-            return $this->fieldLoader->load($root->fieldId)->then(function($field) use ($fieldName, $root) {
-                return $this->resolveValue($field, $fieldName, $root->value);
-            });
+        $field = $info->parentType->getField($fieldName);
+        $presentationDirective = $info->schema->getDirective("presentation");
+        $directiveValue = Values::getDirectiveValues($presentationDirective, $field->astNode);
+
+        if (empty($directiveValue["list"])) {
+            return parent::resolveField($root, $fieldName, $args, $context, $info);
         }
 
-        return parent::resolveField($root, $fieldName, $args, $context, $info);
+        $presentations = $directiveValue["list"];
+
+        return $this->fieldLoader->load($root->fieldId)->then(function(ProfileField $field) use ($fieldName, $root, $presentations) {
+            return in_array($field->presentation, $presentations) ? $root->value : null;
+        });
     }
 }

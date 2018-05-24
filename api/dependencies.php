@@ -29,6 +29,7 @@ use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoMutationResolver;
+use Everywhere\Api\Schema\Resolvers\ProfileFieldConfigsResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldSectionResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldValueResolver;
@@ -39,7 +40,7 @@ use Everywhere\Api\Schema\Resolvers\ProfileResolver;
 use Everywhere\Api\Schema\Resolvers\ValueResolver;
 use Everywhere\Api\Schema\TypeConfigDecorators\AggregateTypeConfigDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\InputTypeDecorator;
-use Everywhere\Api\Schema\TypeConfigDecorators\InterfaceTypeConfigDecorator;
+use Everywhere\Api\Schema\TypeConfigDecorators\AbstractTypeConfigDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\ObjectTypeConfigDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\ScalarTypeConfigDecorator;
 use Everywhere\Api\Schema\Context;
@@ -112,7 +113,7 @@ return [
             $resolveClass
         );
 
-        $interfaceTypeDecorator = new InterfaceTypeConfigDecorator(
+        $interfaceTypeDecorator = new AbstractTypeConfigDecorator(
             $resolversMap,
             $resolveClass
         );
@@ -149,6 +150,10 @@ return [
 
     NodeResolver::class => function(ContainerInterface $container) {
         return new NodeResolver();
+    },
+
+    ProfileFieldConfigsResolver::class => function(ContainerInterface $container) {
+        return new ProfileFieldConfigsResolver();
     },
 
     DataLoaderFactory::class => function(ContainerInterface $container) {

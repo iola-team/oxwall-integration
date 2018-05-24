@@ -4,10 +4,10 @@ namespace Everywhere\Api\Schema\TypeConfigDecorators;
 
 use Everywhere\Api\Contract\Schema\AbstractTypeResolverInterface;
 use Everywhere\Api\Contract\Schema\TypeConfigDecoratorInterface;
-use Everywhere\Api\Schema\AbstractTypeConfigDecorator;
+use Everywhere\Api\Schema\AbstractTypeConfigDecorator as TypeConfigDecorator;
 use GraphQL\Language\AST\NodeKind;
 
-class InterfaceTypeConfigDecorator extends AbstractTypeConfigDecorator
+class AbstractTypeConfigDecorator extends TypeConfigDecorator
 {
     protected $typesMap;
     protected $resolve;
@@ -20,7 +20,12 @@ class InterfaceTypeConfigDecorator extends AbstractTypeConfigDecorator
 
     public function decorate(array $typeConfig)
     {
-        if ($this->getKind($typeConfig) !== NodeKind::INTERFACE_TYPE_DEFINITION) {
+        $allowed = [
+            NodeKind::INTERFACE_TYPE_DEFINITION,
+            NodeKind::UNION_TYPE_DEFINITION,
+        ];
+
+        if (!in_array($this->getKind($typeConfig), $allowed)) {
             return $typeConfig;
         }
 

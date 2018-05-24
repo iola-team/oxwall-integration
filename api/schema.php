@@ -10,6 +10,7 @@ use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoMutationResolver;
+use Everywhere\Api\Schema\Resolvers\ProfileFieldConfigsResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldSectionResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldValueResolver;
@@ -52,7 +53,10 @@ return [
         "Upload" => UploadResolver::class,
 
         // Interface types
-        'Node' => NodeResolver::class,
+        "Node" => NodeResolver::class,
+
+        // Union types
+        "ProfileFieldConfigs" => ProfileFieldConfigsResolver::class,
 
         // Mutation resolvers
 
