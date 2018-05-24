@@ -30,11 +30,6 @@ class ProfileField extends AbstractEntity
     public $presentation;
 
     /**
-     * @var string
-     */
-    public $dataType;
-
-    /**
      * @var boolean
      */
     public $isRequired;

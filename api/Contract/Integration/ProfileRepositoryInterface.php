@@ -61,5 +61,5 @@ interface ProfileRepositoryInterface
      * @param array $values
      * @return null
      */
-    public function saveUserFieldValues($userId, array $values);
+    public function saveFieldValues($userId, array $values);
 }

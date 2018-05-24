@@ -196,12 +196,20 @@ type ProfileFieldSection implements Node {
 type ProfileFieldValue implements Node {
     id: ID!
     field: ProfileField!
-    value: Value
+
+    booleanValue: Boolean
+    stringValue: String
+    arrayValue: [String!]
+    dateValue: Date
 }
 
 input ProfileFieldValueInput {
-    fieldName: String!
-    value: Value
+    fieldId: ID!
+
+    booleanValue: Boolean
+    stringValue: String
+    arrayValue: [String!]
+    dateValue: Date
 }
 
 input ProfileFieldSaveInput {

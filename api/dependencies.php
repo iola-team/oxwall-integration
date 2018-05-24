@@ -304,7 +304,9 @@ return [
 
     ProfileMutationResolver::class => function(ContainerInterface $container) {
         return new ProfileMutationResolver(
-            $container->getIntegration()->getProfileRepository()
+            $container->getIntegration()->getProfileRepository(),
+            $container[DataLoaderFactory::class],
+            $container[IDFactoryInterface::class]
         );
     },
 

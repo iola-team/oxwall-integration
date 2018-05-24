@@ -114,7 +114,6 @@ class ProfileRepository implements ProfileRepositoryInterface
             $profileField->name = $questionDto->name;
             $profileField->label = $this->questionService->getQuestionLang($questionDto->name);
             $profileField->presentation = $this->getPresentation($questionDto->presentation);
-            $profileField->dataType = $questionDto->type;
             $profileField->isRequired = !empty($questionDto->required);
             $profileField->sectionId = $questionDto->sectionName;
 
@@ -233,7 +232,7 @@ class ProfileRepository implements ProfileRepositoryInterface
         return $out;
     }
 
-    public function saveUserFieldValues($userId, array $values)
+    public function saveFieldValues($userId, array $values)
     {
         return $this->questionService->saveQuestionsData($values, $userId);
     }
