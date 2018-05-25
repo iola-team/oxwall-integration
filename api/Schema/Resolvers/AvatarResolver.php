@@ -9,14 +9,14 @@ use Everywhere\Api\Schema\EntityResolver;
 
 class AvatarResolver extends EntityResolver
 {
-    public function __construct(AvatarRepositoryInterface $profileRepository, DataLoaderFactoryInterface $loaderFactory)
+    public function __construct(AvatarRepositoryInterface $avatarRepository, DataLoaderFactoryInterface $loaderFactory)
     {
-        $entityLoader = $loaderFactory->create(function ($ids, $args) use ($profileRepository) {
-            return $profileRepository->findByIds($ids, $args);
+        $entityLoader = $loaderFactory->create(function ($ids, $args) use ($avatarRepository) {
+            return $avatarRepository->findByIds($ids, $args);
         });
 
-        $urlLoader = $loaderFactory->create(function($ids, $args) use ($profileRepository) {
-            return $profileRepository->getUrls($ids, $args);
+        $urlLoader = $loaderFactory->create(function($ids, $args) use ($avatarRepository) {
+            return $avatarRepository->getUrls($ids, $args);
         });
 
         parent::__construct($entityLoader, [
