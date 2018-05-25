@@ -22,11 +22,9 @@ class ProfileFieldResolver extends EntityResolver
         });
 
         $this->addFieldResolver('configs', function(ProfileField $field) {
-            return [
-                "_presentation_" => $field->presentation,
-                "minDate" => new \DateTime(),
-                "maxDate" => new \DateTime()
-            ];
+            return array_merge((array) $field->configs, [
+                "@presentation" => $field->presentation,
+            ]);
         });
     }
 }

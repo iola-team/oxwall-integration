@@ -30,7 +30,7 @@ class ProfileFieldConfigsResolver implements AbstractTypeResolverInterface
                 continue;
             }
 
-            if (in_array($root["_presentation_"], $directiveValue["list"])) {
+            if (in_array($root["@presentation"], $directiveValue["list"])) {
                 return $type;
             }
         }
