@@ -75,10 +75,10 @@ class UserRepository implements UserRepositoryInterface
          * @var $userDto \BOL_User
          */
         foreach ($userDtoList as $userDto) {
-            $user = new User();
+            $user = new User($userDto->id);
 
-            $user->id = $userDto->id;
             $user->name = \BOL_UserService::getInstance()->getDisplayName($userDto->id);
+            $user->accountTypeId = $userDto->accountType;
             $user->email = $userDto->email;
             $user->activityTime = (int) $userDto->activityStamp;
 

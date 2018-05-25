@@ -3,6 +3,7 @@ schema {
     mutation: Mutation
 }
 
+scalar Value
 scalar Date
 scalar Cursor
 scalar Upload
@@ -10,6 +11,7 @@ scalar Upload
 type Query {
     me: User
     users(first: Int = 10, after: Cursor, search: String = "", email: String = ""): UserConnection!
+    accountTypes: [AccountType!]!
     node(id: ID!): Node
 }
 
@@ -51,6 +53,7 @@ type Mutation {
     deleteUserAvatar(id: ID!): AvatarDeletePayload!
     addUserPhoto(input: UserPhotoCreateInput!): UserPhotoCreatePayload!
     deleteUserPhoto(id: ID!): UserPhotoDeletePayload!
+    saveProfileFieldValues(input: ProfileFieldSaveInput!): ProfileFieldSavePayload!
 }
 
 input SignInUserInput {
@@ -93,6 +96,8 @@ type User implements Node {
     avatar: Avatar
     friends(first: Int = 10, after: Cursor): UserFriendsConnection!
     photos(first: Int = 10, after: Cursor): UserPhotoConnection!
+
+    profile: Profile!
 }
 
 type UserInfo {
@@ -141,6 +146,122 @@ type UserPhotoCreatePayload implements CreatePayload {
 type UserPhotoDeletePayload implements DeletePayload {
     deletedId: ID!
     user: User!
+}
+
+
+
+type Profile {
+    accountType: AccountType!
+    values: [ProfileFieldValue!]!
+}
+
+enum ProfileFieldPlace {
+    SIGN_UP
+    VIEW
+    EDIT
+}
+
+type AccountType implements Node {
+    id: ID!
+    label: String!
+    fields(on: ProfileFieldPlace): [ProfileField!]!
+}
+
+directive @presentation(list: [ProfileFieldPresentation!]!) on OBJECT | INPUT_FIELD_DEFINITION | FIELD_DEFINITION
+
+enum ProfileFieldPresentation {
+    TEXT
+    TEXTAREA
+    PASSWORD
+    URL
+    DATE
+    SINGLE_CHOICE
+    MULTI_CHOICE
+    SWITCH
+    RANGE
+}
+
+type ProfileFieldTextConfigs @presentation(list: [TEXT, TEXTAREA, PASSWORD, URL]) {
+    regexp: String
+    minLength: Int
+    maxLength: Int
+}
+
+type ProfileFieldListItem {
+    label: String!
+    value: String!
+}
+
+type ProfileFieldListConfigs @presentation(list: [SINGLE_CHOICE, MULTI_CHOICE]) {
+    items: [ProfileFieldListItem!]!
+}
+
+type ProfileFieldDateConfigs @presentation(list: [DATE]) {
+    minDate: Date!
+    maxDate: Date!
+}
+
+type ProfileFieldDefaultConfigs @presentation(list: [SWITCH]) {
+    presentation: ProfileFieldPresentation!
+}
+
+union ProfileFieldConfigs = ProfileFieldTextConfigs | ProfileFieldListConfigs | ProfileFieldDateConfigs | ProfileFieldDefaultConfigs
+
+type ProfileField implements Node {
+    id: ID!
+    name: String!
+    label: String!
+    presentation: ProfileFieldPresentation!
+    isRequired: Boolean!
+    section: ProfileFieldSection!
+    configs: ProfileFieldConfigs
+}
+
+type ProfileFieldTextValue @presentation(list: [TEXT, TEXTAREA, PASSWORD, URL]) {
+    value: String
+}
+
+type ProfileFieldListValue @presentation(list: [SINGLE_CHOICE, MULTI_CHOICE]) {
+    value: [String!]
+}
+
+type ProfileFieldDateValue @presentation(list: [DATE]) {
+    value: Date
+}
+
+type ProfileFieldBooleanValue @presentation(list: [SWITCH]) {
+    value: Boolean
+}
+
+union ProfileFieldValueData = ProfileFieldTextValue | ProfileFieldListValue | ProfileFieldDateValue | ProfileFieldBooleanValue
+
+type ProfileFieldValue implements Node {
+    id: ID!
+    field: ProfileField!
+    data: ProfileFieldValueData
+}
+
+input ProfileFieldValueInput {
+    fieldId: ID!
+
+    booleanValue: Boolean @presentation(list: [SWITCH])
+    stringValue: String @presentation(list: [TEXT, TEXTAREA, PASSWORD, URL])
+    arrayValue: [String!] @presentation(list: [SINGLE_CHOICE, MULTI_CHOICE])
+    dateValue: Date @presentation(list: [DATE])
+}
+
+input ProfileFieldSaveInput {
+    userId: ID!
+    values: [ProfileFieldValueInput!]!
+}
+
+type ProfileFieldSavePayload {
+    user: User!
+}
+
+type ProfileFieldSection implements Node {
+    id: ID!
+    label: String!
 }
 
 

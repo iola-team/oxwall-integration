@@ -13,6 +13,7 @@ use Everywhere\Api\Contract\Schema\ConnectionFactoryInterface;
 use Everywhere\Api\Contract\Schema\ContextInterface;
 use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
 use Everywhere\Api\Contract\Schema\DataLoaderInterface;
+use Everywhere\Api\Entities\User;
 use Everywhere\Api\Schema\EntityResolver;
 use GraphQL\Executor\Promise\Promise;
 use GraphQL\Type\Definition\ResolveInfo;
@@ -92,7 +93,7 @@ class UserResolver extends EntityResolver
     }
 
     /**
-     * @param $user
+     * @param User $user
      * @param $fieldName
      * @param $args
      * @param ContextInterface $context
@@ -134,9 +135,10 @@ class UserResolver extends EntityResolver
                 return $this->avatarLoader->load($user->id, $args);
 
             /**
-             * Pass user entity as root value to UserInfo resolver
+             * Pass user entity as root value to UserInfo and UserProfile resolvers
              */
             case "info":
+            case "profile":
                 return $user;
 
             default:

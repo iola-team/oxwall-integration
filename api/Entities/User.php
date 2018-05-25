@@ -22,7 +22,12 @@ class User extends AbstractEntity
     public $email;
 
     /**
-     * @var int
+     * @var \DateTime|int
      */
     public $activityTime;
+
+    /**
+     * @var mixed
+     */
+    public $accountTypeId;
 }

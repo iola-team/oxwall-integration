@@ -29,4 +29,9 @@ interface IntegrationInterface
      * @return AvatarRepositoryInterface
      */
     public function getAvatarRepository();
+
+    /**
+     * @return ProfileRepositoryInterface
+     */
+    public function getProfileRepository();
 }
