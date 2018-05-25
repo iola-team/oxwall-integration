@@ -217,19 +217,28 @@ type ProfileField implements Node {
     configs: ProfileFieldConfigs
 }
 
-type ProfileFieldSection implements Node {
-    id: ID!
-    label: String!
+type ProfileFieldTextValue @presentation(list: [TEXT, TEXTAREA, PASSWORD, URL]) {
+    value: String
 }
+
+type ProfileFieldListValue @presentation(list: [SINGLE_CHOICE, MULTI_CHOICE]) {
+    value: [String!]
+}
+
+type ProfileFieldDateValue @presentation(list: [DATE]) {
+    value: Date
+}
+
+type ProfileFieldBooleanValue @presentation(list: [SWITCH]) {
+    value: Boolean
+}
+
+union ProfileFieldValueData = ProfileFieldTextValue | ProfileFieldListValue | ProfileFieldDateValue | ProfileFieldBooleanValue
 
 type ProfileFieldValue implements Node {
     id: ID!
     field: ProfileField!
-
-    booleanValue: Boolean @presentation(list: [SWITCH])
-    stringValue: String @presentation(list: [TEXT, TEXTAREA, PASSWORD, URL])
-    arrayValue: [String!] @presentation(list: [SINGLE_CHOICE, MULTI_CHOICE])
-    dateValue: Date @presentation(list: [DATE])
+    data: ProfileFieldValueData
 }
 
 input ProfileFieldValueInput {
@@ -248,6 +257,11 @@ input ProfileFieldSaveInput {
 
 type ProfileFieldSavePayload {
     user: User!
+}
+
+type ProfileFieldSection implements Node {
+    id: ID!
+    label: String!
 }
 
 

@@ -37,32 +37,14 @@ class ProfileFieldValueResolver extends EntityResolver
         $this->addFieldResolver("field", function(ProfileFieldValue $value) {
             return $this->fieldLoader->load($value->fieldId);
         });
-    }
 
-    /**
-     * @param ProfileFieldValue $root
-     * @param string $fieldName
-     * @param $args
-     * @param ContextInterface $context
-     * @param ResolveInfo $info
-     *
-     * @return mixed
-     * @throws
-     */
-    public function resolveField($root, $fieldName, $args, ContextInterface $context, ResolveInfo $info)
-    {
-        $field = $info->parentType->getField($fieldName);
-        $presentationDirective = $info->schema->getDirective("presentation");
-        $directiveValue = Values::getDirectiveValues($presentationDirective, $field->astNode);
-
-        if (empty($directiveValue["list"])) {
-            return parent::resolveField($root, $fieldName, $args, $context, $info);
-        }
-
-        $presentations = $directiveValue["list"];
-
-        return $this->fieldLoader->load($root->fieldId)->then(function(ProfileField $field) use ($fieldName, $root, $presentations) {
-            return in_array($field->presentation, $presentations) ? $root->value : null;
+        $this->addFieldResolver("data", function(ProfileFieldValue $value) {
+            return $this->fieldLoader->load($value->fieldId)->then(function(ProfileField $field) use ($value) {
+                return [
+                    "presentation" => $field->presentation,
+                    "value" => $value->value
+                ];
+            });
         });
     }
 }

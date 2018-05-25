@@ -58,6 +58,7 @@ return [
 
         // Union types
         "ProfileFieldConfigs" => PresentationAwareTypeResolver::class,
+        "ProfileFieldValueData" => PresentationAwareTypeResolver::class,
 
         // Mutation resolvers
 
