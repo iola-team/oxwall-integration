@@ -9,7 +9,7 @@ use GraphQL\Executor\Values;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 
-class ProfileFieldConfigsResolver implements AbstractTypeResolverInterface
+class PresentationAwareTypeResolver implements AbstractTypeResolverInterface
 {
     /**
      * @param $root
@@ -30,7 +30,7 @@ class ProfileFieldConfigsResolver implements AbstractTypeResolverInterface
                 continue;
             }
 
-            if (in_array($root["@presentation"], $directiveValue["list"])) {
+            if (in_array($root["presentation"], $directiveValue["list"])) {
                 return $type;
             }
         }

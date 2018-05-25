@@ -23,7 +23,7 @@ class ProfileFieldResolver extends EntityResolver
 
         $this->addFieldResolver('configs', function(ProfileField $field) {
             return array_merge((array) $field->configs, [
-                "@presentation" => $field->presentation,
+                "presentation" => $field->presentation,
             ]);
         });
     }

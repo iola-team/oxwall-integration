@@ -183,15 +183,17 @@ enum ProfileFieldPresentation {
 
 type ProfileFieldTextConfigs @presentation(list: [TEXT, TEXTAREA, PASSWORD, URL]) {
     regexp: String
+    minLength: Int
+    maxLength: Int
 }
 
-type ProfileFieldListConfigsItem {
+type ProfileFieldListItem {
     label: String!
     value: String!
 }
 
 type ProfileFieldListConfigs @presentation(list: [SINGLE_CHOICE, MULTI_CHOICE]) {
-    items: [ProfileFieldListConfigsItem!]!
+    items: [ProfileFieldListItem!]!
 }
 
 type ProfileFieldDateConfigs @presentation(list: [DATE]) {
@@ -199,7 +201,11 @@ type ProfileFieldDateConfigs @presentation(list: [DATE]) {
     maxDate: Date!
 }
 
-union ProfileFieldConfigs = ProfileFieldTextConfigs | ProfileFieldListConfigs | ProfileFieldDateConfigs
+type ProfileFieldDefaultConfigs @presentation(list: [SWITCH]) {
+    presentation: ProfileFieldPresentation!
+}
+
+union ProfileFieldConfigs = ProfileFieldTextConfigs | ProfileFieldListConfigs | ProfileFieldDateConfigs | ProfileFieldDefaultConfigs
 
 type ProfileField implements Node {
     id: ID!

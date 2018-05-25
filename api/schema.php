@@ -10,6 +10,7 @@ use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoMutationResolver;
+use Everywhere\Api\Schema\Resolvers\PresentationAwareTypeResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldConfigsResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldSectionResolver;
@@ -56,7 +57,7 @@ return [
         "Node" => NodeResolver::class,
 
         // Union types
-        "ProfileFieldConfigs" => ProfileFieldConfigsResolver::class,
+        "ProfileFieldConfigs" => PresentationAwareTypeResolver::class,
 
         // Mutation resolvers
 

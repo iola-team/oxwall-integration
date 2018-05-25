@@ -40,7 +40,7 @@ class ProfileField extends AbstractEntity
     public $sectionId;
 
     /**
-     * @var array
+     * @var array|null
      */
     public $configs;
 }

@@ -88,12 +88,12 @@ class ProfileRepository implements ProfileRepositoryInterface
             \BOL_QuestionService::QUESTION_PRESENTATION_PASSWORD => ProfileField::PRESENTATION_PASSWORD,
             \BOL_QuestionService::QUESTION_PRESENTATION_BIRTHDATE => ProfileField::PRESENTATION_DATE,
             \BOL_QuestionService::QUESTION_PRESENTATION_DATE =>  ProfileField::PRESENTATION_DATE,
+            \BOL_QuestionService::QUESTION_PRESENTATION_AGE => ProfileField::PRESENTATION_DATE,
             \BOL_QuestionService::QUESTION_PRESENTATION_URL => ProfileField::PRESENTATION_URL,
             \BOL_QuestionService::QUESTION_PRESENTATION_MULTICHECKBOX => ProfileField::PRESENTATION_MULTI_CHOICE,
             \BOL_QuestionService::QUESTION_PRESENTATION_FSELECT => ProfileField::PRESENTATION_MULTI_CHOICE,
             \BOL_QuestionService::QUESTION_PRESENTATION_RADIO => ProfileField::PRESENTATION_SINGLE_CHOICE,
             \BOL_QuestionService::QUESTION_PRESENTATION_SELECT => ProfileField::PRESENTATION_SINGLE_CHOICE,
-            \BOL_QuestionService::QUESTION_PRESENTATION_AGE => ProfileField::PRESENTATION_SINGLE_CHOICE,
             \BOL_QuestionService::QUESTION_PRESENTATION_CHECKBOX => ProfileField::PRESENTATION_SWITCH,
             \BOL_QuestionService::QUESTION_PRESENTATION_RANGE => ProfileField::PRESENTATION_RANGE
         ];
@@ -101,21 +101,76 @@ class ProfileRepository implements ProfileRepositoryInterface
         return $aliasing[$presentation];
     }
 
+    /**
+     * @param \BOL_Question $questionDto
+     * @param \BOL_QuestionValue[] $values
+     *
+     * @return array
+     */
+    private function getFieldConfigs(\BOL_Question $questionDto, $values)
+    {
+        $questionConfigs = empty($questionDto->custom) ? [] : json_decode($questionDto->custom, true);
+
+        switch ($questionDto->presentation) {
+            case \BOL_QuestionService::QUESTION_PRESENTATION_BIRTHDATE:
+            case \BOL_QuestionService::QUESTION_PRESENTATION_DATE:
+            case \BOL_QuestionService::QUESTION_PRESENTATION_AGE:
+                $minYear = $questionConfigs["year_range"]["from"];
+                $maxYear = $questionConfigs["year_range"]["to"];
+
+                return [
+                    "minDate" => (new \DateTime())->setDate($minYear, 1, 1),
+                    "maxDate" => (new \DateTime())->setDate($maxYear, 12, 31)
+                ];
+
+            case \BOL_QuestionService::QUESTION_PRESENTATION_PASSWORD:
+                return [
+                    "minLength" => \UTIL_Validator::PASSWORD_MIN_LENGTH,
+                    "maxLength" => \UTIL_Validator::PASSWORD_MAX_LENGTH,
+                ];
+
+            case \BOL_QuestionService::QUESTION_PRESENTATION_SELECT:
+            case \BOL_QuestionService::QUESTION_PRESENTATION_RADIO:
+            case \BOL_QuestionService::QUESTION_PRESENTATION_FSELECT:
+            case \BOL_QuestionService::QUESTION_PRESENTATION_MULTICHECKBOX:
+                $items = [];
+                foreach ($values as $value) {
+                    $items[] = [
+                        "label" => $this->questionService->getQuestionValueLang($value->questionName, $value->value),
+                        "value" => $value->value
+                    ];
+                }
+
+                return [
+                    "items" => $items
+                ];
+        }
+
+        return $questionConfigs;
+    }
+
     public function findFieldsByIds(array $ids)
     {
         $out = [];
         $questionDtos = $this->questionService->findQuestionByNameList($ids);
+        $questionValues = $this->questionService->findQuestionsValuesByQuestionNameList($ids);
 
         /**
          * @var $questionDto \BOL_Question
          */
         foreach ($questionDtos as $questionDto) {
+            $configs = $questionDto->custom;
+            $questionValue = empty($questionValues[$questionDto->name])
+                ? [] :
+                $questionValues[$questionDto->name]["values"];
+
             $profileField = new ProfileField($questionDto->name);
             $profileField->name = $questionDto->name;
             $profileField->label = $this->questionService->getQuestionLang($questionDto->name);
             $profileField->presentation = $this->getPresentation($questionDto->presentation);
             $profileField->isRequired = !empty($questionDto->required);
             $profileField->sectionId = $questionDto->sectionName;
+            $profileField->configs = $this->getFieldConfigs($questionDto, $questionValue);
 
             $out[$questionDto->name] = $profileField;
         }
