@@ -220,7 +220,7 @@ type ProfileFieldTextValue @presentation(list: [TEXT]) {
     value: String
 }
 
-type ProfileFieldListValue @presentation(list: [SELECT]) {
+type ProfileFieldSelectValue @presentation(list: [SELECT]) {
     value: [String!]
 }
 
@@ -228,11 +228,11 @@ type ProfileFieldDateValue @presentation(list: [DATE]) {
     value: Date
 }
 
-type ProfileFieldBooleanValue @presentation(list: [SWITCH]) {
+type ProfileFieldSwitchValue @presentation(list: [SWITCH]) {
     value: Boolean
 }
 
-union ProfileFieldValueData = ProfileFieldTextValue | ProfileFieldListValue | ProfileFieldDateValue | ProfileFieldBooleanValue
+union ProfileFieldValueData = ProfileFieldTextValue | ProfileFieldSelectValue | ProfileFieldDateValue | ProfileFieldSwitchValue
 
 type ProfileFieldValue implements Node {
     id: ID!
