@@ -171,29 +171,28 @@ directive @presentation(list: [ProfileFieldPresentation!]!) on OBJECT | INPUT_FI
 
 enum ProfileFieldPresentation {
     TEXT
-    TEXTAREA
-    PASSWORD
-    URL
     DATE
-    SINGLE_CHOICE
-    MULTI_CHOICE
+    SELECT
     SWITCH
     RANGE
 }
 
-type ProfileFieldTextConfigs @presentation(list: [TEXT, TEXTAREA, PASSWORD, URL]) {
+type ProfileFieldTextConfigs @presentation(list: [TEXT]) {
+    multiline: Boolean
+    secure: Boolean
     regexp: String
     minLength: Int
     maxLength: Int
 }
 
-type ProfileFieldListItem {
+type ProfileFieldSelectOption {
     label: String!
     value: String!
 }
 
-type ProfileFieldListConfigs @presentation(list: [SINGLE_CHOICE, MULTI_CHOICE]) {
-    items: [ProfileFieldListItem!]!
+type ProfileFieldSelectConfigs @presentation(list: [SELECT]) {
+    multiple: Boolean
+    options: [ProfileFieldSelectOption!]!
 }
 
 type ProfileFieldDateConfigs @presentation(list: [DATE]) {
@@ -201,11 +200,11 @@ type ProfileFieldDateConfigs @presentation(list: [DATE]) {
     maxDate: Date!
 }
 
-type ProfileFieldDefaultConfigs @presentation(list: [SWITCH]) {
+type ProfileFieldDefaultConfigs @presentation(list: [SWITCH, RANGE]) {
     presentation: ProfileFieldPresentation!
 }
 
-union ProfileFieldConfigs = ProfileFieldTextConfigs | ProfileFieldListConfigs | ProfileFieldDateConfigs | ProfileFieldDefaultConfigs
+union ProfileFieldConfigs = ProfileFieldTextConfigs | ProfileFieldSelectConfigs | ProfileFieldDateConfigs | ProfileFieldDefaultConfigs
 
 type ProfileField implements Node {
     id: ID!
@@ -217,11 +216,11 @@ type ProfileField implements Node {
     configs: ProfileFieldConfigs
 }
 
-type ProfileFieldTextValue @presentation(list: [TEXT, TEXTAREA, PASSWORD, URL]) {
+type ProfileFieldTextValue @presentation(list: [TEXT]) {
     value: String
 }
 
-type ProfileFieldListValue @presentation(list: [SINGLE_CHOICE, MULTI_CHOICE]) {
+type ProfileFieldListValue @presentation(list: [SELECT]) {
     value: [String!]
 }
 
@@ -245,8 +244,8 @@ input ProfileFieldValueInput {
     fieldId: ID!
 
     booleanValue: Boolean @presentation(list: [SWITCH])
-    stringValue: String @presentation(list: [TEXT, TEXTAREA, PASSWORD, URL])
-    arrayValue: [String!] @presentation(list: [SINGLE_CHOICE, MULTI_CHOICE])
+    stringValue: String @presentation(list: [TEXT])
+    arrayValue: [String!] @presentation(list: [SELECT])
     dateValue: Date @presentation(list: [DATE])
 }
 

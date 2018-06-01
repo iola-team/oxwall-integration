@@ -84,16 +84,16 @@ class ProfileRepository implements ProfileRepositoryInterface
     {
         $aliasing = [
             \BOL_QuestionService::QUESTION_PRESENTATION_TEXT => ProfileField::PRESENTATION_TEXT,
-            \BOL_QuestionService::QUESTION_PRESENTATION_TEXTAREA => ProfileField::PRESENTATION_TEXTAREA,
-            \BOL_QuestionService::QUESTION_PRESENTATION_PASSWORD => ProfileField::PRESENTATION_PASSWORD,
+            \BOL_QuestionService::QUESTION_PRESENTATION_TEXTAREA => ProfileField::PRESENTATION_TEXT,
+            \BOL_QuestionService::QUESTION_PRESENTATION_PASSWORD => ProfileField::PRESENTATION_TEXT,
             \BOL_QuestionService::QUESTION_PRESENTATION_BIRTHDATE => ProfileField::PRESENTATION_DATE,
             \BOL_QuestionService::QUESTION_PRESENTATION_DATE =>  ProfileField::PRESENTATION_DATE,
             \BOL_QuestionService::QUESTION_PRESENTATION_AGE => ProfileField::PRESENTATION_DATE,
-            \BOL_QuestionService::QUESTION_PRESENTATION_URL => ProfileField::PRESENTATION_URL,
-            \BOL_QuestionService::QUESTION_PRESENTATION_MULTICHECKBOX => ProfileField::PRESENTATION_MULTI_CHOICE,
-            \BOL_QuestionService::QUESTION_PRESENTATION_FSELECT => ProfileField::PRESENTATION_MULTI_CHOICE,
-            \BOL_QuestionService::QUESTION_PRESENTATION_RADIO => ProfileField::PRESENTATION_SINGLE_CHOICE,
-            \BOL_QuestionService::QUESTION_PRESENTATION_SELECT => ProfileField::PRESENTATION_SINGLE_CHOICE,
+            \BOL_QuestionService::QUESTION_PRESENTATION_URL => ProfileField::PRESENTATION_TEXT,
+            \BOL_QuestionService::QUESTION_PRESENTATION_MULTICHECKBOX => ProfileField::PRESENTATION_SELECT,
+            \BOL_QuestionService::QUESTION_PRESENTATION_FSELECT => ProfileField::PRESENTATION_SELECT,
+            \BOL_QuestionService::QUESTION_PRESENTATION_RADIO => ProfileField::PRESENTATION_SELECT,
+            \BOL_QuestionService::QUESTION_PRESENTATION_SELECT => ProfileField::PRESENTATION_SELECT,
             \BOL_QuestionService::QUESTION_PRESENTATION_CHECKBOX => ProfileField::PRESENTATION_SWITCH,
             \BOL_QuestionService::QUESTION_PRESENTATION_RANGE => ProfileField::PRESENTATION_RANGE
         ];
@@ -125,24 +125,30 @@ class ProfileRepository implements ProfileRepositoryInterface
 
             case \BOL_QuestionService::QUESTION_PRESENTATION_PASSWORD:
                 return [
+                    "secure" => true,
                     "minLength" => \UTIL_Validator::PASSWORD_MIN_LENGTH,
                     "maxLength" => \UTIL_Validator::PASSWORD_MAX_LENGTH,
+                ];
+
+            case \BOL_QuestionService::QUESTION_PRESENTATION_TEXTAREA:
+                return [
+                    "multiline" => true,
                 ];
 
             case \BOL_QuestionService::QUESTION_PRESENTATION_SELECT:
             case \BOL_QuestionService::QUESTION_PRESENTATION_RADIO:
             case \BOL_QuestionService::QUESTION_PRESENTATION_FSELECT:
             case \BOL_QuestionService::QUESTION_PRESENTATION_MULTICHECKBOX:
-                $items = [];
+                $options = [];
                 foreach ($values as $value) {
-                    $items[] = [
+                    $options[] = [
                         "label" => $this->questionService->getQuestionValueLang($value->questionName, $value->value),
                         "value" => $value->value
                     ];
                 }
 
                 return [
-                    "items" => $items
+                    "options" => $options
                 ];
         }
 
