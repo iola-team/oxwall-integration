@@ -177,7 +177,13 @@ enum ProfileFieldPresentation {
     RANGE
 }
 
+enum StringFormat {
+    EMAIL
+    URL
+}
+
 type ProfileFieldTextConfigs @presentation(list: [TEXT]) {
+    format: StringFormat
     multiline: Boolean
     secure: Boolean
     regexp: String
@@ -256,6 +262,7 @@ input ProfileFieldSaveInput {
 
 type ProfileFieldSavePayload {
     user: User!
+    nodes: [ProfileFieldValue!]!
 }
 
 type ProfileFieldSection implements Node {

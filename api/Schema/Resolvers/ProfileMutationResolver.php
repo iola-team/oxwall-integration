@@ -126,10 +126,11 @@ class ProfileMutationResolver extends CompositeResolver
                 $data[$field->getId()] = $this->getFinalValue($field, $allowedPresentations, $value);
             }
 
-            $this->profileRepository->saveFieldValues($userId, $data);
+            $valueIds = $this->profileRepository->saveFieldValues($userId, $data);
 
             return [
-                "user" => $userId
+                "user" => $userId,
+                "nodes" => $valueIds
             ];
         });
     }

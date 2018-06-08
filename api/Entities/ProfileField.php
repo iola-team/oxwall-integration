@@ -10,6 +10,9 @@ class ProfileField extends AbstractEntity
     const PRESENTATION_SWITCH = "SWITCH";
     const PRESENTATION_RANGE = "RANGE";
 
+    const TEXT_FORMAT_URL = "URL";
+    const TEXT_FORMAT_EMAIL = "EMAIL";
+
     /**
      * @var string
      */
