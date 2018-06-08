@@ -13,7 +13,7 @@ class ProfileRepository implements ProfileRepositoryInterface
     /**
      * @var \BOL_QuestionService
      */
-    private $questionService;
+    protected $questionService;
 
     public function __construct()
     {
@@ -80,20 +80,20 @@ class ProfileRepository implements ProfileRepositoryInterface
         return $out;
     }
 
-    private function getPresentation($presentation)
+    protected function getPresentation($presentation)
     {
         $aliasing = [
             \BOL_QuestionService::QUESTION_PRESENTATION_TEXT => ProfileField::PRESENTATION_TEXT,
-            \BOL_QuestionService::QUESTION_PRESENTATION_TEXTAREA => ProfileField::PRESENTATION_TEXTAREA,
-            \BOL_QuestionService::QUESTION_PRESENTATION_PASSWORD => ProfileField::PRESENTATION_PASSWORD,
+            \BOL_QuestionService::QUESTION_PRESENTATION_TEXTAREA => ProfileField::PRESENTATION_TEXT,
+            \BOL_QuestionService::QUESTION_PRESENTATION_PASSWORD => ProfileField::PRESENTATION_TEXT,
             \BOL_QuestionService::QUESTION_PRESENTATION_BIRTHDATE => ProfileField::PRESENTATION_DATE,
             \BOL_QuestionService::QUESTION_PRESENTATION_DATE =>  ProfileField::PRESENTATION_DATE,
             \BOL_QuestionService::QUESTION_PRESENTATION_AGE => ProfileField::PRESENTATION_DATE,
-            \BOL_QuestionService::QUESTION_PRESENTATION_URL => ProfileField::PRESENTATION_URL,
-            \BOL_QuestionService::QUESTION_PRESENTATION_MULTICHECKBOX => ProfileField::PRESENTATION_MULTI_CHOICE,
-            \BOL_QuestionService::QUESTION_PRESENTATION_FSELECT => ProfileField::PRESENTATION_MULTI_CHOICE,
-            \BOL_QuestionService::QUESTION_PRESENTATION_RADIO => ProfileField::PRESENTATION_SINGLE_CHOICE,
-            \BOL_QuestionService::QUESTION_PRESENTATION_SELECT => ProfileField::PRESENTATION_SINGLE_CHOICE,
+            \BOL_QuestionService::QUESTION_PRESENTATION_URL => ProfileField::PRESENTATION_TEXT,
+            \BOL_QuestionService::QUESTION_PRESENTATION_MULTICHECKBOX => ProfileField::PRESENTATION_SELECT,
+            \BOL_QuestionService::QUESTION_PRESENTATION_FSELECT => ProfileField::PRESENTATION_SELECT,
+            \BOL_QuestionService::QUESTION_PRESENTATION_RADIO => ProfileField::PRESENTATION_SELECT,
+            \BOL_QuestionService::QUESTION_PRESENTATION_SELECT => ProfileField::PRESENTATION_SELECT,
             \BOL_QuestionService::QUESTION_PRESENTATION_CHECKBOX => ProfileField::PRESENTATION_SWITCH,
             \BOL_QuestionService::QUESTION_PRESENTATION_RANGE => ProfileField::PRESENTATION_RANGE
         ];
@@ -107,9 +107,15 @@ class ProfileRepository implements ProfileRepositoryInterface
      *
      * @return array
      */
-    private function getFieldConfigs(\BOL_Question $questionDto, $values)
+    protected function getFieldConfigs(\BOL_Question $questionDto, $values)
     {
         $questionConfigs = empty($questionDto->custom) ? [] : json_decode($questionDto->custom, true);
+
+        if ($questionDto->name === "email") {
+            return [
+                "format" => ProfileField::TEXT_FORMAT_EMAIL,
+            ];
+        }
 
         switch ($questionDto->presentation) {
             case \BOL_QuestionService::QUESTION_PRESENTATION_BIRTHDATE:
@@ -123,26 +129,39 @@ class ProfileRepository implements ProfileRepositoryInterface
                     "maxDate" => (new \DateTime())->setDate($maxYear, 12, 31)
                 ];
 
+            case \BOL_QuestionService::QUESTION_PRESENTATION_URL:
+                return [
+                    "format" => ProfileField::TEXT_FORMAT_URL,
+                ];
+
             case \BOL_QuestionService::QUESTION_PRESENTATION_PASSWORD:
                 return [
+                    "secure" => true,
                     "minLength" => \UTIL_Validator::PASSWORD_MIN_LENGTH,
                     "maxLength" => \UTIL_Validator::PASSWORD_MAX_LENGTH,
                 ];
 
+            case \BOL_QuestionService::QUESTION_PRESENTATION_TEXTAREA:
+                return [
+                    "multiline" => true,
+                ];
+
+            case \BOL_QuestionService::QUESTION_PRESENTATION_MULTICHECKBOX:
+                $multiple = true;
             case \BOL_QuestionService::QUESTION_PRESENTATION_SELECT:
             case \BOL_QuestionService::QUESTION_PRESENTATION_RADIO:
             case \BOL_QuestionService::QUESTION_PRESENTATION_FSELECT:
-            case \BOL_QuestionService::QUESTION_PRESENTATION_MULTICHECKBOX:
-                $items = [];
+                $options = [];
                 foreach ($values as $value) {
-                    $items[] = [
+                    $options[] = [
                         "label" => $this->questionService->getQuestionValueLang($value->questionName, $value->value),
                         "value" => $value->value
                     ];
                 }
 
                 return [
-                    "items" => $items
+                    "multiple" => !empty($multiple),
+                    "options" => $options
                 ];
         }
 
@@ -218,7 +237,7 @@ class ProfileRepository implements ProfileRepositoryInterface
 
             $value = empty($data[$userId][$fieldId])
                 ? null :
-                $this->convertQuestionValue(
+                $this->extractQuestionValue(
                     $questions[$fieldId],
                     $data[$userId][$fieldId],
                     empty($questionValues[$fieldId]) ? [] : $questionValues[$fieldId]["values"]
@@ -234,7 +253,7 @@ class ProfileRepository implements ProfileRepositoryInterface
         return $out;
     }
 
-    private function convertQuestionValue(\BOL_Question $question, $value, $questionValues)
+    protected function extractQuestionValue(\BOL_Question $question, $value, $questionValues)
     {
         $type = $question->type;
 
@@ -266,21 +285,45 @@ class ProfileRepository implements ProfileRepositoryInterface
         return $value;
     }
 
+    protected function convertInputValue(\BOL_Question $question, $value)
+    {
+        switch ($question->type) {
+            case \BOL_QuestionService::QUESTION_VALUE_TYPE_SELECT:
+            case \BOL_QuestionService::QUESTION_VALUE_TYPE_FSELECT:
+            case \BOL_QuestionService::QUESTION_VALUE_TYPE_MULTISELECT:
+                return array_sum($value);
+
+            case \BOL_QuestionService::QUESTION_VALUE_TYPE_DATETIME:
+                /* @var $value \DateTime */
+                return $value->format("Y-m-d H:i:s");
+
+            case \BOL_QuestionService::QUESTION_VALUE_TYPE_BOOLEAN:
+                return $value ? '1' : '0';
+        }
+
+        return $value;
+    }
+
     /**
      * Oxwall do not have special entities for profile field values
      * We will generated virtual ids ("[\"fieldId\", \"userId\"]") for them
      *
-     * @param string[] $userIds
-     * @param string[] $fieldIds
-     * @return string[]
+     * @param string $userId
+     * @param string $fieldId
+     * @return string
      */
+    protected function generateFieldValueId($userId, $fieldId)
+    {
+        return json_encode([(string) $fieldId, (string) $userId]);
+    }
+
     public function findFieldValuesIds(array $userIds, array $fieldIds)
     {
         $out = [];
         foreach ($userIds as $userId) {
             $out[$userId] = [];
             foreach ($fieldIds as $id) {
-                $out[$userId][] = json_encode([$id, $userId]);
+                $out[$userId][] = $this->generateFieldValueId($userId, $id);
             }
         }
 
@@ -289,6 +332,18 @@ class ProfileRepository implements ProfileRepositoryInterface
 
     public function saveFieldValues($userId, array $values)
     {
-        return $this->questionService->saveQuestionsData($values, $userId);
+        $fieldIds = array_keys($values);
+        $questionDtos = $this->questionService->findQuestionByNameList($fieldIds);
+
+        $out = [];
+        $dataToSave = [];
+        foreach ($questionDtos as $questionDto) {
+            $dataToSave[$questionDto->name] = $this->convertInputValue($questionDto, $values[$questionDto->name]);
+            $out[] = $this->generateFieldValueId($userId, $questionDto->name);
+        }
+
+        $this->questionService->saveQuestionsData($dataToSave, $userId);
+
+        return $out;
     }
 }
