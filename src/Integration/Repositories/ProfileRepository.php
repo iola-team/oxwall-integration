@@ -255,15 +255,15 @@ class ProfileRepository implements ProfileRepositoryInterface
 
     protected function extractQuestionValue(\BOL_Question $question, $value, $questionValues)
     {
-        $type = $question->type;
-
         if ($question->name === "joinStamp") {
             return new \DateTime("@" . $value);
         }
 
-        switch ($type) {
+        switch ($question->type) {
             case \BOL_QuestionService::QUESTION_VALUE_TYPE_SELECT:
             case \BOL_QuestionService::QUESTION_VALUE_TYPE_FSELECT:
+                return [$value];
+
             case \BOL_QuestionService::QUESTION_VALUE_TYPE_MULTISELECT:
                 $out = [];
 
