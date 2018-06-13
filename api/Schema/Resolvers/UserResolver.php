@@ -48,6 +48,16 @@ class UserResolver extends EntityResolver
     /**
      * @var DataLoaderInterface
      */
+    protected $chatLoader;
+
+    /**
+     * @var DataLoaderInterface
+     */
+    protected $chatCountsLoader;
+
+    /**
+     * @var DataLoaderInterface
+     */
     protected $infoLoader;
 
     /**
@@ -89,6 +99,14 @@ class UserResolver extends EntityResolver
 
         $this->infoLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
             return $userRepository->getInfo($ids, $args);
+        });
+
+        $this->chatLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
+            return $userRepository->findChats($ids, $args);
+        });
+
+        $this->chatCountsLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
+            return $userRepository->countChats($ids, $args);
         });
     }
 
@@ -133,6 +151,18 @@ class UserResolver extends EntityResolver
 
             case "avatar":
                 return $this->avatarLoader->load($user->id, $args);
+
+            case "chats":
+                return $this->connectionFactory->create(
+                    $user,
+                    $args,
+                    function($args) use($user) {
+                        return $this->chatLoader->load($user->id, $args);
+                    },
+                    function($args) use($user) {
+                        return $this->chatCountsLoader->load($user->id, $args);
+                    }
+                );
 
             /**
              * Pass user entity as root value to UserInfo and UserProfile resolvers

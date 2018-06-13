@@ -92,12 +92,12 @@ type User implements Node {
     activityTime: Date!
 
     info: UserInfo!
+    profile: Profile!
 
     avatar: Avatar
     friends(first: Int = 10, after: Cursor): UserFriendsConnection!
     photos(first: Int = 10, after: Cursor): UserPhotoConnection!
-
-    profile: Profile!
+    chats(first: Int = 10, after: Cursor): UserChatsConnection!
 }
 
 type UserInfo {
@@ -314,4 +314,25 @@ type PhotoEdge implements Edge {
 type Comment implements Node {
     id: ID!
     text: String!
+}
+
+
+
+type Chat  implements Node {
+    id: ID!
+    title: String
+    user: User!
+    participants: [User!]!
+}
+
+type ChatEdge implements Edge {
+    node: Chat!
+    cursor: Cursor!
+}
+
+type UserChatsConnection implements Connection {
+    pageInfo: PageInfo!
+    metaInfo: ConnectionMetaInfo!
+    edges: [ChatEdge!]!
+    totalCount: Int
 }

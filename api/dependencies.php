@@ -25,6 +25,7 @@ use Everywhere\Api\Schema\ConnectionFactory;
 use Everywhere\Api\Schema\Relay;
 use Everywhere\Api\Schema\Resolvers\AccountTypeResolver;
 use Everywhere\Api\Schema\Resolvers\AvatarMutationResolver;
+use Everywhere\Api\Schema\Resolvers\ChatResolver;
 use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
@@ -305,6 +306,13 @@ return [
         return new ProfileResolver(
             $container->getIntegration()->getProfileRepository(),
             $container[DataLoaderFactory::class]
+        );
+    },
+
+    ChatResolver::class => function(ContainerInterface $container) {
+        return new ChatResolver(
+            $container->getIntegration()->getChatRepository(),
+                $container[DataLoaderFactory::class]
         );
     },
 

@@ -178,6 +178,26 @@ class UserRepository implements UserRepositoryInterface
         return $out;
     }
 
+    public function findChats($ids, array $args)
+    {
+        $out = [];
+        foreach ($ids as $id) {
+            $out[$id] = [];
+        }
+
+        return $out;
+    }
+
+    public function countChats($ids, array $args)
+    {
+        $out = [];
+        foreach ($ids as $id) {
+            $out[$id] = 0;
+        }
+
+        return $out;
+    }
+
     public function getInfo($ids, array $args)
     {
         $mapInfoToQuestion = [

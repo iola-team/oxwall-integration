@@ -34,4 +34,9 @@ interface IntegrationInterface
      * @return ProfileRepositoryInterface
      */
     public function getProfileRepository();
+
+    /**
+     * @return ChatRepositoryInterface
+     */
+    public function getChatRepository();
 }

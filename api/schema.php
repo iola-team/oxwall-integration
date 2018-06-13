@@ -6,6 +6,7 @@ use Everywhere\Api\Schema\Resolvers\AccountTypeResolver;
 use Everywhere\Api\Schema\Resolvers\AuthMutationResolver;
 use Everywhere\Api\Schema\Resolvers\AvatarMutationResolver;
 use Everywhere\Api\Schema\Resolvers\AvatarResolver;
+use Everywhere\Api\Schema\Resolvers\ChatResolver;
 use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
@@ -37,6 +38,7 @@ return [
         "UserConnection" => Relay\ConnectionResolver::class,
         "UserFriendsConnection" => Relay\ConnectionResolver::class,
         "UserPhotoConnection" => Relay\ConnectionResolver::class,
+        "UserChatsConnection" => Relay\ConnectionResolver::class,
 
         "Photo" => PhotoResolver::class,
         "Comment" => CommentResolver::class,
@@ -46,6 +48,7 @@ return [
         "ProfileFieldValue" => ProfileFieldValueResolver::class,
         "ProfileFieldSection" => ProfileFieldSectionResolver::class,
         "Profile" => ProfileResolver::class,
+        "Chat" => ChatResolver::class,
 
         // Scalar types
         "Value" => ValueResolver::class,
