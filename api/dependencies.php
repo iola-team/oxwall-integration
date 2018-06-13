@@ -28,6 +28,7 @@ use Everywhere\Api\Schema\Resolvers\AvatarMutationResolver;
 use Everywhere\Api\Schema\Resolvers\ChatResolver;
 use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
+use Everywhere\Api\Schema\Resolvers\MessageResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoMutationResolver;
 use Everywhere\Api\Schema\Resolvers\PresentationAwareTypeResolver;
@@ -312,7 +313,15 @@ return [
     ChatResolver::class => function(ContainerInterface $container) {
         return new ChatResolver(
             $container->getIntegration()->getChatRepository(),
-                $container[DataLoaderFactory::class]
+            $container[DataLoaderFactory::class],
+            $container[ConnectionFactoryInterface::class]
+        );
+    },
+
+    MessageResolver::class => function(ContainerInterface $container) {
+        return new MessageResolver(
+            $container->getIntegration()->getChatRepository(),
+            $container[DataLoaderFactory::class]
         );
     },
 

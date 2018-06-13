@@ -80,7 +80,7 @@ interface UserRepositoryInterface extends AuthRepositoryInterface
     /**
      * @param mixed[] $ids
      * @param mixed[] $args
-     * @return int
+     * @return int[]
      */
     public function countChats($ids, array $args);
 

@@ -18,6 +18,22 @@ class UserRepository implements UserRepositoryInterface
 {
     public $counter = 0;
 
+    /**
+     * @var \MAILBOX_BOL_ConversationService
+     */
+    protected $conversationService;
+
+    /**
+     * @var \MAILBOX_BOL_ConversationDao
+     */
+    protected $conversationDao;
+
+    public function __construct()
+    {
+        $this->conversationService = \MAILBOX_BOL_ConversationService::getInstance();
+        $this->conversationDao = \MAILBOX_BOL_ConversationDao::getInstance();
+    }
+
     public function convertDisplayName($displayName, $postfix = 0)
     {
         $displayName = preg_replace('/-/', '_', \URLify::filter($displayName));
@@ -180,9 +196,15 @@ class UserRepository implements UserRepositoryInterface
 
     public function findChats($ids, array $args)
     {
+        $activeModes = $this->conversationService->getActiveModeList();
+
         $out = [];
         foreach ($ids as $id) {
             $out[$id] = [];
+            $conversationInfoList = $this->conversationDao->findConversationItemListByUserId($id, $activeModes, $args["offset"], $args["count"]);
+            foreach ($conversationInfoList as $conversationInfo) {
+                $out[$id][] = $conversationInfo["id"];
+            }
         }
 
         return $out;
@@ -192,7 +214,7 @@ class UserRepository implements UserRepositoryInterface
     {
         $out = [];
         foreach ($ids as $id) {
-            $out[$id] = 0;
+            $out[$id] = $this->conversationService->countConversationListByUserId($id);
         }
 
         return $out;

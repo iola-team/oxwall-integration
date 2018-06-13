@@ -8,9 +8,4 @@ class Chat extends AbstractEntity
      * @var string
      */
     public $userId;
-
-    /**
-     * @var string
-     */
-    public $title;
 }

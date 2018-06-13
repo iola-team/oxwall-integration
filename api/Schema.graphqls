@@ -320,9 +320,9 @@ type Comment implements Node {
 
 type Chat  implements Node {
     id: ID!
-    title: String
     user: User!
     participants: [User!]!
+    messages: ChatMessagesConnection!
 }
 
 type ChatEdge implements Edge {
@@ -334,5 +334,24 @@ type UserChatsConnection implements Connection {
     pageInfo: PageInfo!
     metaInfo: ConnectionMetaInfo!
     edges: [ChatEdge!]!
+    totalCount: Int
+}
+
+type Message implements Node {
+    id: ID!
+    user: User!
+    chat: Chat!
+    content: String
+}
+
+type MessageEdge implements Edge {
+    node: Message!
+    cursor: Cursor!
+}
+
+type ChatMessagesConnection implements Connection {
+    pageInfo: PageInfo!
+    metaInfo: ConnectionMetaInfo!
+    edges: [MessageEdge!]!
     totalCount: Int
 }

@@ -9,6 +9,7 @@ use Everywhere\Api\Schema\Resolvers\AvatarResolver;
 use Everywhere\Api\Schema\Resolvers\ChatResolver;
 use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
+use Everywhere\Api\Schema\Resolvers\MessageResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoMutationResolver;
 use Everywhere\Api\Schema\Resolvers\PresentationAwareTypeResolver;
@@ -49,6 +50,8 @@ return [
         "ProfileFieldSection" => ProfileFieldSectionResolver::class,
         "Profile" => ProfileResolver::class,
         "Chat" => ChatResolver::class,
+        "ChatMessagesConnection" => Relay\ConnectionResolver::class,
+        "Message" => MessageResolver::class,
 
         // Scalar types
         "Value" => ValueResolver::class,
