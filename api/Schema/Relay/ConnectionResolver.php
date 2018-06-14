@@ -53,16 +53,26 @@ class ConnectionResolver extends CompositeResolver
 
     private function getEdges($items, ConnectionObjectInterface $connection)
     {
+        $items = $this->sliceEdges($items, $connection);
+
         $edges = [];
         $firstItem = array_shift($items);
-        $after = $this->getPagination($connection)["after"];
-        $filter = $after ? $after : $this->getFilter($connection);
+        $pagination = $this->getPagination($connection);
+        $filter = $this->getFilter($connection);
+
+        /**
+         * Cursor may include any extra data we pass here.
+         * This data can be the connection filter...
+         *
+         * TODO: Review the code later and add filter data to cursors if needed
+         */
+        $cursor = $pagination["after"] ? $pagination["after"] : [];
         
         if ($firstItem) {
-            $firstEdge = $this->edgeFactory->createAfter($filter, $firstItem);
+            $firstEdge = $this->edgeFactory->createAfter($cursor, $firstItem);
             $edges[] = $firstEdge;
         } else {
-            $firstEdge = $this->edgeFactory->create($filter);
+            $firstEdge = $this->edgeFactory->create($cursor);
         }
 
         $resultPromise = $firstEdge->getCursor();
@@ -87,25 +97,34 @@ class ConnectionResolver extends CompositeResolver
         $filter = $this->getFilter($connection);
         $offset = 0;
         $count = $pagination['first'] + 1;
+        $cursorArg = [];
 
         if ($pagination["after"]) {
             $offset = $pagination["after"]["offset"] + 1;
-            $filter = $pagination["after"];
+            $cursorArg["after"] = $pagination["after"]["cursor"];
         }
 
         return $this->getItems(
             $connection,
-            $filter,
-            $offset,
-            $count
+            array_merge($filter, $cursorArg, [
+                "offset" => $offset,
+                "count" => $count
+            ])
         );
+    }
+
+    private function sliceEdges($items, ConnectionObjectInterface $connection)
+    {
+        $count = $this->getPagination($connection)["first"];
+
+        return array_slice($items, 0, $count);
     }
 
     private function getPageInfo($items, ConnectionObjectInterface $connection)
     {
         $count = $this->getPagination($connection)["first"];
         $edgesPromise = $this->getEdges(
-            array_slice($items, 0, $count),
+            $this->sliceEdges($items, $connection),
             $connection
         );
 
@@ -150,12 +169,9 @@ class ConnectionResolver extends CompositeResolver
      *
      * @return \GraphQL\Executor\Promise\Promise
      */
-    protected function getItems(ConnectionObjectInterface $connection, array $filter, $offset, $count)
+    protected function getItems(ConnectionObjectInterface $connection, array $filter)
     {
-        return $connection->getItems(array_merge($filter, [
-            "offset" => $offset,
-            "count" => $count
-        ]));
+        return $connection->getItems($filter);
     }
 
     /**

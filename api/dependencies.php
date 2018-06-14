@@ -28,6 +28,8 @@ use Everywhere\Api\Schema\Resolvers\AvatarMutationResolver;
 use Everywhere\Api\Schema\Resolvers\ChatResolver;
 use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
+use Everywhere\Api\Schema\Resolvers\MessageConnectionResolver;
+use Everywhere\Api\Schema\Resolvers\MessageEdgeFactory;
 use Everywhere\Api\Schema\Resolvers\MessageResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoMutationResolver;
@@ -242,15 +244,15 @@ return [
         );
     },
 
-    Relay\DefaultEdgeFactory::class => function(ContainerInterface $container) {
-        return new Relay\DefaultEdgeFactory(
+    Relay\EdgeFactory::class => function(ContainerInterface $container) {
+        return new Relay\EdgeFactory(
             $container[PromiseAdapter::class]
         );
     },
 
     Relay\ConnectionResolver::class => function(ContainerInterface $container) {
         return new Relay\ConnectionResolver(
-            $container[Relay\DefaultEdgeFactory::class]
+            $container[Relay\EdgeFactory::class]
         );
     },
 
@@ -322,6 +324,20 @@ return [
         return new MessageResolver(
             $container->getIntegration()->getChatRepository(),
             $container[DataLoaderFactory::class]
+        );
+    },
+
+    MessageEdgeFactory::class => function(ContainerInterface $container) {
+        return new MessageEdgeFactory(
+            $container->getIntegration()->getChatRepository(),
+            $container[DataLoaderFactory::class],
+            $container[PromiseAdapter::class]
+        );
+    },
+
+    MessageConnectionResolver::class => function(ContainerInterface $container) {
+        return new MessageConnectionResolver(
+            $container[MessageEdgeFactory::class]
         );
     },
 

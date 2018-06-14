@@ -322,7 +322,7 @@ type Chat  implements Node {
     id: ID!
     user: User!
     participants: [User!]!
-    messages: ChatMessagesConnection!
+    messages(first: Int = 10, after: Cursor): ChatMessagesConnection!
 }
 
 type ChatEdge implements Edge {

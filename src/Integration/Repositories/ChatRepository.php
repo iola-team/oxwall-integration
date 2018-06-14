@@ -74,7 +74,7 @@ class ChatRepository implements ChatRepositoryInterface
     public function findChatsMessageIds($chatIds, $args)
     {
         $count = $args["count"];
-        $afterTimestamp = empty($args["after"]) ? 0 : $args["after"]->getTimestamp();
+        $afterTimestamp = empty($args["after"]["time"]) ? 0 : $args["after"]["time"]->getTimestamp();
 
         $out = [];
         foreach ($chatIds as $id) {
@@ -94,15 +94,9 @@ class ChatRepository implements ChatRepositoryInterface
 
     public function countChatsMessages($chatIds, $args)
     {
-        $afterTimestamp = empty($args["after"]) ? 0 : $args["after"]->getTimestamp();
-
         $out = [];
         foreach ($chatIds as $id) {
-            $example = new \OW_Example();
-            $example->andFieldEqual("conversationId", $id);
-            $example->andFieldGreaterThan("timeStamp", $afterTimestamp);
-
-            $out[$id] = $this->messageDao->countByExample($example);
+            $out[$id] = $this->messageDao->findCountByConversationId($id);
         }
 
         return $out;
