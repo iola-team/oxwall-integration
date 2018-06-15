@@ -10,7 +10,7 @@ class CursorResolver implements ScalarTypeResolverInterface
 {
     public function serialize($value)
     {
-        return json_encode($value);// base64_encode(serialize($value));
+        return base64_encode(serialize($value));
     }
 
     public function parseValue($value)
@@ -21,13 +21,13 @@ class CursorResolver implements ScalarTypeResolverInterface
             );
         }
 
-        return json_decode($value, true); //unserialize(base64_decode($value));
+        return unserialize(base64_decode($value));
     }
 
     public function parseLiteral($ast)
     {
         if ($ast instanceof StringValueNode) {
-            return json_decode($ast->value, true); //unserialize(base64_decode($ast->value));
+            return unserialize(base64_decode($ast->value));
         }
 
         return null;
