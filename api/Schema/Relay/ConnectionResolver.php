@@ -113,12 +113,12 @@ class ConnectionResolver extends CompositeResolver
         $filter = $this->getFilter($connection);
         $cursorArg = [];
 
-        if (!empty($pagination["after"]["data"])) {
-            $cursorArg["after"] = $pagination["after"]["data"];
+        if ($pagination["after"]) {
+            $cursorArg["after"] = $pagination["after"];
         }
 
-        if (!empty($pagination["before"]["data"])) {
-            $cursorArg["before"] = $pagination["before"]["data"];
+        if ($pagination["before"]) {
+            $cursorArg["before"] = $pagination["before"];
         }
 
         $slice = $this->getSlice($connection, $totalCount);

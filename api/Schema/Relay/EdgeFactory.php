@@ -16,9 +16,9 @@ class EdgeFactory implements EdgeFactoryInterface
         $this->promiseAdapter = $promiseAdapter;
     }
 
-    protected function getData($node, $fromCursor, $direction)
+    protected function buildCursor($node, $fromCursor, $direction)
     {
-        return null;
+        return [];
     }
 
     protected function loadNode($node)
@@ -40,16 +40,9 @@ class EdgeFactory implements EdgeFactoryInterface
         });
 
         return $nodePromise->then(function($node) use($data, $direction) {
-            $cursor = array_merge($data, [
+            return array_merge($data, $this->buildCursor($node, $data, $direction), [
                 "offset" => $this->calculateOffset($data, $direction),
             ]);
-
-            $data = $this->getData($node, $data, $direction);
-            if (!empty($data)) {
-                $cursor["data"] = $data;
-            }
-
-            return $cursor;
         });
     }
 
