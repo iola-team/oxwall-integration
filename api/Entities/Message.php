@@ -18,4 +18,9 @@ class Message extends AbstractEntity
      * @var string
      */
     public $content;
+
+    /**
+     * @var \DateTime
+     */
+    public $time;
 }

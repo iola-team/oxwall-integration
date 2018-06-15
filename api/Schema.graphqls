@@ -95,9 +95,9 @@ type User implements Node {
     profile: Profile!
 
     avatar: Avatar
-    friends(first: Int = 10, after: Cursor): UserFriendsConnection!
-    photos(first: Int = 10, after: Cursor): UserPhotoConnection!
-    chats(first: Int = 10, after: Cursor): UserChatsConnection!
+    friends(first: Int, after: Cursor, last: Int, before: Cursor): UserFriendsConnection!
+    photos(first: Int, after: Cursor, last: Int, before: Cursor): UserPhotoConnection!
+    chats(first: Int, after: Cursor, last: Int, before: Cursor): UserChatsConnection!
 }
 
 type UserInfo {
@@ -322,7 +322,7 @@ type Chat  implements Node {
     id: ID!
     user: User!
     participants: [User!]!
-    messages(first: Int = 10, after: Cursor): ChatMessagesConnection!
+    messages(first: Int, after: Cursor, last: Int, before: Cursor): ChatMessagesConnection!
 }
 
 type ChatEdge implements Edge {
@@ -342,6 +342,7 @@ type Message implements Node {
     user: User!
     chat: Chat!
     content: String
+    time: Date!
 }
 
 type MessageEdge implements Edge {

@@ -16,11 +16,9 @@ class EdgeFactory implements EdgeFactoryInterface
         $this->promiseAdapter = $promiseAdapter;
     }
 
-    protected function buildCursor($node, $fromCursor, $offset)
+    protected function getData($node, $fromCursor, $direction)
     {
-        return [
-            "offset" => isset($fromCursor["offset"]) ? $fromCursor["offset"] + $offset : 0
-        ];
+        return null;
     }
 
     protected function loadNode($node)
@@ -28,19 +26,30 @@ class EdgeFactory implements EdgeFactoryInterface
         return $node;
     }
 
-    private function getCursor($node, $data, $offset = 0)
+    private function calculateOffset($data, $direction)
+    {
+        $out = isset($data["offset"]) ? $data["offset"] + $direction : 0;
+
+        return $out < 0 ? 0 : $out;
+    }
+
+    private function getCursor($node, $data, $direction = 0)
     {
         $nodePromise = $this->promiseAdapter->createFulfilled($node)->then(function($node) {
             return $this->loadNode($node);
         });
 
-        return $nodePromise->then(function($node) use($data, $offset) {
-            $fromCursor = isset($data["cursor"]) ? $data["cursor"] : null;
-
-            return array_merge($data, [
-                "offset" => isset($data["offset"]) ? $data["offset"] + $offset : 0,
-                "cursor" => $this->buildCursor($node, $fromCursor, $offset),
+        return $nodePromise->then(function($node) use($data, $direction) {
+            $cursor = array_merge($data, [
+                "offset" => $this->calculateOffset($data, $direction),
             ]);
+
+            $data = $this->getData($node, $data, $direction);
+            if (!empty($data)) {
+                $cursor["data"] = $data;
+            }
+
+            return $cursor;
         });
     }
 

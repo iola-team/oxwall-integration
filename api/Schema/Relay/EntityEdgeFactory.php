@@ -19,7 +19,7 @@ class EntityEdgeFactory extends EdgeFactory
 
     protected function loadNode($node)
     {
-        if ($node instanceof EntityInterface) {
+        if (!$node || $node instanceof EntityInterface) {
             return $node;
         }
 

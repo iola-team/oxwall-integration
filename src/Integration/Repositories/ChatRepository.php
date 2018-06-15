@@ -51,6 +51,7 @@ class ChatRepository implements ChatRepositoryInterface
             $message->userId = $messageDto->senderId;
             $message->chatId = $messageDto->conversationId;
             $message->content = $messageDto->text;
+            $message->time = new \DateTime("@" . $messageDto->timeStamp);
 
             $out[$id] = $message;
         }
@@ -73,17 +74,19 @@ class ChatRepository implements ChatRepositoryInterface
 
     public function findChatsMessageIds($chatIds, $args)
     {
-        $count = $args["count"];
-        $afterTimestamp = empty($args["after"]["time"]) ? 0 : $args["after"]["time"]->getTimestamp();
-
         $out = [];
         foreach ($chatIds as $id) {
             $out[$id] = [];
 
+            $example = new \OW_Example();
+            $example->andFieldEqual("conversationId", $id);
+            $example->setLimitClause($args["offset"], $args["count"]);
+
             /**
              * @var $messageDtos \MAILBOX_BOL_Message[]
              */
-            $messageDtos = $this->messageDao->findListByConversationId($id, $count, $afterTimestamp);
+            $messageDtos = $this->messageDao->findListByExample($example);
+
             foreach ($messageDtos as $messageDto) {
                 $out[$id][] = $messageDto->id;
             }
