@@ -2,15 +2,15 @@
 
 namespace Everywhere\Api\Contract\Integration;
 
+use Everywhere\Api\Entities\Chat;
 use Everywhere\Api\Entities\Message;
-use Everywhere\Api\Entities\User;
 
 interface ChatRepositoryInterface
 {
     /**
      * @param string[] $ids
      *
-     * @return User[]
+     * @return Chat[]
      */
     public function findChatsByIds($ids);
 
