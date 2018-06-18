@@ -342,7 +342,7 @@ type Message implements Node {
     user: User!
     chat: Chat!
     content: String
-    time: Date!
+    createdAt: Date!
 }
 
 type MessageEdge implements Edge {

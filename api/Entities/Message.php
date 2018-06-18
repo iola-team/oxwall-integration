@@ -22,5 +22,5 @@ class Message extends AbstractEntity
     /**
      * @var \DateTime
      */
-    public $time;
+    public $createdAt;
 }
