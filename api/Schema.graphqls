@@ -337,11 +337,15 @@ type UserChatsConnection implements Connection {
     totalCount: Int
 }
 
+type MessageContent {
+    text: String
+}
+
 type Message implements Node {
     id: ID!
     user: User!
     chat: Chat!
-    content: String
+    content: MessageContent!
     createdAt: Date!
 }
 

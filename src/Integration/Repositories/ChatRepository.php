@@ -50,8 +50,10 @@ class ChatRepository implements ChatRepositoryInterface
             $message = new Message($messageDto->id);
             $message->userId = $messageDto->senderId;
             $message->chatId = $messageDto->conversationId;
-            $message->content = $messageDto->text;
             $message->createdAt = new \DateTime("@" . $messageDto->timeStamp);
+            $message->content = [
+                "text" => $messageDto->text
+            ];
 
             $out[$id] = $message;
         }

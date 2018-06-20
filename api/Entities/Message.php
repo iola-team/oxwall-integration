@@ -15,7 +15,7 @@ class Message extends AbstractEntity
     public $chatId;
 
     /**
-     * @var string
+     * @var array
      */
     public $content;
 
