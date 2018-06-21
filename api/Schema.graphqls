@@ -299,6 +299,7 @@ type AvatarCreatePayload implements CreatePayload {
 type Photo implements Node {
     id: ID!
     url: String!
+    createdAt: Int!
 
     user: User!
     comments(offset: Int = 0, count: Int = 10): [Comment]

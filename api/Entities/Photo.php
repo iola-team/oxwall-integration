@@ -20,4 +20,9 @@ class Photo extends AbstractEntity
      * @var int
      */
     public $userId;
+
+    /**
+     * @var int
+     */
+    public $createdAt;
 }
