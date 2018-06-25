@@ -54,6 +54,7 @@ type Mutation {
     addUserPhoto(input: UserPhotoCreateInput!): UserPhotoCreatePayload!
     deleteUserPhoto(id: ID!): UserPhotoDeletePayload!
     saveProfileFieldValues(input: ProfileFieldSaveInput!): ProfileFieldSavePayload!
+    addMessage(input: MessageInput!, after: Cursor, before: Cursor, at: Cursor): MessageCreatePayload!
 }
 
 input SignInUserInput {
@@ -360,3 +361,20 @@ type ChatMessagesConnection implements Connection {
     edges: [MessageEdge!]!
     totalCount: Int
 }
+
+input MessageContentInput {
+    text: String,
+}
+
+input MessageInput {
+    userId: ID!
+    chatId: ID!
+    content: MessageContentInput!
+}
+
+type MessageCreatePayload {
+    user: User!,
+    node: Message!
+    edge: MessageEdge!
+}
+

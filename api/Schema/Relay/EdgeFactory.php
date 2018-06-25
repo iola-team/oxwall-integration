@@ -5,6 +5,7 @@ namespace Everywhere\Api\Schema\Relay;
 use Everywhere\Api\Contract\Entities\EntityInterface;
 use Everywhere\Api\Contract\Schema\Relay\EdgeFactoryInterface;
 use Everywhere\Api\Contract\Schema\Relay\EdgeObjectInterface;
+use GraphQL\Error\InvariantViolation;
 use GraphQL\Executor\Promise\PromiseAdapter;
 
 class EdgeFactory implements EdgeFactoryInterface
@@ -73,4 +74,36 @@ class EdgeFactory implements EdgeFactoryInterface
         return $this->createEdge($node, $cursor, 1);
     }
 
+    public function createFromArguments($arguments, $node)
+    {
+        $paginationArgs = [
+            "after" => null, "before" => null, "at" => null
+        ];
+
+
+        $filteredArgs = array_intersect_key($arguments, $paginationArgs);
+
+        if (count($filteredArgs) > 1) {
+            throw new InvariantViolation(
+                'You can specify only one cursor when creating an edge. The following are provided: '
+                . "`" . implode(array_keys($filteredArgs), '`, `') . "`"
+            );
+        }
+
+        $filteredArgs = array_merge($paginationArgs, $filteredArgs);
+
+        if ($filteredArgs["before"]) {
+            return $this->createBefore($filteredArgs["before"], $node);
+        }
+
+        if ($filteredArgs["after"]) {
+            return $this->createAfter($filteredArgs["after"], $node);
+        }
+
+        if ($filteredArgs["at"]) {
+            return $this->create($filteredArgs["at"], $node);
+        }
+
+        return $this->create([], $node);
+    }
 }

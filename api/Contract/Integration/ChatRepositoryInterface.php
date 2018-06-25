@@ -44,4 +44,12 @@ interface ChatRepositoryInterface
      * @return int[]
      */
     public function countChatsMessages($chatIds, $args);
+
+
+    /**
+     * @param array $args
+     *
+     * @return Message
+     */
+    public function addMessage($args);
 }

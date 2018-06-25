@@ -9,6 +9,7 @@ use Everywhere\Api\Schema\Resolvers\AvatarResolver;
 use Everywhere\Api\Schema\Resolvers\ChatResolver;
 use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
+use Everywhere\Api\Schema\Resolvers\MessageMutationResolver;
 use Everywhere\Api\Schema\Resolvers\MessageResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoMutationResolver;
@@ -71,7 +72,8 @@ return [
             AuthMutationResolver::class,
             AvatarMutationResolver::class,
             PhotoMutationResolver::class,
-            ProfileMutationResolver::class
+            ProfileMutationResolver::class,
+            MessageMutationResolver::class,
         ],
     ]
 ];

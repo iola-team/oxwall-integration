@@ -5,7 +5,6 @@ namespace Everywhere\Oxwall\Integration\Repositories;
 use Everywhere\Api\Contract\Integration\ChatRepositoryInterface;
 use Everywhere\Api\Entities\Chat;
 use Everywhere\Api\Entities\Message;
-use Everywhere\Api\Entities\User;
 
 class ChatRepository implements ChatRepositoryInterface
 {
@@ -84,6 +83,8 @@ class ChatRepository implements ChatRepositoryInterface
             $example->andFieldEqual("conversationId", $id);
             $example->setLimitClause($args["offset"], $args["count"]);
 
+            $example->setOrder('timeStamp DESC');
+
             /**
              * @var $messageDtos \MAILBOX_BOL_Message[]
              */
@@ -105,5 +106,17 @@ class ChatRepository implements ChatRepositoryInterface
         }
 
         return $out;
+    }
+
+    public function addMessage($args)
+    {
+        $userId = $args["userId"];
+        $chatId = $args["chatId"];
+        $content = $args["content"];
+
+        $chat = $this->conversationService->getConversation($chatId);
+        $messageDto = $this->conversationService->addMessage($chat, $userId, $content["text"]);
+
+        return $messageDto->id;
     }
 }
