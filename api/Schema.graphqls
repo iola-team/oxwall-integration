@@ -299,6 +299,7 @@ type AvatarCreatePayload implements CreatePayload {
 type Photo implements Node {
     id: ID!
     url: String!
+    caption: String!
     createdAt: Int!
 
     user: User!
