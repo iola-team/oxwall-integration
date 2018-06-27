@@ -10,12 +10,13 @@
     "require": {
         "slim/slim": "^3.10.0",
         "overblog/dataloader-php": "^0.5.2",
-        "tuupola/slim-jwt-auth": "^2.4.0",
+        "tuupola/slim-jwt-auth": "^2.4",
         "zendframework/zend-authentication": "^2.5",
         "pimple/pimple": "^3.2.3",
         "webonyx/graphql-php": "^0.12.0",
         "jbroadway/urlify": "^1.1.0",
-        "alroniks/dtms": "^0.5.2"
+        "alroniks/dtms": "^0.5.2",
+        "tuupola/cors-middleware": "^0.5.2"
     },
     "autoload": {
         "psr-4": {
