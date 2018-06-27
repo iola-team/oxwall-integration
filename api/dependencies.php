@@ -21,6 +21,7 @@ use Everywhere\Api\Contract\Schema\ViewerInterface;
 use Everywhere\Api\Middleware\GraphQLMiddleware;
 use Everywhere\Api\Middleware\AuthenticationMiddleware;
 use Everywhere\Api\Middleware\UploadMiddleware;
+use Everywhere\Api\Middleware\CorsMiddleware;
 use Everywhere\Api\Schema\ConnectionFactory;
 use Everywhere\Api\Schema\Relay;
 use Everywhere\Api\Schema\Resolvers\AccountTypeResolver;
@@ -87,6 +88,10 @@ return [
         return new GraphQLMiddleware(
             $container[ServerConfig::class]
         );
+    },
+
+    CorsMiddleware::class => function(ContainerInterface $container) {
+        return new CorsMiddleware();
     },
 
     UploadMiddleware::class => function(ContainerInterface $container) {
