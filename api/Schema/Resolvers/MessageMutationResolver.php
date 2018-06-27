@@ -22,6 +22,7 @@ class MessageMutationResolver extends CompositeResolver
 
                 return [
                     "user" => $args["input"]["userId"],
+                    "chat" => $args["input"]["chatId"],
                     "node" => $message,
                     "edge" => function() use ($edgeFactory, $args, $message) {
                         return $edgeFactory->createFromArguments($args, $message);

@@ -373,7 +373,8 @@ input MessageInput {
 }
 
 type MessageCreatePayload {
-    user: User!,
+    user: User!
+    chat: Chat!
     node: Message!
     edge: MessageEdge!
 }
