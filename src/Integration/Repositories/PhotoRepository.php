@@ -63,8 +63,9 @@ class PhotoRepository implements PhotoRepositoryInterface
             $photo = new Photo((int) $item["id"]);
             $photo->url = $item["url"];
             $photo->caption = $item["description"];
-            $photo->userId = (int) $item["userId"];
-            $photo->createdAt = (int) $item["addDatetime"];
+            $photo->userId = $item["userId"];
+            $createdAt = $item["addDatetime"];
+            $photo->createdAt = new \DateTime("@$createdAt");
 
             $out[$photo->id] = $photo;
         }

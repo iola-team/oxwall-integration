@@ -22,12 +22,12 @@ class Photo extends AbstractEntity
     public $caption;
 
     /**
-     * @var int
+     * @var string
      */
     public $userId;
 
     /**
-     * @var int
+     * @var \datetime
      */
     public $createdAt;
 }
