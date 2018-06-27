@@ -27,7 +27,7 @@ class Photo extends AbstractEntity
     public $userId;
 
     /**
-     * @var \datetime
+     * @var \DateTime
      */
     public $createdAt;
 }
