@@ -1,0 +1,39 @@
+id: 9
+event: message
+data: {"type":"SUBSCRIPTION_DATA","data":{"onMessageAdd":{"__typename":"User","id":"User:17","name":"Name 9"}}}
+
+id: 8
+event: message
+data: {"type":"SUBSCRIPTION_DATA","data":{"onMessageAdd":{"__typename":"User","id":"User:17","name":"Name 8"}}}
+
+id: 7
+event: message
+data: {"type":"SUBSCRIPTION_DATA","data":{"onMessageAdd":{"__typename":"User","id":"User:17","name":"Name 7"}}}
+
+id: 6
+event: message
+data: {"type":"SUBSCRIPTION_DATA","data":{"onMessageAdd":{"__typename":"User","id":"User:17","name":"Name 6"}}}
+
+id: 5
+event: message
+data: {"type":"SUBSCRIPTION_DATA","data":{"onMessageAdd":{"__typename":"User","id":"User:17","name":"Name 5"}}}
+
+id: 4
+event: message
+data: {"type":"SUBSCRIPTION_DATA","data":{"onMessageAdd":{"__typename":"User","id":"User:17","name":"Name 4"}}}
+
+id: 3
+event: message
+data: {"type":"SUBSCRIPTION_DATA","data":{"onMessageAdd":{"__typename":"User","id":"User:17","name":"Name 3"}}}
+
+id: 2
+event: message
+data: {"type":"SUBSCRIPTION_DATA","data":{"onMessageAdd":{"__typename":"User","id":"User:17","name":"Name 2"}}}
+
+id: 1
+event: message
+data: {"type":"SUBSCRIPTION_DATA","data":{"onMessageAdd":{"__typename":"User","id":"User:17","name":"Name 1"}}}
+
+id: 0
+event: message
+data: {"type":"SUBSCRIPTION_DATA","data":{"onMessageAdd":{"__typename":"User","id":"User:17","name":"Name 0"}}}
