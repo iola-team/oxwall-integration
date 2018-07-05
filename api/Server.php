@@ -3,6 +3,7 @@
 namespace Everywhere\Api;
 
 use Everywhere\Api\App\App;
+use Everywhere\Api\Contract\App\EventManagerInterface;
 use Everywhere\Api\Contract\Integration\IntegrationInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -37,6 +38,7 @@ class Server
         );
 
         require __DIR__ . '/routes.php';
+        require __DIR__ . '/init.php';
 
         return $app;
     }

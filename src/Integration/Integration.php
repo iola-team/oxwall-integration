@@ -8,15 +8,25 @@
 
 namespace Everywhere\Oxwall\Integration;
 
+use Everywhere\Api\Contract\App\EventManagerInterface;
+use Everywhere\Api\Contract\Integration\SubscriptionEventsRepositoryInterface;
 use Everywhere\Api\Contract\Integration\IntegrationInterface;
+use Everywhere\Api\Integration\Events\SubscriptionEvent;
 use Everywhere\Oxwall\Integration\Repositories\AvatarRepository;
 use Everywhere\Oxwall\Integration\Repositories\ProfileRepository;
+use Everywhere\Oxwall\Integration\Repositories\SubscriptionEventsRepository;
 use Everywhere\Oxwall\Integration\Repositories\UserRepository;
 use Everywhere\Oxwall\Integration\Repositories\PhotoRepository;
 use Everywhere\Oxwall\Integration\Repositories\CommentRepository;
 
 class Integration implements IntegrationInterface
 {
+    public function init(EventManagerInterface $eventManager)
+    {
+
+    }
+
+
     public static function getTmpDir() {
         return \OW::getPluginManager()->getPlugin('esapi')->getPluginFilesDir();
     }
@@ -44,5 +54,10 @@ class Integration implements IntegrationInterface
     public function getProfileRepository()
     {
         return new ProfileRepository();
+    }
+
+    public function getSubscriptionEventsRepository()
+    {
+        return new SubscriptionEventsRepository();
     }
 }

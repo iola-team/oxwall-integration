@@ -8,6 +8,7 @@ use Everywhere\Api\Schema\Resolvers\AvatarMutationResolver;
 use Everywhere\Api\Schema\Resolvers\AvatarResolver;
 use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
+use Everywhere\Api\Schema\Resolvers\NewMessageSubscriptionResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoMutationResolver;
 use Everywhere\Api\Schema\Resolvers\PresentationAwareTypeResolver;
@@ -68,5 +69,9 @@ return [
             PhotoMutationResolver::class,
             ProfileMutationResolver::class
         ],
+
+        "Subscription" => [
+            NewMessageSubscriptionResolver::class
+        ]
     ]
 ];
