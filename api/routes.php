@@ -16,7 +16,11 @@ use Everywhere\Api\Middleware\CorsMiddleware;
 use Everywhere\Api\Middleware\SSE\Stream;
 use Everywhere\Api\Middleware\SubscriptionMiddleware;
 use Everywhere\Api\Middleware\UploadMiddleware;
+use Everywhere\Api\Subscription\SubscriptionManager;
+use GraphQL\Deferred;
+use GraphQL\Executor\ExecutionResult;
 use GraphQL\Executor\Executor;
+use GraphQL\Executor\Promise\Adapter\SyncPromise;
 use GraphQL\Executor\Promise\Adapter\SyncPromiseAdapter;
 use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\GraphQL;
@@ -55,16 +59,29 @@ $app->get('/subscriptions/{id}', function(ServerRequestInterface $request, Respo
     $eventSource = $container[EventSourceInterface::class];
 
     /**
-     * @var $subscriptionFactory SubscriptionFactoryInterface
+     * @var SyncPromiseAdapter $promiseAdapter
      */
-    $subscriptionFactory = $container[SubscriptionFactoryInterface::class];
-    $subscription = $subscriptionFactory->create("messages.new");
-    $iterator = $subscription->subscribe();
+    $promiseAdapter = $container[PromiseAdapter::class];
+
+    /**
+     * @var BuilderInterface $schemaBuilder
+     */
+    $schemaBuilder = $container[BuilderInterface::class];
+    $context = $container[ContextInterface::class];
+    $schema = $schemaBuilder->build();
+
+    $subscriptionManager = new SubscriptionManager($schema, $context, $eventSource, $promiseAdapter);
+
+    $variableValues = [];
+    $query = "subscription { onMessageAdd }";
+
+    $subscriptionManager->subscribe($query, $variableValues);
+    $iterator = $subscriptionManager->getIterator();
 
     $endTimeStamp = time() + 30;
     $fromTimeOffset = null;
 
-    return $response->withBody(new Stream($iterator, function() use($eventSource, $endTimeStamp, &$fromTimeOffset) {
+    return $response->withBody(new Stream($iterator, function() use($subscriptionManager, $eventSource, $endTimeStamp, &$fromTimeOffset) {
         /**
          * Stop streaming if last longer then given time
          */
@@ -73,6 +90,7 @@ $app->get('/subscriptions/{id}', function(ServerRequestInterface $request, Respo
         }
 
         $fromTimeOffset = $eventSource->loadEvents($fromTimeOffset);
+        $subscriptionManager->run();
 
         usleep(500000); // Sleep for half a second
     }));
@@ -85,49 +103,65 @@ $app->get('/subscriptions-write', function(ServerRequestInterface $request, Resp
      */
     $eventManager = $container[EventManagerInterface::class];
 
-    $eventManager->emit(new SubscriptionEvent("messages.new", [
-        "messageId" => 1
-    ]));
+    $eventManager->emit(new SubscriptionEvent("messages.new", "Hello Subscription: " . time()));
 
-    $eventManager->emit(new SubscriptionEvent("messages.new", [
-        "messageId" => 2
-    ]));
-
-    usleep(100000);
-
-    $eventManager->emit(new SubscriptionEvent("messages.new", [
-        "messageId" => 3
-    ]));
-
-    usleep(100000);
-
-    $eventManager->emit(new SubscriptionEvent("messages.new", [
-        "messageId" => 4
-    ]));
-
-    usleep(100000);
-
-    $eventManager->emit(new SubscriptionEvent("messages.new", [
-        "messageId" => 5
-    ]));
-
-    usleep(100000);
-
-    $eventManager->emit(new SubscriptionEvent("messages.new", [
-        "messageId" => 6
-    ]));
-
-    usleep(100000);
-
-    $eventManager->emit(new SubscriptionEvent("messages.new", [
-        "messageId" => 7
-    ]));
+//    $eventManager->emit(new SubscriptionEvent("messages.new", [
+//        "messageId" => 2
+//    ]));
+//
+//    usleep(100000);
+//
+//    $eventManager->emit(new SubscriptionEvent("messages.new", [
+//        "messageId" => 3
+//    ]));
+//
+//    usleep(100000);
+//
+//    $eventManager->emit(new SubscriptionEvent("messages.new", [
+//        "messageId" => 4
+//    ]));
+//
+//    usleep(100000);
+//
+//    $eventManager->emit(new SubscriptionEvent("messages.new", [
+//        "messageId" => 5
+//    ]));
+//
+//    usleep(100000);
+//
+//    $eventManager->emit(new SubscriptionEvent("messages.new", [
+//        "messageId" => 6
+//    ]));
+//
+//    usleep(100000);
+//
+//    $eventManager->emit(new SubscriptionEvent("messages.new", [
+//        "messageId" => 7
+//    ]));
 
     return "\nDone!\n\n";
 });
 
 
 $app->get('/subscriptions-test', function(ServerRequestInterface $request, ResponseInterface $response) use ($container) {
+
+    /**
+     * Clear output buffer
+     */
+    while (ob_get_level() > 0) {
+        ob_end_flush();
+    }
+
+    /**
+     * Disable output buffer
+     */
+    ob_implicit_flush();
+
+
+    /**
+     * @var $eventSource EventSourceInterface
+     */
+    $eventSource = $container[EventSourceInterface::class];
 
     /**
      * @var SyncPromiseAdapter $promiseAdapter
@@ -144,9 +178,41 @@ $app->get('/subscriptions-test', function(ServerRequestInterface $request, Respo
     $rootValue = null;
     $variableValues = [];
     $query = "subscription { onMessageAdd }";
-    $promise = GraphQL::promiseToExecute($promiseAdapter, $schema, $query, $rootValue, $context, $variableValues);
 
-    $result = $promiseAdapter->wait($promise);
+//    $result = $promiseAdapter->wait($promise);
+
+    $endTimeStamp = time() + 30;
+    $fromTimeOffset = null;
+
+    while (true) {
+        /**
+         * @var $promise SyncPromise
+         */
+        $promise = GraphQL::promiseToExecute($promiseAdapter, $schema, $query, $rootValue, $context, $variableValues)->adoptedPromise;
+
+        while ($promise->state === SyncPromise::PENDING) {
+            /**
+             * Stop streaming if last longer then given time
+             */
+            if ($endTimeStamp <= time()) {
+                break 2;
+            }
+
+            $fromTimeOffset = $eventSource->loadEvents($fromTimeOffset);
+
+            Deferred::runQueue();
+            SyncPromise::runQueue();
+
+            usleep(500000);
+        }
+
+        /**
+         * @var $result ExecutionResult
+         */
+        $result = $promise->result;
+
+        print_r($result->data);
+    }
 
     return "\nDone!\n\n";
 });

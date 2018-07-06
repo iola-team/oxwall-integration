@@ -2,35 +2,41 @@
 
 namespace Everywhere\Api\Schema;
 
+use Everywhere\Api\Contract\App\EventManagerInterface;
 use Everywhere\Api\Contract\Integration\Events\SubscriptionEventInterface;
 use Everywhere\Api\Contract\Schema\SubscriptionInterface;
+use GraphQL\Executor\Promise\Adapter\SyncPromise;
 use League\Event\ListenerAcceptorInterface;
+use League\Event\ListenerInterface;
 
-class Subscription implements SubscriptionInterface
+class Subscription extends SyncPromise implements SubscriptionInterface
 {
     /**
-     * @var ListenerAcceptorInterface
+     * @var EventManagerInterface
      */
-    protected $eventSource;
-
-    /**
-     * @var \SplQueue
-     */
-    protected $queue;
-
+    protected $eventManager;
     protected $eventNames = [];
+    protected $listener;
 
-    public function __construct(array $eventNames, ListenerAcceptorInterface $eventSource)
+    public function __construct(array $eventNames, EventManagerInterface $eventManager)
     {
-        $this->eventSource = $eventSource;
+        $this->eventManager = $eventManager;
         $this->eventNames = $eventNames;
 
-        $this->queue = new \SplQueue();
-        $this->queue->setIteratorMode(\SplDoublyLinkedList::IT_MODE_DELETE);
+        $this->listener = function($event) {
+            $this->handleEvent($event);
+        };
+
+        $this->subscribe();
+        $this->then(function() {
+            $this->unsubscribe();
+        });
     }
 
     /**
      * @param SubscriptionEventInterface $event
+     *
+     * @throws
      */
     protected function handleEvent($event)
     {
@@ -38,20 +44,20 @@ class Subscription implements SubscriptionInterface
             return;
         }
 
-        $this->queue->enqueue($event->getData());
+        $this->resolve($event->getData());
     }
 
-    /**
-     * @return \Iterator
-     */
-    public function subscribe()
+    protected function unsubscribe()
     {
         foreach ($this->eventNames as $eventName) {
-            $this->eventSource->addListener($eventName, function($event) {
-                $this->handleEvent($event);
-            });
+            $this->eventManager->removeListener($eventName, $this->listener);
         }
+    }
 
-        return new \InfiniteIterator($this->queue);
+    protected function subscribe()
+    {
+        foreach ($this->eventNames as $eventName) {
+            $this->eventManager->addListener($eventName, $this->listener);
+        }
     }
 }

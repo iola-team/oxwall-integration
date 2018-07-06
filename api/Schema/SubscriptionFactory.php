@@ -2,26 +2,26 @@
 
 namespace Everywhere\Api\Schema;
 
+use Everywhere\Api\Contract\App\EventManagerInterface;
 use Everywhere\Api\Contract\Schema\SubscriptionFactoryInterface;
-use League\Event\ListenerAcceptorInterface;
 
 class SubscriptionFactory implements SubscriptionFactoryInterface
 {
     /**
-     * @var ListenerAcceptorInterface
+     * @var EventManagerInterface
      */
-    protected $eventSource;
+    protected $eventManager;
 
-    public function __construct(ListenerAcceptorInterface $eventSource)
+    public function __construct(EventManagerInterface $eventManager)
     {
-        $this->eventSource = $eventSource;
+        $this->eventManager = $eventManager;
     }
 
     public function create($eventNames, callable $filter = null)
     {
         return new Subscription(
             is_string($eventNames) ? [$eventNames]: $eventNames,
-            $this->eventSource
+            $this->eventManager
         );
     }
 }

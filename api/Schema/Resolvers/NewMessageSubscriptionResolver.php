@@ -12,7 +12,7 @@ class NewMessageSubscriptionResolver extends SubscriptionResolver
         parent::__construct();
 
         $this->addFieldResolver("onMessageAdd", function() use ($subscriptionFactory) {
-            return $subscriptionFactory->create('on-message-add');
+            return $subscriptionFactory->create('messages.new');
         });
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Everywhere\Api\Integration;
 
+use Everywhere\Api\App\EventManager;
 use Everywhere\Api\Contract\Integration\Events\SubscriptionEventInterface;
 use Everywhere\Api\Contract\Integration\EventSourceInterface;
 use Everywhere\Api\Contract\Integration\SubscriptionEventsRepositoryInterface;
@@ -12,17 +13,12 @@ use League\Event\ListenerAcceptor;
 use League\Event\ListenerAcceptorInterface;
 use League\Event\ListenerProviderInterface;
 
-class EventSource extends ListenerAcceptor implements EventSourceInterface, ListenerProviderInterface
+class EventSource extends EventManager implements EventSourceInterface, ListenerProviderInterface
 {
     /**
      * @var SubscriptionEventsRepositoryInterface
      */
     protected $eventsRepository;
-
-    /**
-     * @var Emitter
-     */
-    protected $emitter;
 
     /**
      * Event lifetime in milliseconds
@@ -33,10 +29,7 @@ class EventSource extends ListenerAcceptor implements EventSourceInterface, List
 
     public function __construct(SubscriptionEventsRepositoryInterface $eventsRepository)
     {
-        $this->emitter = new Emitter();
         $this->eventsRepository = $eventsRepository;
-
-        parent::__construct($this->emitter);
     }
 
     protected function getTimeOffset()
@@ -65,7 +58,7 @@ class EventSource extends ListenerAcceptor implements EventSourceInterface, List
         $eventEntities = $this->eventsRepository->findEvents($lastEventTimeOffset);
 
         foreach ($eventEntities as $eventEntity) {
-            $this->emitter->emit(
+            $this->emit(
                 new SubscriptionEvent($eventEntity->name, $eventEntity->data)
             );
 

@@ -101,9 +101,7 @@ class Stream implements EventStreamInterface
 
         $data = json_encode([
             "type" => "SUBSCRIPTION_DATA",
-            "data" => [
-                "onMessageAdd" => $current
-            ]
+            "data" => $current
         ]);
 
         $out = [
