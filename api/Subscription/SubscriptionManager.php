@@ -4,6 +4,7 @@ namespace Everywhere\Api\Subscription;
 
 use Everywhere\Api\Contract\App\EventManagerInterface;
 use Everywhere\Api\Contract\Schema\ContextInterface;
+use Everywhere\Api\Contract\Subscription\SubscriptionManagerInterface;
 use GraphQL\Deferred;
 use GraphQL\Executor\ExecutionResult;
 use GraphQL\Executor\Promise\Adapter\SyncPromise;
@@ -11,7 +12,7 @@ use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\GraphQL;
 use GraphQL\Type\Schema;
 
-class SubscriptionManager
+class SubscriptionManager implements SubscriptionManagerInterface
 {
     protected $eventManager;
     protected $schema;
@@ -22,9 +23,9 @@ class SubscriptionManager
     protected $resultQueue;
 
     public function __construct(
+        EventManagerInterface $eventManager,
         Schema $schema,
         ContextInterface $context,
-        EventManagerInterface $eventManager,
         PromiseAdapter $promiseAdapter
     )
     {
@@ -71,9 +72,6 @@ class SubscriptionManager
         });
     }
 
-    /**
-     * @return \Iterator
-     */
     public function getIterator()
     {
         return new \InfiniteIterator($this->resultQueue);

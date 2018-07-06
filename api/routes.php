@@ -10,6 +10,7 @@ use Everywhere\Api\Contract\Integration\SubscriptionEventsRepositoryInterface;
 use Everywhere\Api\Contract\Schema\BuilderInterface;
 use Everywhere\Api\Contract\Schema\ContextInterface;
 use Everywhere\Api\Contract\Schema\SubscriptionFactoryInterface;
+use Everywhere\Api\Contract\Subscription\SubscriptionManagerFactoryInterface;
 use Everywhere\Api\Integration\Events\SubscriptionEvent;
 use Everywhere\Api\Middleware\AuthenticationMiddleware;
 use Everywhere\Api\Middleware\CorsMiddleware;
@@ -52,25 +53,16 @@ $app->post('/subscriptions', function() {
 });
 
 $app->get('/subscriptions/{id}', function(ServerRequestInterface $request, ResponseInterface $response) use ($container) {
+    /**
+     * @var SubscriptionManagerFactoryInterface $subscriptionManagerFactory
+     */
+    $subscriptionManagerFactory = $container[SubscriptionManagerFactoryInterface::class];
 
     /**
-     * @var $eventSource EventSourceInterface
+     * @var EventSourceInterface $eventSource
      */
     $eventSource = $container[EventSourceInterface::class];
-
-    /**
-     * @var SyncPromiseAdapter $promiseAdapter
-     */
-    $promiseAdapter = $container[PromiseAdapter::class];
-
-    /**
-     * @var BuilderInterface $schemaBuilder
-     */
-    $schemaBuilder = $container[BuilderInterface::class];
-    $context = $container[ContextInterface::class];
-    $schema = $schemaBuilder->build();
-
-    $subscriptionManager = new SubscriptionManager($schema, $context, $eventSource, $promiseAdapter);
+    $subscriptionManager = $subscriptionManagerFactory->create($eventSource);
 
     $variableValues = [];
     $query = "subscription { onMessageAdd }";
@@ -82,15 +74,15 @@ $app->get('/subscriptions/{id}', function(ServerRequestInterface $request, Respo
     $fromTimeOffset = null;
 
     return $response->withBody(new Stream($iterator, function() use($subscriptionManager, $eventSource, $endTimeStamp, &$fromTimeOffset) {
+        $fromTimeOffset = $eventSource->loadEvents($fromTimeOffset);
+        $subscriptionManager->run();
+
         /**
          * Stop streaming if last longer then given time
          */
         if ($endTimeStamp <= time()) {
-            return false;
+            return $fromTimeOffset;
         }
-
-        $fromTimeOffset = $eventSource->loadEvents($fromTimeOffset);
-        $subscriptionManager->run();
 
         usleep(500000); // Sleep for half a second
     }));

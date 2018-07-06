@@ -15,6 +15,8 @@ class Stream implements EventStreamInterface
      * @var callable
      */
     protected $tick;
+    protected $lastEventId;
+    protected $shouldEnd = false;
 
     public function __construct(\Iterator $iterator, callable $tick)
     {
@@ -50,12 +52,18 @@ class Stream implements EventStreamInterface
 
     public function eof()
     {
+        if ($this->shouldEnd) {
+            return true;
+        }
+
         while (true) {
             if ($this->iterator->valid()) {
-                return false;
+                break;
             } else {
-                if (call_user_func($this->tick) === false) {
-                    return true;
+                $this->lastEventId = call_user_func($this->tick);
+
+                if ($this->lastEventId !== null) {
+                    break;
                 }
 
                 $this->iterator->rewind();
@@ -97,20 +105,28 @@ class Stream implements EventStreamInterface
 
     public function read($length)
     {
-        $current = $this->iterator->current();
+        if ($this->lastEventId) {
+            $out = [
+                "id: " . $this->lastEventId,
+                "event: end",
+            ];
 
-        $data = json_encode([
-            "type" => "SUBSCRIPTION_DATA",
-            "data" => $current
-        ]);
+            $this->shouldEnd = true;
+        } else {
+            $current = $this->iterator->current();
 
-        $out = [
-            "id: " . uniqid(),
-            "event: message",
-            "data: " . $data
-        ];
+            $data = json_encode([
+                "type" => "SUBSCRIPTION_DATA",
+                "data" => $current
+            ]);
 
-        $this->iterator->next();
+            $out = [
+                "event: message",
+                "data: " . $data
+            ];
+
+            $this->iterator->next();
+        }
 
         return implode("\n", $out) . "\n\n";
     }

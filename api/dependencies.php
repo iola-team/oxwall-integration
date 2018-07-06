@@ -22,6 +22,8 @@ use Everywhere\Api\Contract\Schema\DataLoaderInterface;
 use Everywhere\Api\Contract\Schema\IDFactoryInterface;
 use Everywhere\Api\Contract\Schema\SubscriptionFactoryInterface;
 use Everywhere\Api\Contract\Schema\ViewerInterface;
+use Everywhere\Api\Contract\Subscription\SubscriptionManagerFactoryInterface;
+use Everywhere\Api\Contract\Subscription\SubscriptionManagerInterface;
 use Everywhere\Api\Integration\EventSource;
 use Everywhere\Api\Middleware\GraphQLMiddleware;
 use Everywhere\Api\Middleware\AuthenticationMiddleware;
@@ -62,8 +64,11 @@ use Everywhere\Api\Schema\Resolvers\AvatarResolver;
 use Everywhere\Api\Contract\Schema\BuilderInterface;
 use Everywhere\Api\Contract\Schema\TypeConfigDecoratorInterface;
 use Everywhere\Api\Schema\Viewer;
+use Everywhere\Api\Subscription\SubscriptionManager;
+use Everywhere\Api\Subscription\SubscriptionManagerFactory;
 use GraphQL\Server\ServerConfig;
 use GraphQL\Executor\Promise\PromiseAdapter;
+use GraphQL\Type\Schema;
 use Overblog\DataLoader\Promise\Adapter\Webonyx\GraphQL\SyncPromiseAdapter;
 use Everywhere\Api\Schema\Resolvers\QueryResolver;
 use Everywhere\Api\Schema\Resolvers\UserResolver;
@@ -79,12 +84,16 @@ return [
         return new EventManager();
     },
 
+    Schema::class => function(ContainerInterface $container) {
+        return $container[BuilderInterface::class]->build();
+    },
+
     ServerConfig::class => function(ContainerInterface $container) {
         return ServerConfig::create([
             "debug" => true,
             "queryBatching" => true,
             "context" => $container[ContextInterface::class],
-            "schema" => $container[BuilderInterface::class]->build(),
+            "schema" => $container[Schema::class],
             "promiseAdapter" => $container[PromiseAdapter::class],
         ]);
     },
@@ -93,6 +102,14 @@ return [
         return new Builder(
             $container->getSettings()["schema"]["path"],
             $container[TypeConfigDecoratorInterface::class]
+        );
+    },
+
+    SubscriptionManagerFactoryInterface::class => function(ContainerInterface $container) {
+        return new SubscriptionManagerFactory(
+            $container[Schema::class],
+            $container[ContextInterface::class],
+            $container[PromiseAdapter::class]
         );
     },
 
