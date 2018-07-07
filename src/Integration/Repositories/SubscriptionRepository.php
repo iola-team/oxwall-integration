@@ -25,8 +25,28 @@ class SubscriptionRepository implements SubscriptionRepositoryInterface
         $this->dbo = \OW::getDbo();
     }
 
+    protected function findSubscriptionId($query, $variables)
+    {
+        return $this->dbo->queryForColumn(
+            "SELECT `id` FROM `{$this->subscriptionsTable}` WHERE query=:query AND variables=:variables",
+            [
+                "query" => $query,
+                "variables" => json_encode($variables)
+            ]
+        );
+    }
+
     public function createSubscription($query, array $variables)
     {
+        $existingSubscriptionId = $this->findSubscriptionId($query, $variables);
+
+        /**
+         * Reuse existing subscription if query and variables are the same
+         */
+        if ($existingSubscriptionId) {
+            return $existingSubscriptionId;
+        }
+
         return $this->dbo->insert(
             "INSERT INTO `{$this->subscriptionsTable}` SET query=:query, variables=:variables",
             [

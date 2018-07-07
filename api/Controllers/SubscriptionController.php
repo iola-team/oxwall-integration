@@ -54,7 +54,7 @@ class SubscriptionController
         }
 
         $this->manager->subscribe($subscription->query, $subscription->variables);
-        $endTimeStamp = time() + 5;
+        $endTimeStamp = time() + 0;
         $lastEventId = $request->getHeader("Last-Event-ID");
         $lastEventId = empty($lastEventId) ? null : $lastEventId[0];
 
