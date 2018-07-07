@@ -1,6 +1,6 @@
 <?php
 
-namespace Everywhere\Api\Middleware\SSE;
+namespace Everywhere\Api\Middleware\ServerEvents;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

@@ -5,7 +5,7 @@ namespace Everywhere\Api\Integration;
 use Everywhere\Api\App\EventManager;
 use Everywhere\Api\Contract\Integration\Events\SubscriptionEventInterface;
 use Everywhere\Api\Contract\Integration\EventSourceInterface;
-use Everywhere\Api\Contract\Integration\SubscriptionEventsRepositoryInterface;
+use Everywhere\Api\Contract\Integration\SubscriptionRepositoryInterface;
 use Everywhere\Api\Integration\Events\SubscriptionEvent;
 use League\Event\Emitter;
 use League\Event\EventInterface;
@@ -16,7 +16,7 @@ use League\Event\ListenerProviderInterface;
 class EventSource extends EventManager implements EventSourceInterface, ListenerProviderInterface
 {
     /**
-     * @var SubscriptionEventsRepositoryInterface
+     * @var SubscriptionRepositoryInterface
      */
     protected $eventsRepository;
 
@@ -27,7 +27,7 @@ class EventSource extends EventManager implements EventSourceInterface, Listener
      */
     protected $eventLifetime = 5000;
 
-    public function __construct(SubscriptionEventsRepositoryInterface $eventsRepository)
+    public function __construct(SubscriptionRepositoryInterface $eventsRepository)
     {
         $this->eventsRepository = $eventsRepository;
     }

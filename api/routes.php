@@ -6,15 +6,16 @@ use alroniks\dtms\DateTime;
 use Everywhere\Api\App\Container;
 use Everywhere\Api\Contract\App\EventManagerInterface;
 use Everywhere\Api\Contract\Integration\EventSourceInterface;
-use Everywhere\Api\Contract\Integration\SubscriptionEventsRepositoryInterface;
+use Everywhere\Api\Contract\Integration\SubscriptionRepositoryInterface;
 use Everywhere\Api\Contract\Schema\BuilderInterface;
 use Everywhere\Api\Contract\Schema\ContextInterface;
 use Everywhere\Api\Contract\Schema\SubscriptionFactoryInterface;
 use Everywhere\Api\Contract\Subscription\SubscriptionManagerFactoryInterface;
+use Everywhere\Api\Controllers\SubscriptionController;
 use Everywhere\Api\Integration\Events\SubscriptionEvent;
 use Everywhere\Api\Middleware\AuthenticationMiddleware;
 use Everywhere\Api\Middleware\CorsMiddleware;
-use Everywhere\Api\Middleware\SSE\Stream;
+use Everywhere\Api\Middleware\ServerEvents\Stream;
 use Everywhere\Api\Middleware\SubscriptionMiddleware;
 use Everywhere\Api\Middleware\UploadMiddleware;
 use Everywhere\Api\Subscription\SubscriptionManager;
@@ -46,90 +47,21 @@ $app->add($container[AuthenticationMiddleware::class]);
 $app->any("/graphql", $container[GraphQLMiddleware::class])
     ->add($container[UploadMiddleware::class]);
 
-$app->post('/subscriptions', function() {
-    return json_encode([
-       "subId" => 1
-    ]);
-});
+$app->post('/subscriptions', SubscriptionController::class . ":create");
+$app->delete('/subscriptions/{id}', SubscriptionController::class . ":delete");
+$app->get('/subscriptions/{id}', SubscriptionController::class . ":stream")
+    ->add(SubscriptionMiddleware::class)
+    ->setOutputBuffering(false);
 
-$app->get('/subscriptions/{id}', function(ServerRequestInterface $request, ResponseInterface $response) use ($container) {
-    /**
-     * @var SubscriptionManagerFactoryInterface $subscriptionManagerFactory
-     */
-    $subscriptionManagerFactory = $container[SubscriptionManagerFactoryInterface::class];
-
-    /**
-     * @var EventSourceInterface $eventSource
-     */
-    $eventSource = $container[EventSourceInterface::class];
-    $subscriptionManager = $subscriptionManagerFactory->create($eventSource);
-
-    $variableValues = [];
-    $query = "subscription { onMessageAdd }";
-
-    $subscriptionManager->subscribe($query, $variableValues);
-    $iterator = $subscriptionManager->getIterator();
-
-    $endTimeStamp = time() + 30;
-    $fromTimeOffset = null;
-
-    return $response->withBody(new Stream($iterator, function() use($subscriptionManager, $eventSource, $endTimeStamp, &$fromTimeOffset) {
-        $fromTimeOffset = $eventSource->loadEvents($fromTimeOffset);
-        $subscriptionManager->run();
-
-        /**
-         * Stop streaming if last longer then given time
-         */
-        if ($endTimeStamp <= time()) {
-            return $fromTimeOffset;
-        }
-
-        usleep(500000); // Sleep for half a second
-    }));
-})->add(SubscriptionMiddleware::class)->setOutputBuffering(false);
-
-$app->get('/subscriptions-write', function(ServerRequestInterface $request, ResponseInterface $response) use ($container) {
+$app->get('/subscriptions-write/{userId}', function(ServerRequestInterface $request, ResponseInterface $response, $args) use ($container) {
 
     /**
      * @var $eventManager EventManagerInterface
      */
     $eventManager = $container[EventManagerInterface::class];
 
-    $eventManager->emit(new SubscriptionEvent("messages.new", "Hello Subscription: " . time()));
+    $eventManager->emit(new SubscriptionEvent("messages.new", $args["userId"]));
 
-//    $eventManager->emit(new SubscriptionEvent("messages.new", [
-//        "messageId" => 2
-//    ]));
-//
-//    usleep(100000);
-//
-//    $eventManager->emit(new SubscriptionEvent("messages.new", [
-//        "messageId" => 3
-//    ]));
-//
-//    usleep(100000);
-//
-//    $eventManager->emit(new SubscriptionEvent("messages.new", [
-//        "messageId" => 4
-//    ]));
-//
-//    usleep(100000);
-//
-//    $eventManager->emit(new SubscriptionEvent("messages.new", [
-//        "messageId" => 5
-//    ]));
-//
-//    usleep(100000);
-//
-//    $eventManager->emit(new SubscriptionEvent("messages.new", [
-//        "messageId" => 6
-//    ]));
-//
-//    usleep(100000);
-//
-//    $eventManager->emit(new SubscriptionEvent("messages.new", [
-//        "messageId" => 7
-//    ]));
 
     return "\nDone!\n\n";
 });

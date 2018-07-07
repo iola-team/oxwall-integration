@@ -3,14 +3,19 @@
 namespace Everywhere\Api\Subscription;
 
 use Everywhere\Api\Contract\App\EventManagerInterface;
+use Everywhere\Api\Contract\Integration\Events\SubscriptionEventInterface;
 use Everywhere\Api\Contract\Schema\ContextInterface;
 use Everywhere\Api\Contract\Subscription\SubscriptionManagerInterface;
 use GraphQL\Deferred;
+use GraphQL\Error\InvariantViolation;
 use GraphQL\Executor\ExecutionResult;
 use GraphQL\Executor\Promise\Adapter\SyncPromise;
+use GraphQL\Executor\Promise\Adapter\SyncPromiseAdapter;
+use GraphQL\Executor\Promise\Promise;
 use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\GraphQL;
 use GraphQL\Type\Schema;
+use Overblog\DataLoader\DataLoader;
 
 class SubscriptionManager implements SubscriptionManagerInterface
 {
@@ -19,14 +24,14 @@ class SubscriptionManager implements SubscriptionManagerInterface
     protected $context;
     protected $promiseAdapter;
 
-    protected $subscriptions;
+    protected $promises;
     protected $resultQueue;
 
     public function __construct(
         EventManagerInterface $eventManager,
         Schema $schema,
         ContextInterface $context,
-        PromiseAdapter $promiseAdapter
+        SyncPromiseAdapter $promiseAdapter
     )
     {
         $this->schema = $schema;
@@ -34,23 +39,34 @@ class SubscriptionManager implements SubscriptionManagerInterface
         $this->eventManager = $eventManager;
         $this->promiseAdapter = $promiseAdapter;
 
-        $this->subscriptions = new \SplObjectStorage();
+        $this->promises = new \SplObjectStorage();
         $this->resultQueue = new \SplQueue();
         $this->resultQueue->setIteratorMode(\SplDoublyLinkedList::IT_MODE_DELETE);
+
+        /**
+         * Auto run on every subscription event event
+         */
+        $this->eventManager->addListener("*", function($event) {
+            if ($event instanceof SubscriptionEventInterface) {
+                $this->run();
+            }
+        }, EventManagerInterface::P_LOW);
     }
 
-    public function run()
+    protected function run()
     {
-        Deferred::runQueue();
-        SyncPromise::runQueue();
+        foreach ($this->promises as $promise) {
+            try {
+                $this->promiseAdapter->wait($promise);
+            } catch (InvariantViolation $exception) {
+                // Do nothing...
+            }
+        }
     }
 
     public function subscribe($query, $variables = [])
     {
-        /**
-         * @var $subscription SyncPromise
-         */
-        $subscription = GraphQL::promiseToExecute(
+        $subscriptionPromise = GraphQL::promiseToExecute(
             $this->promiseAdapter,
             $this->schema,
             $query,
@@ -59,14 +75,15 @@ class SubscriptionManager implements SubscriptionManagerInterface
             $variables
         )->adoptedPromise;
 
-        $this->subscriptions->attach($subscription);
+        $promise = new Promise($subscriptionPromise, $this->promiseAdapter);
+        $this->promises->attach($promise);
 
         /**
          * Process result and restart subscription
          */
-        $subscription->then(function(ExecutionResult $result) use($subscription, $query, $variables) {
+        $promise->then(function(ExecutionResult $result) use($promise, $query, $variables) {
             $this->resultQueue->enqueue($result->data);
-            $this->subscriptions->detach($subscription);
+            $this->promises->detach($promise);
 
             $this->subscribe($query, $variables);
         });

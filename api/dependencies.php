@@ -15,6 +15,7 @@ use Everywhere\Api\Contract\Auth\IdentityServiceInterface;
 use Everywhere\Api\Contract\Auth\IdentityStorageInterface;
 use Everywhere\Api\Contract\Auth\TokenBuilderInterface;
 use Everywhere\Api\Contract\Integration\EventSourceInterface;
+use Everywhere\Api\Contract\Integration\SubscriptionRepositoryInterface;
 use Everywhere\Api\Contract\Schema\ConnectionFactoryInterface;
 use Everywhere\Api\Contract\Schema\ContextInterface;
 use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
@@ -24,6 +25,7 @@ use Everywhere\Api\Contract\Schema\SubscriptionFactoryInterface;
 use Everywhere\Api\Contract\Schema\ViewerInterface;
 use Everywhere\Api\Contract\Subscription\SubscriptionManagerFactoryInterface;
 use Everywhere\Api\Contract\Subscription\SubscriptionManagerInterface;
+use Everywhere\Api\Controllers\SubscriptionController;
 use Everywhere\Api\Integration\EventSource;
 use Everywhere\Api\Middleware\GraphQLMiddleware;
 use Everywhere\Api\Middleware\AuthenticationMiddleware;
@@ -261,6 +263,16 @@ return [
 
     EventSourceInterface::class => function(ContainerInterface $container) {
         return new EventSource(
+            $container->getIntegration()->getSubscriptionEventsRepository()
+        );
+    },
+
+    // Routes
+
+    SubscriptionController::class => function(ContainerInterface $container) {
+        return new SubscriptionController(
+            $container[SubscriptionManagerFactoryInterface::class],
+            $container[EventSourceInterface::class],
             $container->getIntegration()->getSubscriptionEventsRepository()
         );
     },

@@ -44,7 +44,8 @@ class Subscription extends SyncPromise implements SubscriptionInterface
             return;
         }
 
-        $this->resolve($event->getData());
+        $data = $event->getData();
+        $this->resolve($data);
     }
 
     protected function unsubscribe()

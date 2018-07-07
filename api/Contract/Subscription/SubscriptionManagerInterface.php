@@ -14,6 +14,4 @@ interface SubscriptionManagerInterface
      * @return \Iterator
      */
     public function getIterator();
-
-    public function run();
 }

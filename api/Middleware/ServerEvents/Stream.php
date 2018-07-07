@@ -1,6 +1,6 @@
 <?php
 
-namespace Everywhere\Api\Middleware\SSE;
+namespace Everywhere\Api\Middleware\ServerEvents;
 
 use Psr\Http\Message\StreamInterface;
 
@@ -17,6 +17,7 @@ class Stream implements EventStreamInterface
     protected $tick;
     protected $lastEventId;
     protected $shouldEnd = false;
+    protected $started = false;
 
     public function __construct(\Iterator $iterator, callable $tick)
     {
@@ -52,20 +53,25 @@ class Stream implements EventStreamInterface
 
     public function eof()
     {
+        if (!$this->started) {
+            return false;
+        }
+
         if ($this->shouldEnd) {
             return true;
         }
 
+        $lastEventId = null;
+
         while (true) {
             if ($this->iterator->valid()) {
                 break;
+            } else if ($lastEventId) {
+                $this->lastEventId = $lastEventId;
+
+                break;
             } else {
-                $this->lastEventId = call_user_func($this->tick);
-
-                if ($this->lastEventId !== null) {
-                    break;
-                }
-
+                $lastEventId = call_user_func($this->tick);
                 $this->iterator->rewind();
             }
         }
@@ -105,13 +111,18 @@ class Stream implements EventStreamInterface
 
     public function read($length)
     {
-        if ($this->lastEventId) {
+        if (!$this->started) {
+            $this->started = true;
+            $out = [
+                "event: start",
+                "retry" => 1000
+            ];
+        } else if ($this->lastEventId) {
+            $this->shouldEnd = true;
             $out = [
                 "id: " . $this->lastEventId,
                 "event: end",
             ];
-
-            $this->shouldEnd = true;
         } else {
             $current = $this->iterator->current();
 
@@ -128,7 +139,7 @@ class Stream implements EventStreamInterface
             $this->iterator->next();
         }
 
-        return implode("\n", $out) . "\n\n";
+        return implode("\n", $out) . ($this->shouldEnd ? "" : "\n\n");
     }
 
     public function getContents()

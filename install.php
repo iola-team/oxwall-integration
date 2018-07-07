@@ -8,7 +8,14 @@ $sql = [
       `data` text NOT NULL,
       PRIMARY KEY (`id`),
       KEY `createdAt` (`createdAt`)
-    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;"
+    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;",
+
+    "CREATE TABLE `{OW_DB_PREFIX}esapi_subscription` (
+      `id` int(11) NOT NULL AUTO_INCREMENT,
+      `query` text NOT NULL,
+      `variables` text NOT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=MyISAM DEFAULT CHARSET=utf8"
 ];
 
 foreach ( $sql as $query )

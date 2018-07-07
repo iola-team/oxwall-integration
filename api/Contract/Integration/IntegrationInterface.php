@@ -43,7 +43,7 @@ interface IntegrationInterface
     public function getProfileRepository();
 
     /**
-     * @return SubscriptionEventsRepositoryInterface
+     * @return SubscriptionRepositoryInterface
      */
     public function getSubscriptionEventsRepository();
 }
