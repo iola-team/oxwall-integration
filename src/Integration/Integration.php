@@ -39,7 +39,7 @@ class Integration implements IntegrationInterface
             $messageDto = $event->getData();
 
             $events->emit(
-                new NewMessageEvent($messageDto->id)
+                new NewMessageEvent($messageDto->senderId, $messageDto->conversationId, $messageDto->id)
             );
         });
     }

@@ -5,11 +5,12 @@ namespace Everywhere\Api;
 use Everywhere\Api\App\App;
 use Everywhere\Api\Contract\App\EventManagerInterface;
 use Everywhere\Api\Contract\Integration\IntegrationInterface;
+use Everywhere\Api\Contract\ServerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 
-class Server
+class Server implements ServerInterface
 {
     protected $baseUrl;
 
@@ -17,6 +18,8 @@ class Server
      * @var IntegrationInterface
      */
     protected $integration;
+
+    protected $app;
 
     public function __construct($baseUrl, IntegrationInterface $integration)
     {
@@ -30,7 +33,11 @@ class Server
         $this->integration = $integration;
     }
 
-    private function init() {
+    public function init() {
+        if ($this->app) {
+            return;
+        }
+
         $app = new App(
             $this->integration,
             require __DIR__ . '/dependencies.php',
@@ -40,15 +47,17 @@ class Server
         require __DIR__ . '/routes.php';
         require __DIR__ . '/init.php';
 
-        return $app;
+        $this->app = $app;
     }
 
-    public function run($path) {
+    public function run($path)
+    {
+        $this->init();
 
         /**
          * @var App
          */
-        $app = $this->init();
+        $app = $this->app;
 
         /**
          * @var ResponseInterface $response
