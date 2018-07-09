@@ -13,6 +13,7 @@ use Everywhere\Api\Contract\Integration\SubscriptionRepositoryInterface;
 use Everywhere\Api\Contract\Integration\IntegrationInterface;
 use Everywhere\Api\Integration\Events\SubscriptionEvent;
 use Everywhere\Oxwall\Integration\Repositories\AvatarRepository;
+use Everywhere\Oxwall\Integration\Repositories\ChatRepository;
 use Everywhere\Oxwall\Integration\Repositories\ProfileRepository;
 use Everywhere\Oxwall\Integration\Repositories\SubscriptionRepository;
 use Everywhere\Oxwall\Integration\Repositories\UserRepository;
@@ -59,5 +60,10 @@ class Integration implements IntegrationInterface
     public function getSubscriptionEventsRepository()
     {
         return new SubscriptionRepository();
+    }
+
+    public function getChatRepository()
+    {
+        return new ChatRepository();
     }
 }

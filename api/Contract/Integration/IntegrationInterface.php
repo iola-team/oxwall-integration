@@ -43,6 +43,11 @@ interface IntegrationInterface
     public function getProfileRepository();
 
     /**
+     * @return ChatRepositoryInterface
+     */
+    public function getChatRepository();
+
+    /**
      * @return SubscriptionRepositoryInterface
      */
     public function getSubscriptionEventsRepository();

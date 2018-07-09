@@ -36,8 +36,11 @@ use Everywhere\Api\Schema\ConnectionFactory;
 use Everywhere\Api\Schema\Relay;
 use Everywhere\Api\Schema\Resolvers\AccountTypeResolver;
 use Everywhere\Api\Schema\Resolvers\AvatarMutationResolver;
+use Everywhere\Api\Schema\Resolvers\ChatResolver;
 use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
+use Everywhere\Api\Schema\Resolvers\MessageMutationResolver;
+use Everywhere\Api\Schema\Resolvers\MessageResolver;
 use Everywhere\Api\Schema\Resolvers\NewMessageSubscriptionResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoMutationResolver;
@@ -52,7 +55,6 @@ use Everywhere\Api\Schema\Resolvers\ProfileResolver;
 use Everywhere\Api\Schema\Resolvers\ValueResolver;
 use Everywhere\Api\Schema\SubscriptionFactory;
 use Everywhere\Api\Schema\TypeConfigDecorators\AggregateTypeConfigDecorator;
-use Everywhere\Api\Schema\TypeConfigDecorators\InputTypeDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\AbstractTypeConfigDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\ObjectTypeConfigDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\ScalarTypeConfigDecorator;
@@ -301,15 +303,15 @@ return [
         );
     },
 
-    Relay\DefaultEdgeFactory::class => function(ContainerInterface $container) {
-        return new Relay\DefaultEdgeFactory(
+    Relay\EdgeFactory::class => function(ContainerInterface $container) {
+        return new Relay\EdgeFactory(
             $container[PromiseAdapter::class]
         );
     },
 
     Relay\ConnectionResolver::class => function(ContainerInterface $container) {
         return new Relay\ConnectionResolver(
-            $container[Relay\DefaultEdgeFactory::class]
+            $container[Relay\EdgeFactory::class]
         );
     },
 
@@ -374,6 +376,28 @@ return [
             $container->getIntegration()->getProfileRepository(),
             $container[DataLoaderFactory::class],
             $container[IDFactoryInterface::class]
+        );
+    },
+
+    ChatResolver::class => function(ContainerInterface $container) {
+        return new ChatResolver(
+            $container->getIntegration()->getChatRepository(),
+            $container[DataLoaderFactory::class],
+            $container[ConnectionFactoryInterface::class]
+        );
+    },
+
+    MessageResolver::class => function(ContainerInterface $container) {
+        return new MessageResolver(
+            $container->getIntegration()->getChatRepository(),
+            $container[DataLoaderFactory::class]
+        );
+    },
+
+    MessageMutationResolver::class => function(ContainerInterface $container) {
+        return new MessageMutationResolver(
+            $container->getIntegration()->getChatRepository(),
+            $container[Relay\EdgeFactory::class]
         );
     },
 

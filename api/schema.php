@@ -6,13 +6,15 @@ use Everywhere\Api\Schema\Resolvers\AccountTypeResolver;
 use Everywhere\Api\Schema\Resolvers\AuthMutationResolver;
 use Everywhere\Api\Schema\Resolvers\AvatarMutationResolver;
 use Everywhere\Api\Schema\Resolvers\AvatarResolver;
+use Everywhere\Api\Schema\Resolvers\ChatResolver;
 use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
 use Everywhere\Api\Schema\Resolvers\NewMessageSubscriptionResolver;
+use Everywhere\Api\Schema\Resolvers\MessageMutationResolver;
+use Everywhere\Api\Schema\Resolvers\MessageResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoMutationResolver;
 use Everywhere\Api\Schema\Resolvers\PresentationAwareTypeResolver;
-use Everywhere\Api\Schema\Resolvers\ProfileFieldConfigsResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldSectionResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldValueResolver;
@@ -38,6 +40,7 @@ return [
         "UserConnection" => Relay\ConnectionResolver::class,
         "UserFriendsConnection" => Relay\ConnectionResolver::class,
         "UserPhotoConnection" => Relay\ConnectionResolver::class,
+        "UserChatsConnection" => Relay\ConnectionResolver::class,
 
         "Photo" => PhotoResolver::class,
         "Comment" => CommentResolver::class,
@@ -47,6 +50,9 @@ return [
         "ProfileFieldValue" => ProfileFieldValueResolver::class,
         "ProfileFieldSection" => ProfileFieldSectionResolver::class,
         "Profile" => ProfileResolver::class,
+        "Chat" => ChatResolver::class,
+        "ChatMessagesConnection" => Relay\ConnectionResolver::class,
+        "Message" => MessageResolver::class,
 
         // Scalar types
         "Value" => ValueResolver::class,
@@ -67,7 +73,8 @@ return [
             AuthMutationResolver::class,
             AvatarMutationResolver::class,
             PhotoMutationResolver::class,
-            ProfileMutationResolver::class
+            ProfileMutationResolver::class,
+            MessageMutationResolver::class,
         ],
 
         "Subscription" => [
