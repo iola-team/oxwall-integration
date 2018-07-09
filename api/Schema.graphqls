@@ -54,6 +54,7 @@ type Mutation {
     addUserPhoto(input: UserPhotoCreateInput!): UserPhotoCreatePayload!
     deleteUserPhoto(id: ID!): UserPhotoDeletePayload!
     saveProfileFieldValues(input: ProfileFieldSaveInput!): ProfileFieldSavePayload!
+    addMessage(input: MessageInput!, after: Cursor, before: Cursor, at: Cursor): MessageCreatePayload!
 }
 
 input SignInUserInput {
@@ -92,12 +93,12 @@ type User implements Node {
     activityTime: Date!
 
     info: UserInfo!
+    profile: Profile!
 
     avatar: Avatar
-    friends(first: Int = 10, after: Cursor): UserFriendsConnection!
-    photos(first: Int = 10, after: Cursor): UserPhotoConnection!
-
-    profile: Profile!
+    friends(first: Int, after: Cursor, last: Int, before: Cursor): UserFriendsConnection!
+    photos(first: Int, after: Cursor, last: Int, before: Cursor): UserPhotoConnection!
+    chats(first: Int, after: Cursor, last: Int, before: Cursor): UserChatsConnection!
 }
 
 type UserInfo {
@@ -317,3 +318,66 @@ type Comment implements Node {
     id: ID!
     text: String!
 }
+
+
+
+type Chat  implements Node {
+    id: ID!
+    user: User!
+    participants: [User!]!
+    messages(first: Int, after: Cursor, last: Int, before: Cursor): ChatMessagesConnection!
+}
+
+type ChatEdge implements Edge {
+    node: Chat!
+    cursor: Cursor!
+}
+
+type UserChatsConnection implements Connection {
+    pageInfo: PageInfo!
+    metaInfo: ConnectionMetaInfo!
+    edges: [ChatEdge!]!
+    totalCount: Int
+}
+
+type MessageContent {
+    text: String
+}
+
+type Message implements Node {
+    id: ID!
+    user: User!
+    chat: Chat!
+    content: MessageContent!
+    createdAt: Date!
+}
+
+type MessageEdge implements Edge {
+    node: Message!
+    cursor: Cursor!
+}
+
+type ChatMessagesConnection implements Connection {
+    pageInfo: PageInfo!
+    metaInfo: ConnectionMetaInfo!
+    edges: [MessageEdge!]!
+    totalCount: Int
+}
+
+input MessageContentInput {
+    text: String,
+}
+
+input MessageInput {
+    userId: ID!
+    chatId: ID!
+    content: MessageContentInput!
+}
+
+type MessageCreatePayload {
+    user: User!
+    chat: Chat!
+    node: Message!
+    edge: MessageEdge!
+}
+

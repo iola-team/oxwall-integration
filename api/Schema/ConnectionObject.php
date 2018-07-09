@@ -37,7 +37,7 @@ class ConnectionObject implements ConnectionObjectInterface
             );
         }
 
-        return $getter($arguments ? $arguments : $this->arguments);
+        return $getter($arguments !== null ? $arguments : $this->arguments);
     }
 
     public function getCount($arguments = null)
@@ -50,7 +50,7 @@ class ConnectionObject implements ConnectionObjectInterface
             );
         }
 
-        return $getter($arguments ? $arguments : $this->arguments);
+        return $getter($arguments !== null ? $arguments : $this->arguments);
     }
 
     public function getArguments()

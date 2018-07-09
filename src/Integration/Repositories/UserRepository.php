@@ -18,6 +18,22 @@ class UserRepository implements UserRepositoryInterface
 {
     public $counter = 0;
 
+    /**
+     * @var \MAILBOX_BOL_ConversationService
+     */
+    protected $conversationService;
+
+    /**
+     * @var \MAILBOX_BOL_ConversationDao
+     */
+    protected $conversationDao;
+
+    public function __construct()
+    {
+        $this->conversationService = \MAILBOX_BOL_ConversationService::getInstance();
+        $this->conversationDao = \MAILBOX_BOL_ConversationDao::getInstance();
+    }
+
     public function convertDisplayName($displayName, $postfix = 0)
     {
         $displayName = preg_replace('/-/', '_', \URLify::filter($displayName));
@@ -173,6 +189,32 @@ class UserRepository implements UserRepositoryInterface
          */
         foreach ($avatars as $avatar) {
             $out[$avatar->userId] = $avatar->id;
+        }
+
+        return $out;
+    }
+
+    public function findChats($ids, array $args)
+    {
+        $activeModes = $this->conversationService->getActiveModeList();
+
+        $out = [];
+        foreach ($ids as $id) {
+            $out[$id] = [];
+            $conversationInfoList = $this->conversationDao->findConversationItemListByUserId($id, $activeModes, $args["offset"], $args["count"]);
+            foreach ($conversationInfoList as $conversationInfo) {
+                $out[$id][] = $conversationInfo["id"];
+            }
+        }
+
+        return $out;
+    }
+
+    public function countChats($ids, array $args)
+    {
+        $out = [];
+        foreach ($ids as $id) {
+            $out[$id] = $this->conversationService->countConversationListByUserId($id);
         }
 
         return $out;

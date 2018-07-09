@@ -11,20 +11,23 @@ use Everywhere\Api\Contract\Schema\Relay\EdgeFactoryInterface;
 use Everywhere\Api\Entities\User;
 use Everywhere\Api\Schema\AbstractResolver;
 use Everywhere\Api\Schema\CompositeResolver;
+use GraphQL\Error\InvariantViolation;
 use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\Type\Definition\ResolveInfo;
 
 class ConnectionResolver extends CompositeResolver
 {
+    const DEFAULT_COUNT = 100;
+
     /**
      * @var EdgeFactoryInterface
      */
     protected $edgeFactory;
 
     private $paginationArguments = [
-        "first" => 0,
+        "first" => null,
         "after" => null,
-        "last" => 0,
+        "last" => null,
         "before" => null
     ];
 
@@ -45,26 +48,49 @@ class ConnectionResolver extends CompositeResolver
 
     private function getPagination(ConnectionObjectInterface $connection)
     {
-        return array_intersect_key(
+        $pagination = array_intersect_key(
             array_merge($this->paginationArguments, $connection->getArguments()),
             $this->paginationArguments
         );
-    }
 
-    private function getEdges($items, ConnectionObjectInterface $connection)
-    {
-        $edges = [];
-        $firstItem = array_shift($items);
-        $after = $this->getPagination($connection)["after"];
-        $filter = $after ? $after : $this->getFilter($connection);
-        
-        if ($firstItem) {
-            $firstEdge = $this->edgeFactory->createAfter($filter, $firstItem);
-            $edges[] = $firstEdge;
-        } else {
-            $firstEdge = $this->edgeFactory->create($filter);
+        if ($pagination["last"] !== null && $pagination["first"] !== null) {
+            throw new InvariantViolation("You should not use `last` and `first` pagination simultaneously");
         }
 
+        if ($pagination["last"] === null && $pagination["first"] === null) {
+            $pagination["first"] = self::DEFAULT_COUNT;
+        }
+
+        return $pagination;
+    }
+
+    /**
+     * Cursor may include any extra data we pass here.
+     * This data can be the connection filter...
+     *
+     * TODO: Review the code later and add filter data to cursors if needed
+     *
+     * @param ConnectionObjectInterface $connection
+     *
+     * @return array
+     */
+    private function getInitialCursorData(ConnectionObjectInterface $connection)
+    {
+        return [];
+    }
+
+    private function getEdges($items, ConnectionObjectInterface $connection, $slice)
+    {
+        $offset = $slice["offset"];
+        $items = $this->sliceEdges($items, $slice["count"]);
+
+        $cursorData = array_merge([
+            "offset" => $offset
+        ], $this->getInitialCursorData($connection));
+
+        $firstItem = array_shift($items);
+        $firstEdge = $this->edgeFactory->create($cursorData, $firstItem);
+        $edges = $firstItem ? [$firstEdge] : [];
         $resultPromise = $firstEdge->getCursor();
 
         foreach ($items as $index => $item) {
@@ -81,35 +107,97 @@ class ConnectionResolver extends CompositeResolver
         });
     }
 
-    private function getItemsWithOverflow(ConnectionObjectInterface $connection)
+    private function getItemsWithOverflow(ConnectionObjectInterface $connection, $totalCount = null)
     {
         $pagination = $this->getPagination($connection);
         $filter = $this->getFilter($connection);
-        $offset = 0;
-        $count = $pagination['first'] + 1;
+        $cursorArg = [];
 
         if ($pagination["after"]) {
-            $offset = $pagination["after"]["offset"] + 1;
-            $filter = $pagination["after"];
+            $cursorArg["after"] = $pagination["after"];
         }
+
+        if ($pagination["before"]) {
+            $cursorArg["before"] = $pagination["before"];
+        }
+
+        $slice = $this->getSlice($connection, $totalCount);
 
         return $this->getItems(
             $connection,
-            $filter,
-            $offset,
-            $count
+            array_merge($filter, $cursorArg, [
+                "offset" => $slice["offset"],
+                "count" => $slice["count"] + 1 // Plus overflow to be able detect `hasNextPage` later
+            ])
         );
     }
 
-    private function getPageInfo($items, ConnectionObjectInterface $connection)
+
+    private function getCursorOffset($cursor, $defaultValue = null)
     {
-        $count = $this->getPagination($connection)["first"];
+        return isset($cursor["offset"]) ? (int) $cursor["offset"] : $defaultValue;
+    }
+
+    private function isTotalCountRequired(ConnectionObjectInterface $connection)
+    {
+        $pagination = $this->getPagination($connection);
+
+        return !$pagination["before"] && $pagination["first"] === null;
+    }
+
+    /**
+     * Calculates slice based on pagination arguments
+     *
+     * @param ConnectionObjectInterface $connection
+     * @param int|null $totalCount
+     * @return array
+     */
+    private function getSlice(ConnectionObjectInterface $connection, $totalCount = null)
+    {
+        $pagination = $this->getPagination($connection);
+
+        $endOffset = $this->getCursorOffset($pagination["before"], $totalCount);
+        $afterOffset = $this->getCursorOffset($pagination["after"], -1);
+        $startOffset = max($afterOffset,-1) + 1;
+
+        if ($pagination["first"] !== null) {
+            $endOffset = $startOffset + $pagination["first"];
+        }
+
+        if ($endOffset === null) {
+            throw new InvariantViolation(
+                "Connection `totalCount` loader or `before` cursor is required for pagination"
+            );
+        }
+
+        if ($pagination["last"] !== null) {
+            $startOffset = max($startOffset, $endOffset - $pagination["last"]);
+        }
+
+        $offset = max($startOffset, 0);
+        $slice = [
+            "offset" => $offset,
+            "count" => $endOffset - $offset
+        ];
+
+        return $slice;
+    }
+
+    private function sliceEdges($items, $count)
+    {
+        return array_slice($items, 0, $count);
+    }
+
+    private function getPageInfo($items, ConnectionObjectInterface $connection, $slice)
+    {
+        $pagination = $this->getPagination($connection);
         $edgesPromise = $this->getEdges(
-            array_slice($items, 0, $count),
-            $connection
+            $this->sliceEdges($items, $slice["count"]),
+            $connection,
+            $slice
         );
 
-        return $edgesPromise->then(function($edges) use($items) {
+        return $edgesPromise->then(function($edges) use($items, $pagination) {
             /**
              * @var $last EdgeObject
              */
@@ -120,9 +208,12 @@ class ConnectionResolver extends CompositeResolver
              */
             $first = reset($edges);
 
-            $hasPreviousPage = empty($first) ? false : $first->getCursor()->then(function($cursor) {
-                return $cursor["offset"] > 0;
-            });
+            $hasPreviousPage = empty($first)
+                ? $pagination["after"]["offset"] > 0
+                : $first->getCursor()->then(function($cursor) {
+                    return $cursor["offset"] > 0;
+                }
+            );
 
             return [
                 "hasNextPage" => count($items) > count($edges),
@@ -135,7 +226,7 @@ class ConnectionResolver extends CompositeResolver
 
     private function getMeta(ConnectionObjectInterface $connection)
     {
-        $firstEdgePlaceholder = $this->edgeFactory->create($this->getFilter($connection));
+        $firstEdgePlaceholder = $this->edgeFactory->create($this->getInitialCursorData($connection));
 
         return [
             "firstCursor" => $firstEdgePlaceholder->getCursor()
@@ -145,28 +236,22 @@ class ConnectionResolver extends CompositeResolver
     /**
      * @param ConnectionObjectInterface $connection
      * @param array $filter
-     * @param $offset
-     * @param $count
      *
      * @return \GraphQL\Executor\Promise\Promise
      */
-    protected function getItems(ConnectionObjectInterface $connection, array $filter, $offset, $count)
+    protected function getItems(ConnectionObjectInterface $connection, array $filter)
     {
-        return $connection->getItems(array_merge($filter, [
-            "offset" => $offset,
-            "count" => $count
-        ]));
+        return $connection->getItems($filter);
     }
 
     /**
      * @param ConnectionObjectInterface $connection
-     * @param array $filter
      *
      * @return \GraphQL\Executor\Promise\Promise
      */
-    protected function getCount(ConnectionObjectInterface $connection, array $filter)
+    protected function getCount(ConnectionObjectInterface $connection)
     {
-        return $connection->getCount($filter);
+        return $connection->getCount($this->getFilter($connection));
     }
 
     /**
@@ -186,23 +271,32 @@ class ConnectionResolver extends CompositeResolver
         }
 
         $connectionArgs = $connection->getArguments();
+        $totalPromise = $this->isTotalCountRequired($connection) ? $this->getCount($connection) : null;
 
         switch ($info->fieldName) {
             case "pageInfo":
-                return $this->getItemsWithOverflow($connection)->then(function($items) use($connection) {
-                    return $this->getPageInfo($items, $connection);
-                });
+                $getPageInfo = function($totalCount = null) use ($connection) {
+                    return $this->getItemsWithOverflow($connection, $totalCount)->then(function($items) use($connection, $totalCount) {
+                        return $this->getPageInfo($items, $connection, $this->getSlice($connection, $totalCount));
+                    });
+                };
+
+                return $totalPromise ? $totalPromise->then($getPageInfo) : $getPageInfo();
 
             case "metaInfo":
                 return $this->getMeta($connection);
 
             case "edges":
-                return $this->getItemsWithOverflow($connection)->then(function($items) use($connection) {
-                    return $this->getEdges($items, $connection);
-                });
+                $getEdges = function($totalCount = null) use ($connection) {
+                    return $this->getItemsWithOverflow($connection, $totalCount)->then(function ($items) use ($connection, $totalCount) {
+                        return $this->getEdges($items, $connection, $this->getSlice($connection, $totalCount));
+                    });
+                };
+
+                return $totalPromise ? $totalPromise->then($getEdges) : $getEdges();
 
             case "totalCount":
-                return $this->getCount($connection, $this->getFilter($connection));
+                return $totalPromise ? $totalPromise : $this->getCount($connection);
         }
 
         return $value;

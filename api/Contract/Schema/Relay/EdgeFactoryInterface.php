@@ -12,6 +12,7 @@ interface EdgeFactoryInterface
      *
      * @param array $filter
      * @param EntityInterface|string $node
+     *
      * @return EdgeObjectInterface
      */
     public function create($filter, $node = null);
@@ -21,6 +22,7 @@ interface EdgeFactoryInterface
      *
      * @param array $cursor
      * @param EntityInterface|string $node
+     *
      * @return EdgeObjectInterface
      */
     public function createBefore($cursor, $node);
@@ -33,4 +35,12 @@ interface EdgeFactoryInterface
      * @return EdgeObjectInterface
      */
     public function createAfter($cursor, $node);
+
+    /**
+     * @param $arguments
+     * @param $node
+     *
+     * @return EdgeObjectInterface
+     */
+    public function createFromArguments($arguments, $node);
 }

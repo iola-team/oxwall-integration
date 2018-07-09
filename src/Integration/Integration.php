@@ -10,6 +10,7 @@ namespace Everywhere\Oxwall\Integration;
 
 use Everywhere\Api\Contract\Integration\IntegrationInterface;
 use Everywhere\Oxwall\Integration\Repositories\AvatarRepository;
+use Everywhere\Oxwall\Integration\Repositories\ChatRepository;
 use Everywhere\Oxwall\Integration\Repositories\ProfileRepository;
 use Everywhere\Oxwall\Integration\Repositories\UserRepository;
 use Everywhere\Oxwall\Integration\Repositories\PhotoRepository;
@@ -44,5 +45,10 @@ class Integration implements IntegrationInterface
     public function getProfileRepository()
     {
         return new ProfileRepository();
+    }
+
+    public function getChatRepository()
+    {
+        return new ChatRepository();
     }
 }
