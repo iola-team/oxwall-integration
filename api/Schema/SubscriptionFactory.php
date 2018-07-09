@@ -3,6 +3,7 @@
 namespace Everywhere\Api\Schema;
 
 use Everywhere\Api\Contract\App\EventManagerInterface;
+use Everywhere\Api\Contract\Integration\Events\SubscriptionEventInterface;
 use Everywhere\Api\Contract\Schema\SubscriptionFactoryInterface;
 
 class SubscriptionFactory implements SubscriptionFactoryInterface
@@ -17,10 +18,14 @@ class SubscriptionFactory implements SubscriptionFactoryInterface
         $this->eventManager = $eventManager;
     }
 
-    public function create($eventNames, callable $filter = null)
+    public function create($eventNames, callable $filter = null, callable $resolve = null)
     {
+
+
         return new Subscription(
             is_string($eventNames) ? [$eventNames]: $eventNames,
+            $filter,
+            $resolve,
             $this->eventManager
         );
     }

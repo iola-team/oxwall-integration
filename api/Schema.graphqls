@@ -10,7 +10,7 @@ scalar Cursor
 scalar Upload
 
 type Subscription {
-    onMessageAdd: User!
+    onMessageAdd(chatId: ID!): Message!
 }
 
 type Query {

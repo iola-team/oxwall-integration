@@ -13,6 +13,7 @@ use Everywhere\Api\Contract\Schema\SubscriptionFactoryInterface;
 use Everywhere\Api\Contract\Subscription\SubscriptionManagerFactoryInterface;
 use Everywhere\Api\Controllers\GraphqlController;
 use Everywhere\Api\Controllers\SubscriptionController;
+use Everywhere\Api\Integration\Events\NewMessageEvent;
 use Everywhere\Api\Integration\Events\SubscriptionEvent;
 use Everywhere\Api\Middleware\AuthenticationMiddleware;
 use Everywhere\Api\Middleware\CorsMiddleware;
@@ -80,8 +81,7 @@ $app->get('/subscriptions-write/{userId}', function(ServerRequestInterface $requ
      */
     $eventManager = $container[EventManagerInterface::class];
 
-    $eventManager->emit(new SubscriptionEvent("messages.new", $args["userId"]));
-
+    $eventManager->emit(new NewMessageEvent(17, 68, 354));
 
     return "\nDone!\n\n";
 });

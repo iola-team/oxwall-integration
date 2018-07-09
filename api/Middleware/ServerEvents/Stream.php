@@ -139,7 +139,7 @@ class Stream implements EventStreamInterface
             $this->iterator->next();
         }
 
-        return implode("\n", $out) . ($this->shouldEnd ? "" : "\n\n");
+        return implode("\n", $out) . ($this->shouldEnd ? "\n" : "\n\n");
     }
 
     public function getContents()

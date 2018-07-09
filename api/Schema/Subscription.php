@@ -15,13 +15,37 @@ class Subscription extends SyncPromise implements SubscriptionInterface
      * @var EventManagerInterface
      */
     protected $eventManager;
+
+    /**
+     * @var string[]
+     */
     protected $eventNames = [];
+
+    /**
+     * @var callable
+     */
+    protected $filter;
+
+    /**
+     * @var callable
+     */
+    protected $resolve;
+
+    /**
+     * @var \Closure
+     */
     protected $listener;
 
-    public function __construct(array $eventNames, EventManagerInterface $eventManager)
+    public function __construct(
+        array $eventNames,
+        callable $filter = null,
+        callable $resolve = null,
+        EventManagerInterface $eventManager)
     {
         $this->eventManager = $eventManager;
         $this->eventNames = $eventNames;
+        $this->filter = $filter;
+        $this->resolve = $resolve;
 
         $this->listener = function($event) {
             $this->handleEvent($event);
@@ -31,6 +55,13 @@ class Subscription extends SyncPromise implements SubscriptionInterface
         $this->then(function() {
             $this->unsubscribe();
         });
+    }
+
+    protected function resolveValue($data)
+    {
+        return is_callable($this->resolve)
+            ? call_user_func($this->resolve, $data)
+            : $data;
     }
 
     /**
@@ -44,7 +75,11 @@ class Subscription extends SyncPromise implements SubscriptionInterface
             return;
         }
 
-        $data = $event->getData();
+        if (is_callable($this->filter) && call_user_func($this->filter, $event->getData()) === false) {
+            return;
+        }
+
+        $data = $this->resolveValue($event->getData());
         $this->resolve($data);
     }
 
