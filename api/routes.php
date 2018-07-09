@@ -11,6 +11,7 @@ use Everywhere\Api\Contract\Schema\BuilderInterface;
 use Everywhere\Api\Contract\Schema\ContextInterface;
 use Everywhere\Api\Contract\Schema\SubscriptionFactoryInterface;
 use Everywhere\Api\Contract\Subscription\SubscriptionManagerFactoryInterface;
+use Everywhere\Api\Controllers\GraphqlController;
 use Everywhere\Api\Controllers\SubscriptionController;
 use Everywhere\Api\Integration\Events\SubscriptionEvent;
 use Everywhere\Api\Middleware\AuthenticationMiddleware;
@@ -29,7 +30,6 @@ use GraphQL\GraphQL;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\App;
-use Everywhere\Api\Middleware\GraphQLMiddleware;
 
 /**
  * @var $app App
@@ -44,7 +44,7 @@ $container = $app->getContainer();
 $app->add($container[CorsMiddleware::class]);
 $app->add($container[AuthenticationMiddleware::class]);
 
-$app->any("/graphql", $container[GraphQLMiddleware::class])
+$app->any("/graphql", GraphqlController::class . ":query")
     ->add($container[UploadMiddleware::class]);
 
 $app->post('/subscriptions', SubscriptionController::class . ":create");

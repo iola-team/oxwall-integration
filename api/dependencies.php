@@ -25,9 +25,9 @@ use Everywhere\Api\Contract\Schema\SubscriptionFactoryInterface;
 use Everywhere\Api\Contract\Schema\ViewerInterface;
 use Everywhere\Api\Contract\Subscription\SubscriptionManagerFactoryInterface;
 use Everywhere\Api\Contract\Subscription\SubscriptionManagerInterface;
+use Everywhere\Api\Controllers\GraphqlController;
 use Everywhere\Api\Controllers\SubscriptionController;
 use Everywhere\Api\Integration\EventSource;
-use Everywhere\Api\Middleware\GraphQLMiddleware;
 use Everywhere\Api\Middleware\AuthenticationMiddleware;
 use Everywhere\Api\Middleware\SubscriptionMiddleware;
 use Everywhere\Api\Middleware\UploadMiddleware;
@@ -42,7 +42,6 @@ use Everywhere\Api\Schema\Resolvers\NewMessageSubscriptionResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoMutationResolver;
 use Everywhere\Api\Schema\Resolvers\PresentationAwareTypeResolver;
-use Everywhere\Api\Schema\Resolvers\ProfileFieldConfigsResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldSectionResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldValueResolver;
@@ -115,8 +114,8 @@ return [
         );
     },
 
-    GraphQLMiddleware::class => function(ContainerInterface $container) {
-        return new GraphQLMiddleware(
+    GraphqlController::class => function(ContainerInterface $container) {
+        return new GraphqlController(
             $container[ServerConfig::class]
         );
     },
