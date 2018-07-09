@@ -44,15 +44,35 @@ $container = $app->getContainer();
 $app->add($container[CorsMiddleware::class]);
 $app->add($container[AuthenticationMiddleware::class]);
 
-$app->any("/graphql", GraphqlController::class . ":query")
+/**
+ * Graphql query route
+ */
+$app->post("/graphql", GraphqlController::class . ":query")
     ->add($container[UploadMiddleware::class]);
 
-$app->post('/subscriptions', SubscriptionController::class . ":create");
-$app->delete('/subscriptions/{id}', SubscriptionController::class . ":delete");
-$app->get('/subscriptions/{id}', SubscriptionController::class . ":stream")
-    ->add(SubscriptionMiddleware::class)
-    ->setOutputBuffering(false);
+$app->group('/subscriptions', function() use($app) {
+    /**
+     * Subscription register route
+     */
+    $app->post('', SubscriptionController::class . ":create");
 
+    /**
+     * Subscription unregister route
+     */
+    $app->delete('/{id}', SubscriptionController::class . ":delete");
+
+    /**
+     * Subscription stream route
+     */
+    $app->get('/{id}', SubscriptionController::class . ":stream")
+        ->add(SubscriptionMiddleware::class)
+        ->setOutputBuffering(false);
+});
+
+
+/**
+ * Subscription test route
+ */
 $app->get('/subscriptions-write/{userId}', function(ServerRequestInterface $request, ResponseInterface $response, $args) use ($container) {
 
     /**
@@ -62,81 +82,6 @@ $app->get('/subscriptions-write/{userId}', function(ServerRequestInterface $requ
 
     $eventManager->emit(new SubscriptionEvent("messages.new", $args["userId"]));
 
-
-    return "\nDone!\n\n";
-});
-
-
-$app->get('/subscriptions-test', function(ServerRequestInterface $request, ResponseInterface $response) use ($container) {
-
-    /**
-     * Clear output buffer
-     */
-    while (ob_get_level() > 0) {
-        ob_end_flush();
-    }
-
-    /**
-     * Disable output buffer
-     */
-    ob_implicit_flush();
-
-
-    /**
-     * @var $eventSource EventSourceInterface
-     */
-    $eventSource = $container[EventSourceInterface::class];
-
-    /**
-     * @var SyncPromiseAdapter $promiseAdapter
-     */
-    $promiseAdapter = $container[PromiseAdapter::class];
-
-    /**
-     * @var BuilderInterface $schemaBuilder
-     */
-    $schemaBuilder = $container[BuilderInterface::class];
-    $context = $container[ContextInterface::class];
-    $schema = $schemaBuilder->build();
-
-    $rootValue = null;
-    $variableValues = [];
-    $query = "subscription { onMessageAdd }";
-
-//    $result = $promiseAdapter->wait($promise);
-
-    $endTimeStamp = time() + 30;
-    $fromTimeOffset = null;
-
-    while (true) {
-        /**
-         * @var $promise SyncPromise
-         */
-        $promise = GraphQL::promiseToExecute($promiseAdapter, $schema, $query, $rootValue, $context, $variableValues)->adoptedPromise;
-
-        while ($promise->state === SyncPromise::PENDING) {
-            /**
-             * Stop streaming if last longer then given time
-             */
-            if ($endTimeStamp <= time()) {
-                break 2;
-            }
-
-            $fromTimeOffset = $eventSource->loadEvents($fromTimeOffset);
-
-            Deferred::runQueue();
-            SyncPromise::runQueue();
-
-            usleep(500000);
-        }
-
-        /**
-         * @var $result ExecutionResult
-         */
-        $result = $promise->result;
-
-        print_r($result->data);
-    }
 
     return "\nDone!\n\n";
 });
