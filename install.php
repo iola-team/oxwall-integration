@@ -10,12 +10,14 @@ $sql = [
       KEY `createdAt` (`createdAt`)
     ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;",
 
-    "CREATE TABLE `{OW_DB_PREFIX}esapi_subscription` (
+    "CREATE TABLE IF NOT EXISTS `{OW_DB_PREFIX}esapi_subscription` (
       `id` int(11) NOT NULL AUTO_INCREMENT,
+      `streamId` varchar(255) NOT NULL,
       `query` text NOT NULL,
       `variables` text NOT NULL,
-      PRIMARY KEY (`id`)
-    ) ENGINE=MyISAM DEFAULT CHARSET=utf8"
+      PRIMARY KEY (`id`),
+      KEY `streamId` (`streamId`)
+    ) ENGINE=MyISAM DEFAULT CHARSET=utf8;"
 ];
 
 foreach ( $sql as $query )

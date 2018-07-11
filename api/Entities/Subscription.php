@@ -7,6 +7,11 @@ class Subscription extends AbstractEntity
     /**
      * @var string
      */
+    public $streamId;
+
+    /**
+     * @var string
+     */
     public $query;
 
     /**

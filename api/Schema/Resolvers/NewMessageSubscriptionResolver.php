@@ -25,7 +25,15 @@ class NewMessageSubscriptionResolver extends SubscriptionResolver
                     return $data["chatId"] == $chatIdObject->getId();
                 },
                 function ($data) {
-                    return $data["messageId"];
+                    return [
+                        "node" => $data["messageId"],
+                        "user" => $data["userId"],
+                        "chat" => $data["chatId"],
+                        "edge" => [
+                            "cursor" => "tmp-cursor", // TODO: use real cursor
+                            "node" => $data["messageId"]
+                        ]
+                    ];
                 }
             );
         });

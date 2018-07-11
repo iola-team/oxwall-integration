@@ -7,8 +7,9 @@ interface SubscriptionManagerInterface
     /**
      * @param string $query
      * @param mixed[] $variables
+     * @param string|null $subscriptionKey
      */
-    public function subscribe($query, $variables);
+    public function subscribe($query, $variables, $subscriptionKey = null);
 
     /**
      * @return \Iterator

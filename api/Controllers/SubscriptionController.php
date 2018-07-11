@@ -28,40 +28,44 @@ class SubscriptionController
 
     public function create(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
+        $streamId = $args["streamId"];
         $body = $request->getParsedBody();
-        $subscriptionId = $this->subscriptionRepository->createSubscription($body["query"], $body["variables"]);
+        $subscriptionId = $this->subscriptionRepository->createSubscription($streamId, $body["query"], $body["variables"]);
 
         return json_encode([
-            "subId" => $subscriptionId
+            "subscriptionId" => $subscriptionId
         ]);
     }
 
     public function delete(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-        $subscriptionId = $args["id"];
+        $streamId = $args["streamId"];
+        $subscriptionId = $args["subscriptionId"];
 
         $this->subscriptionRepository->deleteSubscription($subscriptionId);
     }
 
     public function stream(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-        $subscriptionId = $args["id"];
-        $subscriptions = $this->subscriptionRepository->findSubscriptionsByIds([$subscriptionId]);
-        $subscription = $subscriptions[$subscriptionId];
+        $streamId = $args["streamId"];
+        $subscriptions = $this->subscriptionRepository->findSubscriptionsByStreamId($streamId);
 
-        if (!$subscription) {
+        if (empty($subscriptions)) {
             return $response;
         }
 
-        $this->manager->subscribe($subscription->query, $subscription->variables);
-        $endTimeStamp = time() + 30;
+        foreach ($subscriptions as $subscription) {
+            $this->manager->subscribe($subscription->query, $subscription->variables, $subscription->id);
+        }
+
+        $endTimeStamp = time() + 100;
         $lastEventId = $request->getHeader("Last-Event-ID");
         $lastEventId = empty($lastEventId) ? null : $lastEventId[0];
 
         return $response->withBody(new Stream(
             $this->manager->getIterator(),
             function() use ($endTimeStamp, &$lastEventId) {
-                $lastEventId = $this->eventSource->loadEvents($lastEventId);
+              $lastEventId = $this->eventSource->loadEvents($lastEventId);
 
                 /**
                  * Stop streaming if last longer then given time and return last event id

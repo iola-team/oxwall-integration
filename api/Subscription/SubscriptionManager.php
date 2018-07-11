@@ -64,7 +64,7 @@ class SubscriptionManager implements SubscriptionManagerInterface
         }
     }
 
-    public function subscribe($query, $variables = [])
+    public function subscribe($query, $variables, $subscriptionKey = null)
     {
         $subscriptionPromise = GraphQL::promiseToExecute(
             $this->promiseAdapter,
@@ -81,11 +81,15 @@ class SubscriptionManager implements SubscriptionManagerInterface
         /**
          * Process result and restart subscription
          */
-        $promise->then(function(ExecutionResult $result) use($promise, $query, $variables) {
-            $this->resultQueue->enqueue($result->data);
-            $this->promises->detach($promise);
+        $promise->then(function(ExecutionResult $result) use($promise, $subscriptionKey, $query, $variables) {
+            $key = $subscriptionKey ? $subscriptionKey : uniqid();
 
-            $this->subscribe($query, $variables);
+            $this->resultQueue->enqueue([
+                "data" => $result->data,
+                "key" => $key
+            ]);
+            $this->promises->detach($promise);
+            $this->subscribe($query, $variables, $key);
         });
     }
 

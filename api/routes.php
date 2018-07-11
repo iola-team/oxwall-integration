@@ -55,17 +55,17 @@ $app->group('/subscriptions', function() use($app) {
     /**
      * Subscription register route
      */
-    $app->post('', SubscriptionController::class . ":create");
+    $app->post('/{streamId}', SubscriptionController::class . ":create");
 
     /**
      * Subscription unregister route
      */
-    $app->delete('/{id}', SubscriptionController::class . ":delete");
+    $app->delete('/{streamId}/{subscriptionId}', SubscriptionController::class . ":delete");
 
     /**
      * Subscription stream route
      */
-    $app->get('/{id}', SubscriptionController::class . ":stream")
+    $app->get('/{streamId}', SubscriptionController::class . ":stream")
         ->add(SubscriptionMiddleware::class)
         ->setOutputBuffering(false);
 });

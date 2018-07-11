@@ -9,25 +9,25 @@ interface SubscriptionRepositoryInterface
 {
     /**
      * Creates subscription and returns its id
-     *
+     * @param string $streamId
      * @param string $query
      * @param mixed[] $variables
      *
      * @return mixed
      */
-    public function createSubscription($query, array $variables);
+    public function createSubscription($streamId, $query, array $variables);
 
     /**
-     * @param mixed $id
+     * @param $subscriptionId
      */
-    public function deleteSubscription($id);
+    public function deleteSubscription($subscriptionId);
 
     /**
-     * @param array $ids
+     * @param string $streamId
      *
-     * @return Subscription
+     * @return Subscription[]
      */
-    public function findSubscriptionsByIds(array $ids);
+    public function findSubscriptionsByStreamId($streamId);
 
     /**
      * @param int $afterTimeOffset

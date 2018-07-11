@@ -62,9 +62,16 @@ class Stream implements EventStreamInterface
         }
 
         $lastEventId = null;
+        $keepAliveTime = time();
 
         while (true) {
+            $iterationTime = time();
+
             if ($this->iterator->valid()) {
+                break;
+            } else if($keepAliveTime < $iterationTime) {
+                $keepAliveTime = $iterationTime;
+
                 break;
             } else if ($lastEventId) {
                 $this->lastEventId = $lastEventId;
@@ -123,12 +130,13 @@ class Stream implements EventStreamInterface
                 "id: " . $this->lastEventId,
                 "event: end",
             ];
-        } else {
+        } else if ($this->iterator->valid()) {
             $current = $this->iterator->current();
 
             $data = json_encode([
                 "type" => "SUBSCRIPTION_DATA",
-                "data" => $current
+                "data" => $current["data"],
+                "subscriptionId" => $current["key"],
             ]);
 
             $out = [
@@ -137,6 +145,15 @@ class Stream implements EventStreamInterface
             ];
 
             $this->iterator->next();
+        } else {
+            $data = json_encode([
+                "type" => "KEEPALIVE"
+            ]);
+
+            $out = [
+                "event: message",
+                "data: " . $data
+            ];
         }
 
         return implode("\n", $out) . ($this->shouldEnd ? "\n" : "\n\n");

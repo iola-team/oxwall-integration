@@ -25,31 +25,12 @@ class SubscriptionRepository implements SubscriptionRepositoryInterface
         $this->dbo = \OW::getDbo();
     }
 
-    protected function findSubscriptionId($query, $variables)
+    public function createSubscription($streamId, $query, array $variables)
     {
-        return $this->dbo->queryForColumn(
-            "SELECT `id` FROM `{$this->subscriptionsTable}` WHERE query=:query AND variables=:variables",
-            [
-                "query" => $query,
-                "variables" => json_encode($variables)
-            ]
-        );
-    }
-
-    public function createSubscription($query, array $variables)
-    {
-        $existingSubscriptionId = $this->findSubscriptionId($query, $variables);
-
-        /**
-         * Reuse existing subscription if query and variables are the same
-         */
-        if ($existingSubscriptionId) {
-            return $existingSubscriptionId;
-        }
-
         return $this->dbo->insert(
-            "INSERT INTO `{$this->subscriptionsTable}` SET query=:query, variables=:variables",
+            "INSERT INTO `{$this->subscriptionsTable}` SET streamId=:streamId, query=:query, variables=:variables",
             [
+                "streamId" => $streamId,
                 "query" => $query,
                 "variables" => json_encode($variables)
             ]
@@ -65,24 +46,22 @@ class SubscriptionRepository implements SubscriptionRepositoryInterface
         ]);
     }
 
-    public function findSubscriptionsByIds(array $ids)
+    public function findSubscriptionsByStreamId($streamId)
     {
-        if (empty($ids)) {
-            return [];
-        }
+        $query = "SELECT * FROM `{$this->subscriptionsTable}` WHERE `streamId` = :streamId";
 
-        $inClause = $this->dbo->mergeInClause($ids);
-        $query = "SELECT * FROM `{$this->subscriptionsTable}` WHERE `id` IN ($inClause)";
+        $list = $this->dbo->queryForList($query, [
+            "streamId" => $streamId
+        ]);
 
-        $list = $this->dbo->queryForList($query);
-
-        $subscriptions = array_fill_keys($ids, null);
+        $subscriptions = [];
         foreach ($list as $record) {
             $subscription = new Subscription($record["id"]);
+            $subscription->streamId = $record["streamId"];
             $subscription->query = $record["query"];
             $subscription->variables = json_decode($record["variables"], true);
 
-            $subscriptions[$record["id"]] = $subscription;
+            $subscriptions[] = $subscription;
         }
 
         return $subscriptions;
