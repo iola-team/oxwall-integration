@@ -91,7 +91,7 @@ class SubscriptionRepository implements SubscriptionRepositoryInterface
 
     public function findEvents($timeOffset)
     {
-        $query = "SELECT * FROM `{$this->eventsTable}` WHERE `timeOffset` > :timeOffset";
+        $query = "SELECT * FROM `{$this->eventsTable}` WHERE `timeOffset` > :timeOffset ORDER BY `timeOffset`";
 
         $list = $this->dbo->queryForList($query, [
             "timeOffset" => $timeOffset

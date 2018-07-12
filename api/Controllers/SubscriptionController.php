@@ -43,6 +43,10 @@ class SubscriptionController
         $subscriptionId = $args["subscriptionId"];
 
         $this->subscriptionRepository->deleteSubscription($subscriptionId);
+
+        return json_encode([
+            "deletedId" => $subscriptionId
+        ]);
     }
 
     public function stream(ServerRequestInterface $request, ResponseInterface $response, $args)
@@ -58,7 +62,7 @@ class SubscriptionController
             $this->manager->subscribe($subscription->query, $subscription->variables, $subscription->id);
         }
 
-        $endTimeStamp = time() + 100;
+        $endTimeStamp = time() + 0;
         $lastEventId = $request->getHeader("Last-Event-ID");
         $lastEventId = empty($lastEventId) ? null : $lastEventId[0];
 
