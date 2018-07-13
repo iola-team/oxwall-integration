@@ -62,9 +62,14 @@ class SubscriptionController
             $this->manager->subscribe($subscription->query, $subscription->variables, $subscription->id);
         }
 
-        $endTimeStamp = time() + 0;
+        $endTimeStamp = time() + 0; // TODO: change the timeout tom make it long polling
         $lastEventId = $request->getHeader("Last-Event-ID");
         $lastEventId = empty($lastEventId) ? null : $lastEventId[0];
+
+        /**
+         * Close current session to release the session file lock
+         */
+        session_write_close();
 
         return $response->withBody(new Stream(
             $this->manager->getIterator(),
