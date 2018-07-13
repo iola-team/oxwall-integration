@@ -62,7 +62,7 @@ class SubscriptionController
             $this->manager->subscribe($subscription->query, $subscription->variables, $subscription->id);
         }
 
-        $endTimeStamp = time() + 0; // TODO: change the timeout tom make it long polling
+        $endTimeStamp = time() + 29;
         $lastEventId = $request->getHeader("Last-Event-ID");
         $lastEventId = empty($lastEventId) ? null : $lastEventId[0];
 
