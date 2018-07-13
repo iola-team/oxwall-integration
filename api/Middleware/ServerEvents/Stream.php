@@ -19,6 +19,8 @@ class Stream implements EventStreamInterface
     protected $shouldEnd = false;
     protected $started = false;
 
+    protected $keepAliveInterval = 5;
+
     public function __construct(\Iterator $iterator, callable $tick)
     {
         $this->tick = $tick;
@@ -62,15 +64,15 @@ class Stream implements EventStreamInterface
         }
 
         $lastEventId = null;
-        $keepAliveTime = time();
+        $keepAliveTime = time() + $this->keepAliveInterval;
 
         while (true) {
             $iterationTime = time();
 
             if ($this->iterator->valid()) {
                 break;
-            } else if($keepAliveTime < $iterationTime) {
-                $keepAliveTime = $iterationTime;
+            } else if($keepAliveTime <= $iterationTime) {
+                $keepAliveTime = $iterationTime + $this->keepAliveInterval;
 
                 break;
             } else if ($lastEventId) {
