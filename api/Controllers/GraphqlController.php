@@ -1,19 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: skambalin
- * Date: 9.10.17
- * Time: 17.24
- */
 
-namespace Everywhere\Api\Middleware;
+namespace Everywhere\Api\Controllers;
 
 use GraphQL\Server\ServerConfig;
-use \Psr\Http\Message\ServerRequestInterface;
-use \Psr\Http\Message\ResponseInterface;
 use GraphQL\Server\StandardServer;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
-class GraphQLMiddleware
+class GraphqlController
 {
     /**
      * @var StandardServer
@@ -25,7 +19,7 @@ class GraphQLMiddleware
         $this->server = new StandardServer($serverConfigs);
     }
 
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response)
+    public function query(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         return $this->server->processPsrRequest($request, $response, $response->getBody());
     }

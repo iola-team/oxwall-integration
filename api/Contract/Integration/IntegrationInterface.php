@@ -8,8 +8,15 @@
 
 namespace Everywhere\Api\Contract\Integration;
 
+use Everywhere\Api\Contract\App\EventManagerInterface;
+
 interface IntegrationInterface
 {
+    /**
+     * @param EventManagerInterface $eventManager
+     */
+    public function init(EventManagerInterface $eventManager);
+
     /**
      * @return UserRepositoryInterface
      */
@@ -39,4 +46,9 @@ interface IntegrationInterface
      * @return ChatRepositoryInterface
      */
     public function getChatRepository();
+
+    /**
+     * @return SubscriptionRepositoryInterface
+     */
+    public function getSubscriptionEventsRepository();
 }

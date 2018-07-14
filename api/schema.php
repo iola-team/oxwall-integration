@@ -9,6 +9,7 @@ use Everywhere\Api\Schema\Resolvers\AvatarResolver;
 use Everywhere\Api\Schema\Resolvers\ChatResolver;
 use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
+use Everywhere\Api\Schema\Resolvers\NewMessageSubscriptionResolver;
 use Everywhere\Api\Schema\Resolvers\MessageMutationResolver;
 use Everywhere\Api\Schema\Resolvers\MessageResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
@@ -75,5 +76,9 @@ return [
             ProfileMutationResolver::class,
             MessageMutationResolver::class,
         ],
+
+        "Subscription" => [
+            NewMessageSubscriptionResolver::class
+        ]
     ]
 ];

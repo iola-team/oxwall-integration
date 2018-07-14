@@ -1,12 +1,17 @@
 schema {
     query: Query
     mutation: Mutation
+    subscription: Subscription
 }
 
 scalar Value
 scalar Date
 scalar Cursor
 scalar Upload
+
+type Subscription {
+    onMessageAdd(chatId: ID!): MessageCreatePayload!
+}
 
 type Query {
     me: User

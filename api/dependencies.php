@@ -1,25 +1,35 @@
 <?php
 namespace Everywhere\Api;
 
+use Everywhere\Api\App\EventManager;
 use Everywhere\Api\Auth\AuthenticationAdapter;
 use Everywhere\Api\Auth\AuthenticationService;
 use Everywhere\Api\Auth\IdentityService;
 use Everywhere\Api\Auth\IdentityStorage;
 use Everywhere\Api\Auth\TokenBuilder;
 use Everywhere\Api\Contract\App\ContainerInterface;
+use Everywhere\Api\Contract\App\EventManagerInterface;
 use Everywhere\Api\Contract\Auth\AuthenticationAdapterInterface;
 use Everywhere\Api\Contract\Auth\AuthenticationServiceInterface;
 use Everywhere\Api\Contract\Auth\IdentityServiceInterface;
 use Everywhere\Api\Contract\Auth\IdentityStorageInterface;
 use Everywhere\Api\Contract\Auth\TokenBuilderInterface;
+use Everywhere\Api\Contract\Integration\EventSourceInterface;
+use Everywhere\Api\Contract\Integration\SubscriptionRepositoryInterface;
 use Everywhere\Api\Contract\Schema\ConnectionFactoryInterface;
 use Everywhere\Api\Contract\Schema\ContextInterface;
 use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
 use Everywhere\Api\Contract\Schema\DataLoaderInterface;
 use Everywhere\Api\Contract\Schema\IDFactoryInterface;
+use Everywhere\Api\Contract\Schema\SubscriptionFactoryInterface;
 use Everywhere\Api\Contract\Schema\ViewerInterface;
-use Everywhere\Api\Middleware\GraphQLMiddleware;
+use Everywhere\Api\Contract\Subscription\SubscriptionManagerFactoryInterface;
+use Everywhere\Api\Contract\Subscription\SubscriptionManagerInterface;
+use Everywhere\Api\Controllers\GraphqlController;
+use Everywhere\Api\Controllers\SubscriptionController;
+use Everywhere\Api\Integration\EventSource;
 use Everywhere\Api\Middleware\AuthenticationMiddleware;
+use Everywhere\Api\Middleware\SubscriptionMiddleware;
 use Everywhere\Api\Middleware\UploadMiddleware;
 use Everywhere\Api\Middleware\CorsMiddleware;
 use Everywhere\Api\Schema\ConnectionFactory;
@@ -31,6 +41,7 @@ use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
 use Everywhere\Api\Schema\Resolvers\MessageMutationResolver;
 use Everywhere\Api\Schema\Resolvers\MessageResolver;
+use Everywhere\Api\Schema\Resolvers\NewMessageSubscriptionResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoMutationResolver;
 use Everywhere\Api\Schema\Resolvers\PresentationAwareTypeResolver;
@@ -42,6 +53,7 @@ use Everywhere\Api\Schema\Resolvers\UploadResolver;
 use Everywhere\Api\Schema\Resolvers\UserInfoResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileResolver;
 use Everywhere\Api\Schema\Resolvers\ValueResolver;
+use Everywhere\Api\Schema\SubscriptionFactory;
 use Everywhere\Api\Schema\TypeConfigDecorators\AggregateTypeConfigDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\AbstractTypeConfigDecorator;
 use Everywhere\Api\Schema\TypeConfigDecorators\ObjectTypeConfigDecorator;
@@ -55,8 +67,11 @@ use Everywhere\Api\Schema\Resolvers\AvatarResolver;
 use Everywhere\Api\Contract\Schema\BuilderInterface;
 use Everywhere\Api\Contract\Schema\TypeConfigDecoratorInterface;
 use Everywhere\Api\Schema\Viewer;
+use Everywhere\Api\Subscription\SubscriptionManager;
+use Everywhere\Api\Subscription\SubscriptionManagerFactory;
 use GraphQL\Server\ServerConfig;
 use GraphQL\Executor\Promise\PromiseAdapter;
+use GraphQL\Type\Schema;
 use Overblog\DataLoader\Promise\Adapter\Webonyx\GraphQL\SyncPromiseAdapter;
 use Everywhere\Api\Schema\Resolvers\QueryResolver;
 use Everywhere\Api\Schema\Resolvers\UserResolver;
@@ -68,12 +83,20 @@ return [
         return new SyncPromiseAdapter();
     },
 
+    EventManagerInterface::class =>  function() {
+        return new EventManager();
+    },
+
+    Schema::class => function(ContainerInterface $container) {
+        return $container[BuilderInterface::class]->build();
+    },
+
     ServerConfig::class => function(ContainerInterface $container) {
         return ServerConfig::create([
             "debug" => true,
             "queryBatching" => true,
             "context" => $container[ContextInterface::class],
-            "schema" => $container[BuilderInterface::class]->build(),
+            "schema" => $container[Schema::class],
             "promiseAdapter" => $container[PromiseAdapter::class],
         ]);
     },
@@ -85,14 +108,26 @@ return [
         );
     },
 
-    GraphQLMiddleware::class => function(ContainerInterface $container) {
-        return new GraphQLMiddleware(
+    SubscriptionManagerFactoryInterface::class => function(ContainerInterface $container) {
+        return new SubscriptionManagerFactory(
+            $container[Schema::class],
+            $container[ContextInterface::class],
+            $container[PromiseAdapter::class]
+        );
+    },
+
+    GraphqlController::class => function(ContainerInterface $container) {
+        return new GraphqlController(
             $container[ServerConfig::class]
         );
     },
 
     CorsMiddleware::class => function(ContainerInterface $container) {
         return new CorsMiddleware();
+    },
+
+    SubscriptionMiddleware::class => function(ContainerInterface $container) {
+        return new SubscriptionMiddleware();
     },
 
     UploadMiddleware::class => function(ContainerInterface $container) {
@@ -106,6 +141,12 @@ return [
     ConnectionFactoryInterface::class => function(ContainerInterface $container) {
         return new ConnectionFactory(
             $container[DataLoaderFactory::class]
+        );
+    },
+
+    SubscriptionFactoryInterface::class => function(ContainerInterface $container) {
+        return new SubscriptionFactory(
+            $container[EventSourceInterface::class]
         );
     },
 
@@ -218,6 +259,22 @@ return [
     ContextInterface::class => function(ContainerInterface $container) {
         return new Context(
             $container[ViewerInterface::class]
+        );
+    },
+
+    EventSourceInterface::class => function(ContainerInterface $container) {
+        return new EventSource(
+            $container->getIntegration()->getSubscriptionEventsRepository()
+        );
+    },
+
+    // Routes
+
+    SubscriptionController::class => function(ContainerInterface $container) {
+        return new SubscriptionController(
+            $container[SubscriptionManagerFactoryInterface::class],
+            $container[EventSourceInterface::class],
+            $container->getIntegration()->getSubscriptionEventsRepository()
         );
     },
 
@@ -362,6 +419,12 @@ return [
     PhotoMutationResolver::class => function(ContainerInterface $container) {
         return new PhotoMutationResolver(
             $container->getIntegration()->getPhotoRepository()
+        );
+    },
+
+    NewMessageSubscriptionResolver::class => function(ContainerInterface $container) {
+        return new NewMessageSubscriptionResolver(
+            $container[SubscriptionFactoryInterface::class]
         );
     },
 ];
