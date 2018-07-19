@@ -324,13 +324,20 @@ type Comment implements Node {
     text: String!
 }
 
+enum MessageStatus {
+    DELIVERED
+    READ
+}
 
+input ChatMessagesQueryInput {
+    notReadBy: ID
+}
 
 type Chat  implements Node {
     id: ID!
     user: User!
     participants: [User!]!
-    messages(first: Int, after: Cursor, last: Int, before: Cursor): ChatMessagesConnection!
+    messages(query: ChatMessagesQueryInput, first: Int, after: Cursor, last: Int, before: Cursor): ChatMessagesConnection!
 }
 
 type ChatEdge implements Edge {
@@ -347,11 +354,6 @@ type UserChatsConnection implements Connection {
 
 type MessageContent {
     text: String
-}
-
-enum MessageStatus {
-    DELIVERED
-    READ
 }
 
 type Message implements Node {

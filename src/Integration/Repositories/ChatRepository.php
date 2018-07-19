@@ -76,14 +76,21 @@ class ChatRepository implements ChatRepositoryInterface
 
     public function findChatsMessageIds($chatIds, $args)
     {
+        $notReadBy = empty($args["query"]["notReadBy"]) ? null : $args["query"]["notReadBy"];
+
         $out = [];
         foreach ($chatIds as $id) {
             $out[$id] = [];
 
             $example = new \OW_Example();
             $example->andFieldEqual("conversationId", $id);
-            $example->setLimitClause($args["offset"], $args["count"]);
 
+            if ($notReadBy) {
+                $example->andFieldEqual("recipientId", $notReadBy);
+                $example->andFieldEqual("recipientRead", 0);
+            }
+
+            $example->setLimitClause($args["offset"], $args["count"]);
             $example->setOrder('timeStamp DESC');
 
             /**
@@ -101,9 +108,21 @@ class ChatRepository implements ChatRepositoryInterface
 
     public function countChatsMessages($chatIds, $args)
     {
+        $notReadBy = empty($args["query"]["notReadBy"]) ? null : $args["query"]["notReadBy"];
+
         $out = [];
         foreach ($chatIds as $id) {
-            $out[$id] = $this->messageDao->findCountByConversationId($id);
+            $out[$id] = [];
+
+            $example = new \OW_Example();
+            $example->andFieldEqual("conversationId", $id);
+
+            if ($notReadBy) {
+                $example->andFieldEqual("recipientId", $notReadBy);
+                $example->andFieldEqual("recipientRead", 0);
+            }
+
+            $out[$id] = $this->messageDao->countByExample($example);
         }
 
         return $out;
