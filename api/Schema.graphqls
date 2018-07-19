@@ -349,10 +349,16 @@ type MessageContent {
     text: String
 }
 
+enum MessageStatus {
+    DELIVERED
+    READ
+}
+
 type Message implements Node {
     id: ID!
     user: User!
     chat: Chat!
+    status: MessageStatus
     content: MessageContent!
     createdAt: Date!
 }

@@ -47,6 +47,7 @@ class ChatRepository implements ChatRepositoryInterface
             $messageDto = $this->conversationService->getMessage($id);
 
             $message = new Message($messageDto->id);
+            $message->status = $messageDto->recipientRead ? Message::STATUS_READ : Message::STATUS_DELIVERED;
             $message->userId = $messageDto->senderId;
             $message->chatId = $messageDto->conversationId;
             $message->createdAt = new \DateTime("@" . $messageDto->timeStamp);
