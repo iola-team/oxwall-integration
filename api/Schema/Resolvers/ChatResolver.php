@@ -45,7 +45,7 @@ class ChatResolver extends EntityResolver
             "messages",
             function (Chat $chat, $args) use($connectionFactory, $messagesLoader, $messageCountsLoader) {
                 $connectionArgs = [
-                    "query" => [
+                    "filter" => [
                         "notReadBy" => empty($args["query"]["notReadBy"]) ? null : $args["query"]["notReadBy"]->getId()
                     ]
                 ];

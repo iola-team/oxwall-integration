@@ -1,10 +1,17 @@
 <?php
 
-use \Everywhere\Oxwall\App;
+namespace Everywhere\Oxwall;
 
+/**
+ * Apply patches to Oxwall classes
+ */
+require_once __DIR__ . "/patches/patch.php";
 require_once __DIR__ . "/vendor/autoload.php";
 
-$rootRoute = new Everywhere\Oxwall\RootRoute("everywhere-api", "everywhere/api");
-OW::getRouter()->addRoute($rootRoute);
+$extensionManager = new ExtensionManager();
+$extensionManager->init();
+
+$rootRoute = new RootRoute("everywhere-api", "everywhere/api");
+\OW::getRouter()->addRoute($rootRoute);
 
 App::getInstance()->init();

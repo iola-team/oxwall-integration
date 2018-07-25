@@ -10,7 +10,8 @@ scalar Cursor
 scalar Upload
 
 type Subscription {
-    onMessageAdd(chatId: ID!): MessageCreatePayload!
+    onMessageAdd(chatId: ID, userId: ID): MessageCreatePayload!
+    onMessageUpdate(chatId: ID, userId: ID): MessageUpdatePayload!
 }
 
 type Query {
@@ -91,6 +92,14 @@ type PageInfo {
     endCursor: Cursor
 }
 
+input UserChatsFilterInput {
+    hasUnreadMessages: Boolean,
+}
+
+input UserMessagesFilterInput {
+    unread: Boolean,
+}
+
 type User implements Node {
     id: ID!
     name: String!
@@ -103,7 +112,8 @@ type User implements Node {
     avatar: Avatar
     friends(first: Int, after: Cursor, last: Int, before: Cursor): UserFriendsConnection!
     photos(first: Int, after: Cursor, last: Int, before: Cursor): UserPhotoConnection!
-    chats(first: Int, after: Cursor, last: Int, before: Cursor): UserChatsConnection!
+    chats(filter: UserChatsFilterInput, first: Int, after: Cursor, last: Int, before: Cursor): UserChatsConnection!
+    messages(filter: UserMessagesFilterInput, first: Int, after: Cursor, last: Int, before: Cursor): UserMessagesConnection!
 }
 
 type UserInfo {
@@ -329,7 +339,7 @@ enum MessageStatus {
     READ
 }
 
-input ChatMessagesQueryInput {
+input ChatMessagesFilterInput {
     notReadBy: ID
 }
 
@@ -337,7 +347,7 @@ type Chat  implements Node {
     id: ID!
     user: User!
     participants: [User!]!
-    messages(query: ChatMessagesQueryInput, first: Int, after: Cursor, last: Int, before: Cursor): ChatMessagesConnection!
+    messages(filter: ChatMessagesFilterInput, first: Int, after: Cursor, last: Int, before: Cursor): ChatMessagesConnection!
 }
 
 type ChatEdge implements Edge {
@@ -377,6 +387,13 @@ type ChatMessagesConnection implements Connection {
     totalCount: Int
 }
 
+type UserMessagesConnection implements Connection {
+    pageInfo: PageInfo!
+    metaInfo: ConnectionMetaInfo!
+    edges: [MessageEdge!]!
+    totalCount: Int
+}
+
 input MessageContentInput {
     text: String,
 }
@@ -390,7 +407,15 @@ input MessageInput {
 type MessageCreatePayload {
     user: User!
     chat: Chat!
+    chatEdge: ChatEdge!
     node: Message!
     edge: MessageEdge!
 }
 
+type MessageUpdatePayload {
+    user: User!
+    chat: Chat!
+    chatEdge: ChatEdge!
+    node: Message!
+    edge: MessageEdge!
+}

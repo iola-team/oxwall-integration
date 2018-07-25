@@ -76,7 +76,7 @@ class ChatRepository implements ChatRepositoryInterface
 
     public function findChatsMessageIds($chatIds, $args)
     {
-        $notReadBy = empty($args["query"]["notReadBy"]) ? null : $args["query"]["notReadBy"];
+        $notReadBy = empty($args["filter"]["notReadBy"]) ? null : $args["filter"]["notReadBy"];
 
         $out = [];
         foreach ($chatIds as $id) {
