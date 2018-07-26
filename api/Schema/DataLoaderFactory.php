@@ -2,6 +2,8 @@
 
 namespace Everywhere\Api\Schema;
 
+use Everywhere\Api\Contract\App\EventManagerInterface;
+use Everywhere\Api\Contract\Integration\Events\SubscriptionEventInterface;
 use Everywhere\Api\Contract\Schema\ContextInterface;
 use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
 use Everywhere\Api\Contract\Schema\IDFactoryInterface;
@@ -21,15 +23,33 @@ class DataLoaderFactory implements DataLoaderFactoryInterface
      */
     protected $context;
 
-    public function __construct(PromiseAdapter $promiseAdapter, ContextInterface $context)
+    protected $eventManager;
+
+    public function __construct(
+        PromiseAdapter $promiseAdapter,
+        ContextInterface $context,
+        EventManagerInterface $eventManager
+    )
     {
         $this->promiseAdapter = new WebonyxGraphQLSyncPromiseAdapter($promiseAdapter);
         $this->context = $context;
+        $this->eventManager = $eventManager;
     }
 
     public function create(callable $source, $emptyValue = null)
     {
         $loader = new DataLoader($this->createBatchLoadFn($source, $emptyValue), $this->promiseAdapter);
+
+        $this->eventManager->addListener("*", function($event) use($loader) {
+
+            /**
+             * Clear data loader cache on all subscription events
+             * TODO: think about it more - there is might be a better solution
+             */
+            if ($event instanceof SubscriptionEventInterface) {
+                $loader->clearAll();
+            }
+        });
 
         return new DataLoaderDecorator($loader, function($key, $args = []) {
             return $this->buildKey($key, $args);
