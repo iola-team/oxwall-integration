@@ -96,6 +96,17 @@ class PhotoRepository implements PhotoRepositoryInterface
         return $out;
     }
 
+    public function countComments($ids, array $args)
+    {
+      $out = [];
+
+      foreach ($ids as $id) {
+//        $out[$id] = \PHOTO_BOL_PhotoService::getInstance()->countUserPhotos($id);
+      }
+
+      return $out;
+    }
+
     public function addUserPhoto($userId, array $input)
     {
         /**
