@@ -30,14 +30,14 @@ interface PhotoRepositoryInterface
      * @param array $args
      * @return mixed
      */
-    public function findComments($ids, array $args); // @TODO naming -> +ByIds
+    public function findComments($ids, array $args);
 
     /**
      * @param $ids
      * @param array $args
      * @return mixed
      */
-    public function countComments($ids, array $args); // @TODO naming -> +ByIds
+    public function countComments($ids, array $args);
 
     /**
      *
