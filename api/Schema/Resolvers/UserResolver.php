@@ -15,6 +15,7 @@ use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
 use Everywhere\Api\Contract\Schema\DataLoaderInterface;
 use Everywhere\Api\Entities\User;
 use Everywhere\Api\Schema\EntityResolver;
+use Everywhere\Api\Schema\IDObject;
 use GraphQL\Executor\Promise\Promise;
 use GraphQL\Type\Definition\ResolveInfo;
 
@@ -53,7 +54,12 @@ class UserResolver extends EntityResolver
     /**
      * @var DataLoaderInterface
      */
-    protected $chatCountsLoader;
+    protected $chatsLoader;
+
+    /**
+     * @var DataLoaderInterface
+     */
+    protected $chatsCountsLoader;
 
     /**
      * @var DataLoaderInterface
@@ -102,12 +108,18 @@ class UserResolver extends EntityResolver
         });
 
         $this->chatLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
+            return $userRepository->findChat($ids, $args);
+        });
+
+        $this->chatsLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
             return $userRepository->findChats($ids, $args);
         });
 
-        $this->chatCountsLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
+        $this->chatsCountsLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
             return $userRepository->countChats($ids, $args);
         });
+
+
     }
 
     /**
@@ -152,15 +164,21 @@ class UserResolver extends EntityResolver
             case "avatar":
                 return $this->avatarLoader->load($user->id, $args);
 
+            case "chat":
+                return $this->chatLoader->load($user->id, [
+                    "id" => isset($args["id"]) ? $args["id"]->getId() : null,
+                    "recipientId" => isset($args["recipientId"]) ? $args["recipientId"]->getId() : null,
+                ]);
+
             case "chats":
                 return $this->connectionFactory->create(
                     $user,
                     $args,
                     function($args) use($user) {
-                        return $this->chatLoader->load($user->id, $args);
+                        return $this->chatsLoader->load($user->id, $args);
                     },
                     function($args) use($user) {
-                        return $this->chatCountsLoader->load($user->id, $args);
+                        return $this->chatsCountsLoader->load($user->id, $args);
                     }
                 );
 

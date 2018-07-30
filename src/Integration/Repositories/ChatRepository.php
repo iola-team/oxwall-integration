@@ -131,10 +131,18 @@ class ChatRepository implements ChatRepositoryInterface
     public function addMessage($args)
     {
         $userId = $args["userId"];
-        $chatId = $args["chatId"];
         $content = $args["content"];
 
-        $chat = $this->conversationService->getConversation($chatId);
+        $chatId = $args["chatId"];
+        $recipientIds = $args["recipientIds"];
+
+        $chat = null;
+        if ($chatId) {
+            $chat = $this->conversationService->getConversation($chatId);
+        } else if ($recipientIds) {
+            $chat = $this->conversationService->createChatConversation($userId, $recipientIds[0]);
+        }
+
         $messageDto = $this->conversationService->addMessage($chat, $userId, $content["text"]);
 
         return $messageDto->id;
