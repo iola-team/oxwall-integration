@@ -52,4 +52,11 @@ interface ChatRepositoryInterface
      * @return mixed
      */
     public function addMessage($args);
+
+    /**
+     * @param array $args
+     *
+     * @return mixed[]
+     */
+    public function markMessagesAsRead($args);
 }

@@ -61,6 +61,12 @@ type Mutation {
     deleteUserPhoto(id: ID!): UserPhotoDeletePayload!
     saveProfileFieldValues(input: ProfileFieldSaveInput!): ProfileFieldSavePayload!
     addMessage(input: MessageInput!, after: Cursor, before: Cursor, at: Cursor): MessageCreatePayload!
+    markMessagesAsRead(input: MarkMessagesAsReadInput!): [MessageUpdatePayload!]!
+}
+
+input MarkMessagesAsReadInput {
+    userId: ID!
+    messageIds: [ID!]!
 }
 
 input SignInUserInput {

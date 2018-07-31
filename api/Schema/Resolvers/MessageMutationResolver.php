@@ -24,6 +24,7 @@ class MessageMutationResolver extends CompositeResolver
     {
         parent::__construct([
             "addMessage" => [$this, "addMessage"],
+            "markMessagesAsRead" => [$this, "markMessagesAsRead"],
         ]);
 
         $this->chatRepository = $chatRepository;
@@ -58,5 +59,39 @@ class MessageMutationResolver extends CompositeResolver
                 return $this->edgeFactory->createFromArguments($args, $message);
             }
         ];
+    }
+
+    public function markMessagesAsRead($root, $args)
+    {
+        $input = $args["input"];
+        $messageIds = array_map(function(IDObject $idObject) {
+            return $idObject->getId();
+        }, $input["messageIds"]);
+
+        $userId = $input["userId"]->getId();
+
+        $markedMessageIds = $this->chatRepository->markMessagesAsRead([
+            "userId" => $userId,
+            "messageIds" => $messageIds
+        ]);
+
+        /**
+         * @var $message Message[]
+         */
+        $messages = $this->chatRepository->findMessagesByIds($markedMessageIds);
+
+        $out = [];
+        foreach ($messages as $message) {
+            $out[] = [
+                "user" => $message->userId,
+                "chat" => $message->chatId,
+                "node" => $message,
+                "edge" => function() use ($args, $message) {
+                    return $this->edgeFactory->createFromArguments($args, $message);
+                }
+            ];
+        }
+
+        return $out;
     }
 }

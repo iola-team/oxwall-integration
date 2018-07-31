@@ -147,4 +147,14 @@ class ChatRepository implements ChatRepositoryInterface
 
         return $messageDto->id;
     }
+
+    public function markMessagesAsRead($args)
+    {
+        $userId = $args["userId"];
+        $messageIds = $args["messageIds"];
+
+        $this->conversationService->markMessageIdListReadByUser($messageIds, $userId);
+
+        return $messageIds;
+    }
 }
