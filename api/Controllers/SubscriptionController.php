@@ -77,13 +77,15 @@ class SubscriptionController
               $lastEventId = $this->eventSource->loadEvents($lastEventId);
 
                 /**
-                 * Stop streaming if last longer then given time and return last event id
+                 * Stop streaming if last longer then given time
                  */
                 if ($endTimeStamp <= time()) {
-                    return $lastEventId;
+                    return false;
                 }
 
                 usleep(500000); // Sleep for half a second
+
+                return $lastEventId;
             }
         ));
     }

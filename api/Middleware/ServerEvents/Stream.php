@@ -75,12 +75,16 @@ class Stream implements EventStreamInterface
                 $keepAliveTime = $iterationTime + $this->keepAliveInterval;
 
                 break;
-            } else if ($lastEventId) {
-                $this->lastEventId = $lastEventId;
-
-                break;
             } else {
                 $lastEventId = call_user_func($this->tick);
+
+                if ($lastEventId === false) {
+                    $this->shouldEnd = true;
+
+                    break;
+                }
+
+                $this->lastEventId = $lastEventId;
                 $this->iterator->rewind();
             }
         }
@@ -126,10 +130,8 @@ class Stream implements EventStreamInterface
                 "event: start",
                 "retry" => 1000
             ];
-        } else if ($this->lastEventId) {
-            $this->shouldEnd = true;
+        } else if ($this->shouldEnd) {
             $out = [
-                "id: " . $this->lastEventId,
                 "event: end",
             ];
         } else if ($this->iterator->valid()) {
@@ -156,6 +158,13 @@ class Stream implements EventStreamInterface
                 "event: message",
                 "data: " . $data
             ];
+        }
+
+        /**
+         * Add event id to all messages
+         */
+        if ($this->lastEventId) {
+            array_unshift($out, "id: " . $this->lastEventId);
         }
 
         return implode("\n", $out) . ($this->shouldEnd ? "\n" : "\n\n");

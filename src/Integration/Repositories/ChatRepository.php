@@ -143,7 +143,7 @@ class ChatRepository implements ChatRepositoryInterface
             $chat = $this->conversationService->createChatConversation($userId, $recipientIds[0]);
         }
 
-        $messageDto = $this->conversationService->addMessage($chat, $userId, $content["text"]);
+        $messageDto = $this->conversationService->createMessage($chat, $userId, $content["text"]);
 
         return $messageDto->id;
     }

@@ -54,9 +54,11 @@ class EventSource extends EventManager implements EventSourceInterface, Listener
 
     public function loadEvents($timeOffset = null)
     {
-        $lastEventTimeOffset = $timeOffset ? $timeOffset : $this->getTimeOffset();
-        $eventEntities = $this->eventsRepository->findEvents($lastEventTimeOffset);
+        $eventEntities = $this->eventsRepository->findEvents(
+            $timeOffset ?: $this->getTimeOffset()
+        );
 
+        $lastEventTimeOffset = null;
         foreach ($eventEntities as $eventEntity) {
             $this->emit(
                 new SubscriptionEvent($eventEntity->name, $eventEntity->data)
@@ -65,7 +67,7 @@ class EventSource extends EventManager implements EventSourceInterface, Listener
             $lastEventTimeOffset = $eventEntity->timeOffset;
         }
 
-        return $lastEventTimeOffset;
+        return $lastEventTimeOffset ?: $this->getTimeOffset();
     }
 
     public function provideListeners(ListenerAcceptorInterface $listenerAcceptor)
