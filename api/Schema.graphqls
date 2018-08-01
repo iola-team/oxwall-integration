@@ -309,7 +309,7 @@ type Photo implements Node {
     createdAt: Date!
 
     user: User!
-    comments(offset: Int = 0, count: Int = 10): [Comment]
+    comments(first: Int, after: Cursor, last: Int, before: Cursor): PhotoCommentsConnection!
 }
 
 type PhotoEdge implements Edge {
@@ -318,6 +318,18 @@ type PhotoEdge implements Edge {
 }
 
 
+
+type PhotoCommentsConnection implements Connection {
+    pageInfo: PageInfo!
+    metaInfo: ConnectionMetaInfo!
+    edges: [CommentEdge!]!
+    totalCount: Int
+}
+
+type CommentEdge implements Edge {
+    node: Comment!
+    cursor: Cursor!
+}
 
 type Comment implements Node {
     id: ID!

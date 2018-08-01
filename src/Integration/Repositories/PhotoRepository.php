@@ -86,14 +86,26 @@ class PhotoRepository implements PhotoRepositoryInterface
 
         $out = [];
         foreach ($items as $item) {
-            $userId = (int) $item->userId;
-            $userItems = empty($out[$userId]) ? [] : $out[$userId];
-            $userItems[] = $item->id;
-
-            $out[$userId] = $userItems;
+          if (empty($out[$item->entityId])) {
+            $out[$item->entityId] = [$item->getId()];
+          } else {
+            $out[$item->entityId][] = $item->getId();
+          }
         }
 
         return $out;
+    }
+
+    public function countComments($photoIds, array $args)
+    {
+      $commentService = \BOL_CommentService::getInstance();
+      $out = [];
+
+      foreach ($photoIds as $id) {
+        $out[$id] = $commentService->findCommentCount('photo_comments', $id);
+      }
+
+      return $out;
     }
 
     public function addUserPhoto($userId, array $input)

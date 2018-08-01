@@ -21,15 +21,23 @@ interface PhotoRepositoryInterface
 
     /**
      * @param $ids
+     * @return void
+     */
+    public function deleteByIds($ids);
+
+    /**
+     * @param $ids
+     * @param array $args
      * @return mixed
      */
     public function findComments($ids, array $args);
 
     /**
      * @param $ids
-     * @return void
+     * @param array $args
+     * @return mixed
      */
-    public function deleteByIds($ids);
+    public function countComments($ids, array $args);
 
     /**
      *
