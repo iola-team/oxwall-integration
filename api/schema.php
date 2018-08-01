@@ -44,6 +44,7 @@ return [
 
         "Photo" => PhotoResolver::class,
         "Comment" => CommentResolver::class,
+        "PhotoCommentsConnection" => Relay\ConnectionResolver::class,
         "Avatar" => AvatarResolver::class,
         "AccountType" => AccountTypeResolver::class,
         "ProfileField" => ProfileFieldResolver::class,
