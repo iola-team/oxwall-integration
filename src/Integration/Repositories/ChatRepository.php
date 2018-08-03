@@ -47,6 +47,7 @@ class ChatRepository implements ChatRepositoryInterface
             $messageDto = $this->conversationService->getMessage($id);
 
             $message = new Message($messageDto->id);
+            $message->status = $messageDto->recipientRead ? Message::STATUS_READ : Message::STATUS_DELIVERED;
             $message->userId = $messageDto->senderId;
             $message->chatId = $messageDto->conversationId;
             $message->createdAt = new \DateTime("@" . $messageDto->timeStamp);
@@ -75,14 +76,21 @@ class ChatRepository implements ChatRepositoryInterface
 
     public function findChatsMessageIds($chatIds, $args)
     {
+        $notReadBy = empty($args["filter"]["notReadBy"]) ? null : $args["filter"]["notReadBy"];
+
         $out = [];
         foreach ($chatIds as $id) {
             $out[$id] = [];
 
             $example = new \OW_Example();
             $example->andFieldEqual("conversationId", $id);
-            $example->setLimitClause($args["offset"], $args["count"]);
 
+            if ($notReadBy) {
+                $example->andFieldEqual("recipientId", $notReadBy);
+                $example->andFieldEqual("recipientRead", 0);
+            }
+
+            $example->setLimitClause($args["offset"], $args["count"]);
             $example->setOrder('timeStamp DESC');
 
             /**
@@ -100,9 +108,21 @@ class ChatRepository implements ChatRepositoryInterface
 
     public function countChatsMessages($chatIds, $args)
     {
+        $notReadBy = empty($args["filter"]["notReadBy"]) ? null : $args["filter"]["notReadBy"];
+
         $out = [];
         foreach ($chatIds as $id) {
-            $out[$id] = $this->messageDao->findCountByConversationId($id);
+            $out[$id] = [];
+
+            $example = new \OW_Example();
+            $example->andFieldEqual("conversationId", $id);
+
+            if ($notReadBy) {
+                $example->andFieldEqual("recipientId", $notReadBy);
+                $example->andFieldEqual("recipientRead", 0);
+            }
+
+            $out[$id] = $this->messageDao->countByExample($example);
         }
 
         return $out;
@@ -111,12 +131,30 @@ class ChatRepository implements ChatRepositoryInterface
     public function addMessage($args)
     {
         $userId = $args["userId"];
-        $chatId = $args["chatId"];
         $content = $args["content"];
 
-        $chat = $this->conversationService->getConversation($chatId);
-        $messageDto = $this->conversationService->addMessage($chat, $userId, $content["text"]);
+        $chatId = $args["chatId"];
+        $recipientIds = $args["recipientIds"];
+
+        $chat = null;
+        if ($chatId) {
+            $chat = $this->conversationService->getConversation($chatId);
+        } else if ($recipientIds) {
+            $chat = $this->conversationService->createChatConversation($userId, $recipientIds[0]);
+        }
+
+        $messageDto = $this->conversationService->createMessage($chat, $userId, $content["text"]);
 
         return $messageDto->id;
+    }
+
+    public function markMessagesAsRead($args)
+    {
+        $userId = $args["userId"];
+        $messageIds = $args["messageIds"];
+
+        $this->conversationService->markMessageIdListReadByUser($messageIds, $userId);
+
+        return $messageIds;
     }
 }

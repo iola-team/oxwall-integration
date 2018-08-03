@@ -10,7 +10,8 @@ scalar Cursor
 scalar Upload
 
 type Subscription {
-    onMessageAdd(chatId: ID!): MessageCreatePayload!
+    onMessageAdd(chatId: ID, userId: ID): MessageCreatePayload!
+    onMessageUpdate(chatId: ID, userId: ID): MessageUpdatePayload!
 }
 
 type Query {
@@ -60,6 +61,12 @@ type Mutation {
     deleteUserPhoto(id: ID!): UserPhotoDeletePayload!
     saveProfileFieldValues(input: ProfileFieldSaveInput!): ProfileFieldSavePayload!
     addMessage(input: MessageInput!, after: Cursor, before: Cursor, at: Cursor): MessageCreatePayload!
+    markMessagesAsRead(input: MarkMessagesAsReadInput!): [MessageUpdatePayload!]!
+}
+
+input MarkMessagesAsReadInput {
+    userId: ID!
+    messageIds: [ID!]!
 }
 
 input SignInUserInput {
@@ -91,6 +98,10 @@ type PageInfo {
     endCursor: Cursor
 }
 
+input UserMessagesFilterInput {
+    unread: Boolean,
+}
+
 type User implements Node {
     id: ID!
     name: String!
@@ -101,9 +112,12 @@ type User implements Node {
     profile: Profile!
 
     avatar: Avatar
+    chat(id: ID, recipientId: ID): Chat
+
     friends(first: Int, after: Cursor, last: Int, before: Cursor): UserFriendsConnection!
     photos(first: Int, after: Cursor, last: Int, before: Cursor): UserPhotoConnection!
     chats(first: Int, after: Cursor, last: Int, before: Cursor): UserChatsConnection!
+    messages(filter: UserMessagesFilterInput, first: Int, after: Cursor, last: Int, before: Cursor): UserMessagesConnection!
 }
 
 type UserInfo {
@@ -336,13 +350,20 @@ type Comment implements Node {
     text: String!
 }
 
+enum MessageStatus {
+    DELIVERED
+    READ
+}
 
+input ChatMessagesFilterInput {
+    notReadBy: ID
+}
 
 type Chat  implements Node {
     id: ID!
     user: User!
     participants: [User!]!
-    messages(first: Int, after: Cursor, last: Int, before: Cursor): ChatMessagesConnection!
+    messages(filter: ChatMessagesFilterInput, first: Int, after: Cursor, last: Int, before: Cursor): ChatMessagesConnection!
 }
 
 type ChatEdge implements Edge {
@@ -365,6 +386,7 @@ type Message implements Node {
     id: ID!
     user: User!
     chat: Chat!
+    status: MessageStatus
     content: MessageContent!
     createdAt: Date!
 }
@@ -381,20 +403,36 @@ type ChatMessagesConnection implements Connection {
     totalCount: Int
 }
 
+type UserMessagesConnection implements Connection {
+    pageInfo: PageInfo!
+    metaInfo: ConnectionMetaInfo!
+    edges: [MessageEdge!]!
+    totalCount: Int
+}
+
 input MessageContentInput {
     text: String,
 }
 
 input MessageInput {
     userId: ID!
-    chatId: ID!
+    recipientIds: [ID!]
+    chatId: ID
     content: MessageContentInput!
 }
 
 type MessageCreatePayload {
     user: User!
     chat: Chat!
+    chatEdge: ChatEdge!
     node: Message!
     edge: MessageEdge!
 }
 
+type MessageUpdatePayload {
+    user: User!
+    chat: Chat!
+    chatEdge: ChatEdge!
+    node: Message!
+    edge: MessageEdge!
+}

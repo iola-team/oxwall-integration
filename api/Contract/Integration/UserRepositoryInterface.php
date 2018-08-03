@@ -75,6 +75,14 @@ interface UserRepositoryInterface extends AuthRepositoryInterface
      *
      * @return string[]
      */
+    public function findChat($ids, array $args);
+
+    /**
+     * @param mixed[] $ids
+     * @param mixed[] $args
+     *
+     * @return string[]
+     */
     public function findChats($ids, array $args);
 
     /**

@@ -41,7 +41,7 @@ use Everywhere\Api\Schema\Resolvers\CursorResolver;
 use Everywhere\Api\Schema\Resolvers\DateResolver;
 use Everywhere\Api\Schema\Resolvers\MessageMutationResolver;
 use Everywhere\Api\Schema\Resolvers\MessageResolver;
-use Everywhere\Api\Schema\Resolvers\NewMessageSubscriptionResolver;
+use Everywhere\Api\Schema\Resolvers\MessageSubscriptionResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoMutationResolver;
 use Everywhere\Api\Schema\Resolvers\PresentationAwareTypeResolver;
@@ -146,7 +146,8 @@ return [
 
     SubscriptionFactoryInterface::class => function(ContainerInterface $container) {
         return new SubscriptionFactory(
-            $container[EventSourceInterface::class]
+            $container[EventSourceInterface::class],
+            $container[PromiseAdapter::class]
         );
     },
 
@@ -207,7 +208,8 @@ return [
     DataLoaderFactory::class => function(ContainerInterface $container) {
         return new DataLoaderFactory(
             $container[PromiseAdapter::class],
-            $container[ContextInterface::class]
+            $container[ContextInterface::class],
+            $container[EventSourceInterface::class]
         );
     },
 
@@ -423,8 +425,10 @@ return [
         );
     },
 
-    NewMessageSubscriptionResolver::class => function(ContainerInterface $container) {
-        return new NewMessageSubscriptionResolver(
+    MessageSubscriptionResolver::class => function(ContainerInterface $container) {
+        return new MessageSubscriptionResolver(
+            $container->getIntegration()->getChatRepository(),
+            $container[DataLoaderFactory::class],
             $container[SubscriptionFactoryInterface::class]
         );
     },

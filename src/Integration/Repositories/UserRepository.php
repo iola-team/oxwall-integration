@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: skambalin
- * Date: 19.10.17
- * Time: 17.38
- */
 
 namespace Everywhere\Oxwall\Integration\Repositories;
 
@@ -189,6 +183,39 @@ class UserRepository implements UserRepositoryInterface
          */
         foreach ($avatars as $avatar) {
             $out[$avatar->userId] = $avatar->id;
+        }
+
+        return $out;
+    }
+
+    public function findChat($ids, array $args)
+    {
+        $conversationDto = null;
+
+        if (isset($args["id"])) {
+            $conversationDto = $this->conversationService->getConversation($args["id"]);
+        }
+
+        $out = [];
+        foreach ($ids as $userId) {
+            $out[$userId] = null;
+
+            if (!$conversationDto && !empty($args["recipientId"])) {
+                $recipientId = $args["recipientId"];
+                $conversations = $this->conversationService->findConversationList($userId, $recipientId);
+                $conversations = empty($conversations)
+                    ? $this->conversationService->findConversationList($recipientId, $userId)
+                    : $conversations;
+
+                $conversationDto = reset($conversations) ?: null;
+            }
+
+            if (
+                $conversationDto
+                && ($conversationDto->initiatorId == $userId || $conversationDto->interlocutorId == $userId )
+            ) {
+                $out[$userId] = $conversationDto->id;
+            }
         }
 
         return $out;

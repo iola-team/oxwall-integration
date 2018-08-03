@@ -44,9 +44,15 @@ class ChatResolver extends EntityResolver
         $this->addFieldResolver(
             "messages",
             function (Chat $chat, $args) use($connectionFactory, $messagesLoader, $messageCountsLoader) {
+                $connectionArgs = array_merge($args, [
+                    "filter" => [
+                        "notReadBy" => empty($args["filter"]["notReadBy"]) ? null : $args["filter"]["notReadBy"]->getId()
+                    ]
+                ]);
+
                 return $connectionFactory->create(
                     $chat,
-                    $args,
+                    $connectionArgs,
                     function ($args) use($chat, $messagesLoader) {
                         return $messagesLoader->load($chat->id, $args);
                     },

@@ -6,6 +6,7 @@ use Everywhere\Api\Contract\App\EventManagerInterface;
 use Everywhere\Api\Contract\Integration\Events\SubscriptionEventInterface;
 use Everywhere\Api\Contract\Schema\SubscriptionInterface;
 use GraphQL\Executor\Promise\Adapter\SyncPromise;
+use GraphQL\Executor\Promise\PromiseAdapter;
 use League\Event\ListenerAcceptorInterface;
 use League\Event\ListenerInterface;
 
@@ -15,6 +16,11 @@ class Subscription extends SyncPromise implements SubscriptionInterface
      * @var EventManagerInterface
      */
     protected $eventManager;
+
+    /**
+     * @var PromiseAdapter
+     */
+    protected $promiseAdapter;
 
     /**
      * @var string[]
@@ -40,8 +46,11 @@ class Subscription extends SyncPromise implements SubscriptionInterface
         array $eventNames,
         callable $filter = null,
         callable $resolve = null,
-        EventManagerInterface $eventManager)
+        EventManagerInterface $eventManager,
+        PromiseAdapter $promiseAdapter
+    )
     {
+        $this->promiseAdapter = $promiseAdapter;
         $this->eventManager = $eventManager;
         $this->eventNames = $eventNames;
         $this->filter = $filter;
@@ -75,12 +84,18 @@ class Subscription extends SyncPromise implements SubscriptionInterface
             return;
         }
 
-        if (is_callable($this->filter) && call_user_func($this->filter, $event->getData()) === false) {
-            return;
-        }
+        $filterPromise = $this->promiseAdapter->createFulfilled(
+            is_callable($this->filter) ? call_user_func($this->filter, $event->getData()) : true
+        );
 
-        $data = $this->resolveValue($event->getData());
-        $this->resolve($data);
+        $filterPromise->then(function($allowed) use($event) {
+            if (!$allowed) {
+                return;
+            }
+
+            $data = $this->resolveValue($event->getData());
+            $this->resolve($data);
+        });
     }
 
     protected function unsubscribe()

@@ -11,7 +11,8 @@ namespace Everywhere\Oxwall\Integration;
 use Everywhere\Api\Contract\App\EventManagerInterface;
 use Everywhere\Api\Contract\Integration\SubscriptionRepositoryInterface;
 use Everywhere\Api\Contract\Integration\IntegrationInterface;
-use Everywhere\Api\Integration\Events\NewMessageEvent;
+use Everywhere\Api\Integration\Events\MessageAddedEvent;
+use Everywhere\Api\Integration\Events\MessageUpdatedEvent;
 use Everywhere\Api\Integration\Events\SubscriptionEvent;
 use Everywhere\Oxwall\Integration\Repositories\AvatarRepository;
 use Everywhere\Oxwall\Integration\Repositories\ChatRepository;
@@ -39,7 +40,15 @@ class Integration implements IntegrationInterface
             $messageDto = $event->getData();
 
             $events->emit(
-                new NewMessageEvent($messageDto->senderId, $messageDto->conversationId, $messageDto->id)
+                new MessageAddedEvent($messageDto->id)
+            );
+        });
+
+        $this->eventManager->bind("mailbox.onMessageUpdate", function(\OW_Event $event) use($events) {
+            $params = $event->getParams();
+
+            $events->emit(
+                new MessageUpdatedEvent($params["messageId"])
             );
         });
     }

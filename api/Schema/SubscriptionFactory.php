@@ -5,6 +5,7 @@ namespace Everywhere\Api\Schema;
 use Everywhere\Api\Contract\App\EventManagerInterface;
 use Everywhere\Api\Contract\Integration\Events\SubscriptionEventInterface;
 use Everywhere\Api\Contract\Schema\SubscriptionFactoryInterface;
+use GraphQL\Executor\Promise\PromiseAdapter;
 
 class SubscriptionFactory implements SubscriptionFactoryInterface
 {
@@ -13,9 +14,15 @@ class SubscriptionFactory implements SubscriptionFactoryInterface
      */
     protected $eventManager;
 
-    public function __construct(EventManagerInterface $eventManager)
+    /**
+     * @var PromiseAdapter
+     */
+    protected $promiseAdapter;
+
+    public function __construct(EventManagerInterface $eventManager, PromiseAdapter $promiseAdapter)
     {
         $this->eventManager = $eventManager;
+        $this->promiseAdapter = $promiseAdapter;
     }
 
     public function create($eventNames, callable $filter = null, callable $resolve = null)
@@ -26,7 +33,8 @@ class SubscriptionFactory implements SubscriptionFactoryInterface
             is_string($eventNames) ? [$eventNames]: $eventNames,
             $filter,
             $resolve,
-            $this->eventManager
+            $this->eventManager,
+            $this->promiseAdapter
         );
     }
 }
