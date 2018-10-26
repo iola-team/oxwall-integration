@@ -3,6 +3,7 @@ namespace Everywhere\Api\Schema\Resolvers;
 
 use Everywhere\Api\Contract\Integration\CommentRepositoryInterface;
 use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
+use Everywhere\Api\Entities\Comment;
 use Everywhere\Api\Schema\EntityResolver;
 
 class CommentResolver extends EntityResolver
@@ -14,5 +15,9 @@ class CommentResolver extends EntityResolver
         });
 
         parent::__construct($entityLoader);
+
+        $this->addFieldResolver("user", function(Comment $comment) {
+            return $comment->userId;
+        });
     }
 }

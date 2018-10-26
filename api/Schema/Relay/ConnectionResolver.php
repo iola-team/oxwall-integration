@@ -185,7 +185,7 @@ class ConnectionResolver extends CompositeResolver
 
     private function sliceEdges($items, $count)
     {
-        return array_slice($items, 0, $count);
+        return $items === null ? [] : array_slice($items, 0, $count);
     }
 
     private function getPageInfo($items, ConnectionObjectInterface $connection, $slice)

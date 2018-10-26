@@ -334,11 +334,13 @@ type CommentEdge implements Edge {
 type Comment implements Node {
     id: ID!
     text: String!
+    createdAt: Date!
+    user: User!
 }
 
 
 
-type Chat  implements Node {
+type Chat implements Node {
     id: ID!
     user: User!
     participants: [User!]!
