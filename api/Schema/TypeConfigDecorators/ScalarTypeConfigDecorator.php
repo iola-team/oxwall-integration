@@ -4,10 +4,10 @@ namespace Everywhere\Api\Schema\TypeConfigDecorators;
 
 use Everywhere\Api\Contract\Schema\TypeConfigDecoratorInterface;
 use Everywhere\Api\Contract\Schema\Types\ScalarTypeInterface;
-use Everywhere\Api\Schema\AbstractTypeConfigDecorator;
+use Everywhere\Api\Schema\AbstractTypeConfigDecorator as TypeConfigDecorator;
 use GraphQL\Language\AST\NodeKind;
 
-class ScalarTypeConfigDecorator extends AbstractTypeConfigDecorator
+class ScalarTypeConfigDecorator extends TypeConfigDecorator
 {
     protected $typesMap;
     protected $resolve;

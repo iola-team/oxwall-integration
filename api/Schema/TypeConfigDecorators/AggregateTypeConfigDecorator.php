@@ -3,9 +3,9 @@
 namespace Everywhere\Api\Schema\TypeConfigDecorators;
 
 use Everywhere\Api\Contract\Schema\TypeConfigDecoratorInterface;
-use Everywhere\Api\Schema\AbstractTypeConfigDecorator;
+use Everywhere\Api\Schema\AbstractTypeConfigDecorator as TypeConfigDecorator;
 
-class AggregateTypeConfigDecorator extends AbstractTypeConfigDecorator
+class AggregateTypeConfigDecorator extends TypeConfigDecorator
 {
     protected $decorators = [];
 
