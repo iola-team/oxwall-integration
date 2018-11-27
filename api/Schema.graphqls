@@ -59,6 +59,7 @@ type Mutation {
     addUserPhoto(input: UserPhotoCreateInput!): UserPhotoCreatePayload!
     deleteUserPhoto(id: ID!): UserPhotoDeletePayload!
     saveProfileFieldValues(input: ProfileFieldSaveInput!): ProfileFieldSavePayload!
+    addPhotoComment(input: PhotoCommentInput!): PhotoCommentCreatePayload!
     addMessage(input: MessageInput!, after: Cursor, before: Cursor, at: Cursor): MessageCreatePayload!
 }
 
@@ -317,7 +318,17 @@ type PhotoEdge implements Edge {
     cursor: Cursor!
 }
 
+type Comment implements Node {
+    id: ID!
+    text: String!
+    createdAt: Date!
+    user: User!
+}
 
+type CommentEdge implements Edge {
+    node: Comment!
+    cursor: Cursor!
+}
 
 type PhotoCommentsConnection implements Connection {
     pageInfo: PageInfo!
@@ -326,16 +337,17 @@ type PhotoCommentsConnection implements Connection {
     totalCount: Int
 }
 
-type CommentEdge implements Edge {
-    node: Comment!
-    cursor: Cursor!
+input PhotoCommentInput {
+    userId: ID!
+    photoId: ID!
+    text: String!
 }
 
-type Comment implements Node {
-    id: ID!
-    text: String!
-    createdAt: Date!
+type PhotoCommentCreatePayload implements CreatePayload {
     user: User!
+    photo: Photo!
+    node: Comment!
+    edge: CommentEdge!
 }
 
 

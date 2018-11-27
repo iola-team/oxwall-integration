@@ -25,6 +25,19 @@ class PhotoMutationResolver extends CompositeResolver
                 ];
             },
 
+            "addPhotoComment" => function($root, $args) use ($photoRepository) {
+                $input = $args["input"];
+                $userId = $input["userId"]->getId();
+
+                unset($input['userId']);
+                $commentId = $photoRepository->addComment($userId, $input);
+
+                return [
+                    "node" => $commentId,
+                    "user" => $userId,
+                ];
+            },
+
             "deleteUserPhoto" => function($root, $args) use ($photoRepository) {
                 $realId = $args["id"]->getId();
 
