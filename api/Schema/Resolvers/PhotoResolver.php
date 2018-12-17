@@ -48,6 +48,10 @@ class PhotoResolver extends EntityResolver
         $this->commentsCountsLoader = $loaderFactory->create(function($ids, $args, $context) use($photoRepository) {
             return $photoRepository->countComments($ids, $args);
         });
+
+        $this->addFieldResolver("user", function(Photo $photo) {
+            return $photo->userId;
+        });
     }
 
     /**

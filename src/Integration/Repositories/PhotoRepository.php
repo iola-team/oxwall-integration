@@ -19,10 +19,18 @@ class PhotoRepository implements PhotoRepositoryInterface
      */
     private $tempPhotoService;
 
+    /**
+     * @var \BOL_CommentService
+     */
+    protected $commentService;
+
+    protected $commentEntityType = "photo_comments";
+
     public function __construct()
     {
         $this->photoService = \PHOTO_BOL_PhotoService::getInstance();
         $this->tempPhotoService = \PHOTO_BOL_PhotoTemporaryService::getInstance();
+        $this->commentService = \BOL_CommentService::getInstance();
     }
 
     /**
@@ -78,7 +86,7 @@ class PhotoRepository implements PhotoRepositoryInterface
         $entities = array_map(function($photoId) use ($args) {
             return [
                 "entityId" => (int)$photoId,
-                "entityType" => "photo_comments",
+                "entityType" => $this->commentEntityType,
                 "countOnPage" => $args["count"],
             ];
         }, $photoIds);
@@ -98,14 +106,25 @@ class PhotoRepository implements PhotoRepositoryInterface
 
     public function countComments($photoIds, array $args)
     {
-      $commentService = \BOL_CommentService::getInstance();
       $out = [];
 
       foreach ($photoIds as $id) {
-        $out[$id] = $commentService->findCommentCount('photo_comments', $id);
+        $out[$id] = $this->commentService->findCommentCount($this->commentEntityType, $id);
       }
 
       return $out;
+    }
+
+    public function addComment($userId, array $input)
+    {
+        $pluginKey = "photo";
+        $attachment = null;
+        $entityId = $input["photoId"]->getId();
+        $message = $input["text"];
+
+        $commentDto = $this->commentService->addComment($this->commentEntityType, $entityId, $pluginKey, $userId, $message, $attachment);
+
+        return $commentDto->id;
     }
 
     public function addUserPhoto($userId, array $input)
@@ -115,12 +134,12 @@ class PhotoRepository implements PhotoRepositoryInterface
          */
         $file = $input["file"];
 
-        $tmpFileName = Integration::getTmpDir() . uniqid('photo-') . $file->getClientFilename();
+        $tmpFileName = Integration::getTmpDir() . uniqid("photo-") . $file->getClientFilename();
         $file->moveTo($tmpFileName);
 
         $tempPhotoId = $this->tempPhotoService->addTemporaryPhoto($tmpFileName, $userId);
         $albumId = $this->getAlbumId($userId);
-        $photoDto = $this->tempPhotoService->moveTemporaryPhoto($tempPhotoId, $albumId, '');
+        $photoDto = $this->tempPhotoService->moveTemporaryPhoto($tempPhotoId, $albumId, "");
 
         return $photoDto->id;
     }

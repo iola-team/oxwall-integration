@@ -8,8 +8,8 @@
 
 namespace Everywhere\Api\Contract\Integration;
 
-
 use Everywhere\Api\Entities\Photo;
+use Everywhere\Api\Entities\Comment;
 
 interface PhotoRepositoryInterface
 {
@@ -38,6 +38,14 @@ interface PhotoRepositoryInterface
      * @return mixed
      */
     public function countComments($ids, array $args);
+
+    /**
+     *
+     * @param $userId
+     * @param array $input
+     * @return Comment
+     */
+    public function addComment($userId, array $input);
 
     /**
      *
