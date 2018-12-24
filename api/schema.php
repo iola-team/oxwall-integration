@@ -29,7 +29,7 @@ use Everywhere\Api\Schema\Resolvers\CommentResolver;
 use Everywhere\Api\Schema\Resolvers\ValueResolver;
 
 return [
-    "path" => __DIR__ . "/Schema.graphqls",
+    "path" => __DIR__ . "/Schema.graphql",
     "resolvers" => [
         // Object types
 
