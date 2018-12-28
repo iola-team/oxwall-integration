@@ -17,12 +17,24 @@ class EntityEdgeFactory extends EdgeFactory
         $this->entityLoader = $entityLoader;
     }
 
-    protected function loadNode($node)
+    protected function loadNode($item)
     {
-        if (!$node || $node instanceof EntityInterface) {
-            return $node;
+        if (!$item || $item instanceof EntityInterface) {
+            return $this->promiseAdapter->createFulfilled($item);
         }
 
-        return $this->entityLoader->load($node);
+        return $this->entityLoader->load($item);
+    }
+
+    protected function buildCursor($item, $fromCursor, $direction)
+    {
+        return $this->loadNode($item)->then(function($node) use($fromCursor, $direction) {
+            return $this->buildEntityCursor($node, $fromCursor, $direction);
+        });
+    }
+
+    protected function buildEntityCursor(EntityInterface $entity, $fromCursor, $direction)
+    {
+        return [];
     }
 }

@@ -17,14 +17,20 @@ class EdgeFactory implements EdgeFactoryInterface
         $this->promiseAdapter = $promiseAdapter;
     }
 
-    protected function buildCursor($node, $fromCursor, $direction)
+    protected function buildCursor($rootValue, $fromCursor, $direction)
     {
-        return [];
+        /**
+         * TODO: It is slightly dirty way of getting cursor from `rootValue`. Looks like spaghetti to me. Rethink it in future.
+         */
+        return isset($rootValue["cursor"]) ? $rootValue["cursor"] : [];
     }
 
-    protected function loadNode($node)
+    protected function loadNode($rootValue)
     {
-        return $node;
+        /**
+         * TODO: It is slightly dirty way of getting node from `rootValue`. Looks like spaghetti to me. Rethink it in future.
+         */
+        return isset($rootValue["node"]) ? $rootValue["node"] : $rootValue;
     }
 
     private function calculateOffset($data, $direction)
@@ -34,47 +40,55 @@ class EdgeFactory implements EdgeFactoryInterface
         return $out < 0 ? 0 : $out;
     }
 
-    private function getCursor($node, $data, $direction = 0)
+    private function getCursor($rootValue, $data, $direction = 0)
     {
-        $nodePromise = $this->promiseAdapter->createFulfilled($node)->then(function($node) {
-            return $this->loadNode($node);
-        });
+        $cursorPromise = $this->promiseAdapter->createFulfilled(
+            $this->buildCursor($rootValue, $data, $direction)
+        );
 
-        return $nodePromise->then(function($node) use($data, $direction) {
-            return array_merge($data, $this->buildCursor($node, $data, $direction), [
+        return $cursorPromise->then(function($cursor) use($data, $direction) {
+            return array_merge($data, $cursor, [
                 "offset" => $this->calculateOffset($data, $direction),
             ]);
         });
     }
 
-    private function createEdge($node, $data, $offset = 0)
+    private function getNode($rootValue)
+    {
+        return $this->promiseAdapter->createFulfilled(
+            $this->loadNode($rootValue)
+        );
+    }
+
+    private function createEdge($rootValue, $data, $offset = 0)
     {
         return new EdgeObject(
-            function($node) use($data, $offset) {
-                return $this->getCursor($node, $data, $offset);
+            $rootValue,
+            function() use($rootValue, $data, $offset) {
+                return $this->getCursor($rootValue, $data, $offset);
             },
-            function() use($node) {
-                return $this->promiseAdapter->createFulfilled($node);
+            function() use($rootValue) {
+                return $this->getNode($rootValue);
             }
         );
     }
 
-    public function create($data = [], $node = null)
+    public function create($data = [], $rootValue = null)
     {
-        return $this->createEdge($node, $data, 0);
+        return $this->createEdge($rootValue, $data, 0);
     }
 
-    public function createBefore($cursor, $node)
+    public function createBefore($cursor, $rootValue)
     {
-        return $this->createEdge($node, $cursor, -1);
+        return $this->createEdge($rootValue, $cursor, -1);
     }
 
-    public function createAfter($cursor, $node)
+    public function createAfter($cursor, $rootValue)
     {
-        return $this->createEdge($node, $cursor, 1);
+        return $this->createEdge($rootValue, $cursor, 1);
     }
 
-    public function createFromArguments($arguments, $node)
+    public function createFromArguments($arguments, $rootValue)
     {
         $paginationArgs = [
             "after" => null, "before" => null, "at" => null
@@ -93,17 +107,17 @@ class EdgeFactory implements EdgeFactoryInterface
         $filteredArgs = array_merge($paginationArgs, $filteredArgs);
 
         if ($filteredArgs["before"]) {
-            return $this->createBefore($filteredArgs["before"], $node);
+            return $this->createBefore($filteredArgs["before"], $rootValue);
         }
 
         if ($filteredArgs["after"]) {
-            return $this->createAfter($filteredArgs["after"], $node);
+            return $this->createAfter($filteredArgs["after"], $rootValue);
         }
 
         if ($filteredArgs["at"]) {
-            return $this->create($filteredArgs["at"], $node);
+            return $this->create($filteredArgs["at"], $rootValue);
         }
 
-        return $this->create([], $node);
+        return $this->create([], $rootValue);
     }
 }

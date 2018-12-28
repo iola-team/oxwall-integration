@@ -8,6 +8,12 @@ use GraphQL\Executor\Promise\Promise;
 interface EdgeObjectInterface
 {
     /**
+     *
+     * @return mixed
+     */
+    public function getRootValue();
+
+    /**
      * @return Promise
      */
     public function getNode();

@@ -139,7 +139,17 @@ class UserResolver extends EntityResolver
                     $user,
                     $args,
                     function($args) use($user) {
-                        return $this->friendListLoader->load($user->id, $args);
+                        return $this->friendListLoader
+                            ->load($user->id, $args)
+                            ->then(function($friends) use($user) {
+                                return array_map(function($friend) use($user) {
+                                    return [
+                                        "node" => $friend,
+                                        "friendship" => 1 // TODO: get real friendship id
+                                    ];
+                                }, $friends);
+                            }
+                        );
                     },
                     function($args) use($user) {
                         return $this->friendCountsLoader->load($user->id, $args);

@@ -77,6 +77,9 @@ use Everywhere\Api\Schema\Resolvers\QueryResolver;
 use Everywhere\Api\Schema\Resolvers\UserResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoResolver;
 use Everywhere\Api\Schema\Resolvers\CommentResolver;
+use Everywhere\Api\Schema\Resolvers\FriendMutationResolver;
+use Everywhere\Api\Schema\Resolvers\FriendEdgeResolver;
+use Everywhere\Api\Schema\Resolvers\FriendshipResolver;
 
 return [
     PromiseAdapter::class => function() {
@@ -422,6 +425,19 @@ return [
     PhotoMutationResolver::class => function(ContainerInterface $container) {
         return new PhotoMutationResolver(
             $container->getIntegration()->getPhotoRepository()
+        );
+    },
+
+    FriendshipResolver::class => function(ContainerInterface $container) {
+        return new FriendshipResolver(
+            $container->getIntegration()->getFriendshipRepository(),
+            $container[DataLoaderFactory::class]
+        );
+    },
+
+    FriendMutationResolver::class => function(ContainerInterface $container) {
+        return new FriendMutationResolver(
+            $container->getIntegration()->getFriendshipRepository()
         );
     },
 
