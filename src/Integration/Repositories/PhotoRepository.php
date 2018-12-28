@@ -26,11 +26,17 @@ class PhotoRepository implements PhotoRepositoryInterface
 
     protected $commentEntityType = "photo_comments";
 
+    /**
+     * @var \OW_EventManager
+     */
+    protected $eventManager;
+
     public function __construct()
     {
         $this->photoService = \PHOTO_BOL_PhotoService::getInstance();
         $this->tempPhotoService = \PHOTO_BOL_PhotoTemporaryService::getInstance();
         $this->commentService = \BOL_CommentService::getInstance();
+        $this->eventManager = \OW::getEventManager();
     }
 
     /**
@@ -123,8 +129,19 @@ class PhotoRepository implements PhotoRepositoryInterface
         $message = $input["text"];
 
         $commentDto = $this->commentService->addComment($this->commentEntityType, $entityId, $pluginKey, $userId, $message, $attachment);
+        $commentId = $commentDto->id;
 
-        return $commentDto->id;
+        $event = new \OW_Event("base_add_comment", [
+            "entityType" => $this->commentEntityType,
+            "entityId" => $entityId,
+            "userId" => $userId,
+            "commentId" => $commentId,
+            "pluginKey" => $pluginKey,
+            "attachment" => $attachment,
+        ]);
+        \OW::getEventManager()->trigger($event);
+
+        return $commentId;
     }
 
     public function addUserPhoto($userId, array $input)

@@ -27,6 +27,7 @@ class CommentRepository implements CommentRepositoryInterface
             $comment->text = $item->message;
             $comment->createdAt = new \DateTime("@" . $item->createStamp);
             $comment->userId = (int) $item->userId;
+            $comment->photoId = (int) $item->commentEntityId;
 
             $out[$comment->id] = $comment;
         }

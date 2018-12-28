@@ -17,4 +17,9 @@ class Comment extends AbstractEntity
      * @var string
      */
     public $userId;
+
+    /**
+     * @var string
+     */
+    public $photoId;
 }

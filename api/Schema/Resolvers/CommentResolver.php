@@ -19,5 +19,9 @@ class CommentResolver extends EntityResolver
         $this->addFieldResolver("user", function(Comment $comment) {
             return $comment->userId;
         });
+
+        $this->addFieldResolver("photo", function(Comment $comment) {
+            return $comment->photoId;
+        });
     }
 }

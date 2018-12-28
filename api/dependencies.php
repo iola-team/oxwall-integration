@@ -44,6 +44,7 @@ use Everywhere\Api\Schema\Resolvers\MessageResolver;
 use Everywhere\Api\Schema\Resolvers\MessageSubscriptionResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoMutationResolver;
+use Everywhere\Api\Schema\Resolvers\PhotoCommentSubscriptionResolver;
 use Everywhere\Api\Schema\Resolvers\PresentationAwareTypeResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldSectionResolver;
@@ -404,6 +405,14 @@ return [
         );
     },
 
+    MessageSubscriptionResolver::class => function(ContainerInterface $container) {
+        return new MessageSubscriptionResolver(
+            $container->getIntegration()->getChatRepository(),
+            $container[DataLoaderFactory::class],
+            $container[SubscriptionFactoryInterface::class]
+        );
+    },
+
     AuthMutationResolver::class => function(ContainerInterface $container) {
         return new AuthMutationResolver(
             $container[AuthenticationServiceInterface::class],
@@ -425,9 +434,9 @@ return [
         );
     },
 
-    MessageSubscriptionResolver::class => function(ContainerInterface $container) {
-        return new MessageSubscriptionResolver(
-            $container->getIntegration()->getChatRepository(),
+    PhotoCommentSubscriptionResolver::class => function(ContainerInterface $container) {
+        return new PhotoCommentSubscriptionResolver(
+            $container->getIntegration()->getCommentRepository(),
             $container[DataLoaderFactory::class],
             $container[SubscriptionFactoryInterface::class]
         );
