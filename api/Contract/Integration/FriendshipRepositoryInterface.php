@@ -57,7 +57,7 @@ interface FriendshipRepositoryInterface
      *
      * @param string $userId
      * @param string $friendId
-     * @return string|null
+     * @return Friendship|null
      */
-    public function findFriendshipId($userId, $friendId);
+    public function findFriendship($userId, $friendId);
 }

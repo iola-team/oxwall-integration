@@ -208,17 +208,19 @@ class FriendshipRepository implements FriendshipRepositoryInterface
         return $friendshipDto->id;
     }
 
-    public function findFriendshipId($userId, $friendId)
+    public function findFriendship($userId, $friendId)
     {
         $query = 
-            "SELECT id FROM " . $this->friendshipDao->getTableName() . " WHERE 
+            "SELECT * FROM " . $this->friendshipDao->getTableName() . " WHERE 
                 (userId=:userId AND friendId=:friendId) 
                     OR 
                 (userId=:friendId AND friendId=:userId)";
 
-        return $this->dbo->queryForColumn($query, [
+        $friendshipDto = $this->dbo->queryForObject($query, $this->friendshipDao->getDtoClassName(), [
             "userId" => $userId,
             "friendId" => $friendId
         ]);
+
+        return $friendshipDto ? $this->buildFriendship($friendshipDto) : null;
     }
 }
