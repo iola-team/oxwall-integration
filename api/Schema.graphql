@@ -475,7 +475,7 @@ type Friendship implements Node {
 }
 
 input UserFriendsFilterInput {
-    friendshipStatus: FriendshipStatus = ACTIVE
+    friendshipStatusIn: [FriendshipStatus!] = [ACTIVE]
 }
 
 input AddFriendInput {
