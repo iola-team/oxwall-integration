@@ -18,18 +18,20 @@ use Everywhere\Api\Schema\EntityResolver;
 use Everywhere\Api\Schema\IDObject;
 use GraphQL\Executor\Promise\Promise;
 use GraphQL\Type\Definition\ResolveInfo;
+use Everywhere\Api\Contract\Integration\FriendshipRepositoryInterface;
+use Everywhere\Api\Entities\Friendship;
 
 class UserResolver extends EntityResolver
 {
     /**
      * @var DataLoaderInterface
      */
-    protected $friendListLoader;
+    protected $friendshipListLoader;
 
     /**
      * @var DataLoaderInterface
      */
-    protected $friendCountsLoader;
+    protected $friendshipCountsLoader;
 
     /**
      * @var DataLoaderInterface
@@ -72,7 +74,11 @@ class UserResolver extends EntityResolver
     protected $connectionFactory;
 
     public function __construct(
+        // Repositories
         UserRepositoryInterface $userRepository,
+        FriendshipRepositoryInterface $friendshipRepository,
+
+        // Factories
         DataLoaderFactoryInterface $loaderFactory,
         ConnectionFactoryInterface $connectionFactory
     ) {
@@ -83,12 +89,13 @@ class UserResolver extends EntityResolver
         );
 
         $this->connectionFactory = $connectionFactory;
-        $this->friendListLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
-            return $userRepository->findFriends($ids, $args);
+
+        $this->friendshipListLoader = $loaderFactory->create(function($ids, $args, $context) use($friendshipRepository) {
+            return $friendshipRepository->findByUserIds($ids, $args);
         }, []);
 
-        $this->friendCountsLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
-            return $userRepository->countFriends($ids, $args);
+        $this->friendshipCountsLoader = $loaderFactory->create(function($ids, $args, $context) use($friendshipRepository) {
+            return $friendshipRepository->countByUserIds($ids, $args);
         }, []);
 
         $this->photosLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
@@ -118,8 +125,6 @@ class UserResolver extends EntityResolver
         $this->chatsCountsLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
             return $userRepository->countChats($ids, $args);
         });
-
-
     }
 
     /**
@@ -139,20 +144,22 @@ class UserResolver extends EntityResolver
                     $user,
                     $args,
                     function($args) use($user) {
-                        return $this->friendListLoader
+                        return $this->friendshipListLoader
                             ->load($user->id, $args)
-                            ->then(function($friends) use($user) {
-                                return array_map(function($friend) use($user) {
+                            ->then(function($friendships) use($user) {
+                                return array_map(function(Friendship $friendship) use($user) {
                                     return [
-                                        "node" => $friend,
-                                        "friendship" => 1 // TODO: get real friendship id
+                                        "node" => $friendship->userId == $user->id 
+                                            ? $friendship->friendId 
+                                            : $friendship->userId,
+                                        "friendship" => $friendship
                                     ];
-                                }, $friends);
+                                }, $friendships);
                             }
                         );
                     },
                     function($args) use($user) {
-                        return $this->friendCountsLoader->load($user->id, $args);
+                        return $this->friendshipCountsLoader->load($user->id, $args);
                     }
                  );
 

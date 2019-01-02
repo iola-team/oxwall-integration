@@ -296,6 +296,8 @@ return [
     UserResolver::class => function(ContainerInterface $container) {
         return new UserResolver(
             $container->getIntegration()->getUserRepository(),
+            $container->getIntegration()->getFriendshipRepository(),
+
             $container[DataLoaderFactory::class],
             $container[ConnectionFactoryInterface::class]
         );

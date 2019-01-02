@@ -6,7 +6,7 @@ class Friendship extends AbstractEntity
 {
     const STATUS_IGNORED = "IGNORED";
     const STATUS_PENDING = "PENDING";
-    const STATUS_ACCEPTED = "ACCEPTED";
+    const STATUS_ACTIVE = "ACTIVE";
 
     /**
      * @var string

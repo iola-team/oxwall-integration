@@ -117,7 +117,7 @@ type User implements Node {
     avatar: Avatar
     chat(id: ID, recipientId: ID): Chat
 
-    friends(first: Int, after: Cursor, last: Int, before: Cursor): UserFriendsConnection!
+    friends(filter: UserFriendsFilterInput = {}, first: Int, after: Cursor, last: Int, before: Cursor): UserFriendsConnection!
     photos(first: Int, after: Cursor, last: Int, before: Cursor): UserPhotoConnection!
     chats(first: Int, after: Cursor, last: Int, before: Cursor): UserChatsConnection!
     messages(filter: UserMessagesFilterInput, first: Int, after: Cursor, last: Int, before: Cursor): UserMessagesConnection!
@@ -462,7 +462,7 @@ type MessageUpdatePayload {
 enum FriendshipStatus {
     IGNORED
     PENDING
-    ACCEPTED
+    ACTIVE
 }
 
 type Friendship implements Node {
@@ -474,10 +474,14 @@ type Friendship implements Node {
     updatedAt: Date!
 }
 
+input UserFriendsFilterInput {
+    friendshipStatus: FriendshipStatus = ACTIVE
+}
+
 input AddFriendInput {
     userId: ID!
     friendId: ID!
-    status: FriendshipStatus = PENDING
+    status: FriendshipStatus
 }
 
 input DeleteFriendInput {

@@ -22,6 +22,22 @@ interface FriendshipRepositoryInterface
 
     /**
      *
+     * @param string[] $userIds
+     * @param array $args
+     * @return Friendship[]
+     */
+    public function findByUserIds($userIds, array $args);
+
+    /**
+     *
+     * @param string[] $userIds
+     * @param array $args
+     * @return string[]
+     */
+    public function countByUserIds($userIds, array $args);
+
+    /**
+     *
      * @param string $userId
      * @param string $friendId
      * @param string $status

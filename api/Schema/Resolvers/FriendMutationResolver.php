@@ -4,6 +4,7 @@ namespace Everywhere\Api\Schema\Resolvers;
 
 use Everywhere\Api\Schema\CompositeResolver;
 use Everywhere\Api\Contract\Integration\FriendshipRepositoryInterface;
+use Everywhere\Api\Entities\Friendship;
 
 class FriendMutationResolver extends CompositeResolver
 {
@@ -14,9 +15,11 @@ class FriendMutationResolver extends CompositeResolver
                 $input = $args["input"];
                 $userId = $input["userId"]->getId();
                 $friendId = $input["friendId"]->getId();
-                $status = $input["status"];
 
                 $friendshipId = $friendshipRepository->findFriendshipId($userId, $friendId);
+                $autoStatus = $friendshipId ? Friendship::STATUS_ACTIVE : Friendship::STATUS_PENDING;
+                $status = empty($input["status"]) ? $autoStatus : $input["status"];
+
                 $friendshipId = $friendshipId
                     ? $friendshipRepository->updateFriendship($friendshipId, $status)
                     : $friendshipRepository->createFriendship($userId, $friendId, $status);
@@ -24,7 +27,7 @@ class FriendMutationResolver extends CompositeResolver
                 return [
                     "user" => $userId,
                     "friend" => $friendId,
-                    "friendship" => $friendship
+                    "friendship" => $friendshipId
                 ];
             },
 
@@ -33,13 +36,14 @@ class FriendMutationResolver extends CompositeResolver
                 $userId = $input["userId"]->getId();
                 $friendId = $input["friendId"]->getId();
 
-                $friendship = $friendshipRepository->findFriendship($userId, $friendId);
-                $friendshipRepository->deleteByIds([
-                    $friendship->id
-                ]);
+                $friendshipId = $friendshipRepository->findFriendshipId($userId, $friendId);
+
+                if ($friendshipId) {
+                    $friendshipRepository->deleteByIds([$friendshipId]);
+                }
 
                 return [
-                    "deletedId" => $friendship->id,
+                    "deletedId" => $friendshipId,
                     "user" => $userId,
                     "friend" => $friendId
                 ];
