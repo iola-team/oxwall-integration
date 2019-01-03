@@ -87,6 +87,13 @@ class PhotoRepository implements PhotoRepositoryInterface
         return $out;
     }
 
+    public function deleteByIds($ids)
+    {
+        foreach ($ids as $id) {
+            $this->photoService->deletePhoto($id);
+        }
+    }
+
     public function findComments($photoIds, array $args)
     {
         $entities = array_map(function($photoId) use ($args) {
@@ -105,6 +112,26 @@ class PhotoRepository implements PhotoRepositoryInterface
           } else {
             $out[$item->entityId][] = $item->getId();
           }
+        }
+
+        return $out;
+    }
+
+    public function findCommentsParticipantIds($photoIds)
+    {
+        $out = [];
+        foreach ($photoIds as $id) {
+            // @TODO: commentService doesn't have the method "get photo comments participants" (rewrite the foreach+in_array to raw SQL?)
+            $commentsDto = $this->commentService->findFullCommentList($this->commentEntityType, $id);
+            $out[$id] = [];
+
+            foreach ($commentsDto as $commentDto) {
+                $userId = $commentDto->getUserId();
+
+                if (!in_array($userId, $out[$id])) {
+                    $out[$id][] = $userId;
+                }
+            }
         }
 
         return $out;
@@ -159,12 +186,5 @@ class PhotoRepository implements PhotoRepositoryInterface
         $photoDto = $this->tempPhotoService->moveTemporaryPhoto($tempPhotoId, $albumId, "");
 
         return $photoDto->id;
-    }
-
-    public function deleteByIds($ids)
-    {
-        foreach ($ids as $id) {
-            $this->photoService->deletePhoto($id);
-        }
     }
 }

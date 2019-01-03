@@ -2,6 +2,7 @@
 
 namespace Everywhere\Api\Schema\Resolvers;
 
+use Everywhere\Api\Contract\Integration\PhotoRepositoryInterface;
 use Everywhere\Api\Contract\Integration\CommentRepositoryInterface;
 use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
 use Everywhere\Api\Contract\Schema\DataLoaderInterface;
@@ -14,6 +15,16 @@ use Everywhere\Api\Schema\SubscriptionResolver;
 class PhotoCommentSubscriptionResolver extends SubscriptionResolver
 {
     /**
+     * @var PhotoRepositoryInterface
+     */
+    protected $photoRepository;
+
+    /**
+     * @var CommentRepositoryInterface
+     */
+    protected $commentRepository;
+
+    /**
      * @var SubscriptionFactoryInterface
      */
     protected $subscriptionFactory;
@@ -23,15 +34,11 @@ class PhotoCommentSubscriptionResolver extends SubscriptionResolver
      */
     protected $commentLoader;
 
-    /**
-     * @var CommentRepositoryInterface
-     */
-    protected $commentRepository;
-
     public function __construct(
+        PhotoRepositoryInterface $photoRepository,
         CommentRepositoryInterface $commentRepository,
-        DataLoaderFactoryInterface $loaderFactory,
-        SubscriptionFactoryInterface $subscriptionFactory
+        SubscriptionFactoryInterface $subscriptionFactory,
+        DataLoaderFactoryInterface $loaderFactory
     )
     {
         parent::__construct([
@@ -40,12 +47,13 @@ class PhotoCommentSubscriptionResolver extends SubscriptionResolver
             },
         ]);
 
+        $this->photoRepository = $photoRepository;
+        $this->commentRepository = $commentRepository;
+        $this->subscriptionFactory = $subscriptionFactory;
+
         $this->commentLoader = $loaderFactory->create(function($ids) use($commentRepository) {
             return $commentRepository->findByIds($ids);
         });
-
-        $this->subscriptionFactory = $subscriptionFactory;
-        $this->commentRepository = $commentRepository;
     }
 
     protected function createSubscription(array $args, $eventName)
@@ -77,10 +85,6 @@ class PhotoCommentSubscriptionResolver extends SubscriptionResolver
             "node" => $comment,
             "user" => $comment->userId,
             "photo" => $comment->photoId,
-            "chatEdge" => [
-                "cursor" => "tmp-cursor", // TODO: use real cursor
-                "node" => $comment->photoId
-            ],
             "edge" => [
                 "cursor" => "tmp-cursor", // TODO: use real cursor
                 "node" => $comment
@@ -90,28 +94,29 @@ class PhotoCommentSubscriptionResolver extends SubscriptionResolver
 
     protected function filterEvents(Comment $comment, array $args)
     {
-        // @TODO
-//        /**
-//         * @var $userIdObject IDObject
-//         */
-//        $userIdObject = empty($args["userId"]) ? null : $args["userId"];
-//
-//        /**
-//         * @var $photoIdObject IDObject
-//         */
-//        $photoIdObject = empty($args["photoId"]) ? null : $args["photoId"];
-//
-//        if ($photoIdObject && $comment->photoId == $photoIdObject->getId()) {
-//            return true;
-//        }
-//
-//        if (!$userIdObject) {
-//            return false;
-//        }
-//
-//        $participantIds = $this->photoRepository->findPhotoParticipantIds([$comment->photoId])[$comment->photoId];
-//
-//        return in_array($userIdObject->getId(), $participantIds);
         return true;
+
+        // @TODO: use it for notifications
+        /**
+         * @var $userIdObject IDObject
+         */
+        $userIdObject = empty($args["userId"]) ? null : $args["userId"];
+
+        /**
+         * @var $photoIdObject IDObject
+         */
+        $photoIdObject = empty($args["photoId"]) ? null : $args["photoId"];
+
+        if ($photoIdObject && $comment->photoId == $photoIdObject->getId()) {
+            return true;
+        }
+
+        if (!$userIdObject) {
+            return false;
+        }
+
+        $participantIds = $this->photoRepository->findCommentsParticipantIds([$comment->photoId])[$comment->photoId];
+
+        return in_array($userIdObject->getId(), $participantIds);
     }
 }

@@ -436,9 +436,10 @@ return [
 
     PhotoCommentSubscriptionResolver::class => function(ContainerInterface $container) {
         return new PhotoCommentSubscriptionResolver(
+            $container->getIntegration()->getPhotoRepository(),
             $container->getIntegration()->getCommentRepository(),
-            $container[DataLoaderFactory::class],
-            $container[SubscriptionFactoryInterface::class]
+            $container[SubscriptionFactoryInterface::class],
+            $container[DataLoaderFactory::class]
         );
     },
 ];
