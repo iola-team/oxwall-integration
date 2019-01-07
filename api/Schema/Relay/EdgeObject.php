@@ -51,7 +51,7 @@ class EdgeObject implements EdgeObjectInterface, \ArrayAccess
 
     public function offsetExists($offset)
     {
-        $rootValueKeys = $this->rootValue ? array_keys($this->rootValue) : [];
+        $rootValueKeys = is_array($this->rootValue) ? array_keys($this->rootValue) : [];
 
         return in_array($offset, array_merge($rootValueKeys, ['cursor', 'node']));
     }
