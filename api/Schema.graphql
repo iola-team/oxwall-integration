@@ -9,6 +9,8 @@ scalar Date
 scalar Cursor
 scalar Upload
 
+directive @type(name: String!) on FIELD_DEFINITION
+
 type Subscription {
     onMessageAdd(chatId: ID, userId: ID): MessageCreatePayload!
     onMessageUpdate(chatId: ID, userId: ID): MessageUpdatePayload!
@@ -173,7 +175,7 @@ type UserPhotoCreatePayload implements CreatePayload {
 }
 
 type UserPhotoDeletePayload implements DeletePayload {
-    deletedId: ID!
+    deletedId: ID! @type(name: "Photo")
     user: User!
 }
 
@@ -314,7 +316,7 @@ type Avatar implements Node {
 }
 
 type AvatarDeletePayload implements DeletePayload {
-    deletedId: ID!
+    deletedId: ID! @type(name: "Avatar")
     user: User!
 }
 
@@ -496,7 +498,7 @@ type AddFriendPayload {
 }
 
 type DeleteFriendPayload implements DeletePayload {
-    deletedId: ID!
+    deletedId: ID! @type(name: "Friendship")
     user: User!
     friend: User!
 }

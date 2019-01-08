@@ -104,6 +104,15 @@ class ObjectTypeConfigDecorator extends TypeConfigDecorator
         return $value;
     }
 
+    /**
+     * Tries to resolve global ID value based on local ID and parent type
+     * TODO: try to merge this logic with DefaultResolver logic somehow
+     *
+     * @param mixed $value
+     * @param ResolveInfo $info
+     * 
+     * @return mixed|IDObjectInterface
+     */
     protected function normalizeValue($value, ResolveInfo $info)
     {
         $finalType = $this->getFinalType($info->returnType);

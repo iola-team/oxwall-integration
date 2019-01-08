@@ -80,6 +80,7 @@ use Everywhere\Api\Schema\Resolvers\CommentResolver;
 use Everywhere\Api\Schema\Resolvers\FriendMutationResolver;
 use Everywhere\Api\Schema\Resolvers\FriendEdgeResolver;
 use Everywhere\Api\Schema\Resolvers\FriendshipResolver;
+use Everywhere\Api\Schema\DefaultResolver;
 
 return [
     PromiseAdapter::class => function() {
@@ -101,6 +102,9 @@ return [
             "context" => $container[ContextInterface::class],
             "schema" => $container[Schema::class],
             "promiseAdapter" => $container[PromiseAdapter::class],
+            "fieldResolver" => function($root, $args, $context, $info) use($container) {
+                return $container[DefaultResolver::class]->resolve($root, $args, $context, $info);
+            }
         ]);
     },
 
@@ -284,6 +288,12 @@ return [
     },
 
     // Resolvers
+
+    DefaultResolver::class => function(ContainerInterface $container) {
+        return new DefaultResolver(
+            $container[IDFactoryInterface::class]
+        );
+    },
 
     QueryResolver::class => function(ContainerInterface $container) {
         return new QueryResolver(
