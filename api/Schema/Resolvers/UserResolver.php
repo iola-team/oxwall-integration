@@ -20,6 +20,7 @@ use GraphQL\Executor\Promise\Promise;
 use GraphQL\Type\Definition\ResolveInfo;
 use Everywhere\Api\Contract\Integration\FriendshipRepositoryInterface;
 use Everywhere\Api\Entities\Friendship;
+use Everywhere\Api\Contract\Schema\IDObjectInterface;
 
 class UserResolver extends EntityResolver
 {
@@ -128,6 +129,22 @@ class UserResolver extends EntityResolver
     }
 
     /**
+     * TODO: Get rid of this ugly conversion somehow. 
+     * Perhaps it would be better to do such convertion on type resolving phase, 
+     * since we usually do not need id types in resolver functions.
+     * The only exception is `node` resolver.
+     * 
+     * @param IDObjectInterface[] $idObjects
+     * @return string[]
+     */
+    protected function convertIdObjectsToLocalIds($idObjects)
+    {
+        return array_map(function(IDObjectInterface $idObject) {
+            return $idObject->getId();
+        }, $idObjects);
+    }
+
+    /**
      * @param User $user
      * @param $fieldName
      * @param $args
@@ -144,6 +161,10 @@ class UserResolver extends EntityResolver
                     $user,
                     $args,
                     function($args) use($user) {
+                        $args["filter"]["friendIdIn"] = $this->convertIdObjectsToLocalIds(
+                            $args["filter"]["friendIdIn"]
+                        );
+
                         return $this->friendshipListLoader
                             ->load($user->id, $args)
                             ->then(function($friendships) use($user) {
@@ -159,6 +180,10 @@ class UserResolver extends EntityResolver
                         );
                     },
                     function($args) use($user) {
+                        $args["filter"]["friendIdIn"] = $this->convertIdObjectsToLocalIds(
+                            $args["filter"]["friendIdIn"]
+                        );
+
                         return $this->friendshipCountsLoader->load($user->id, $args);
                     }
                  );

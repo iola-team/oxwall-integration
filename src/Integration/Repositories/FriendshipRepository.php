@@ -70,13 +70,15 @@ class FriendshipRepository implements FriendshipRepositoryInterface
      * @param int $count
      * @return \FRIENDS_BOL_Friendship[]
      */
-    protected function findUserFriendshipDtos($userId, array $statusIn, $offset, $count)
+    protected function findUserFriendshipDtos($userId, array $statusIn, array $friendIdIn, $offset, $count)
     {
         $userQueryParts = \BOL_UserDao::getInstance()->getUserQueryFilter("fr", "friendId");
         $friendQueryParts = \BOL_UserDao::getInstance()->getUserQueryFilter("fr", "userId");
         $tableName = $this->friendshipDao->getTableName();
-        $statuses = array_keys(array_intersect($this->statuses, $statusIn));
-        $statusesInSql = $this->dbo->mergeInClause($statuses);
+        $statusesInSql = empty($statusIn) ? null : $this->dbo->mergeInClause(
+            array_keys(array_intersect($this->statuses, $statusIn))
+        );
+        $friendIdInSql = empty($friendIdIn) ? null : $this->dbo->mergeInClause($friendIdIn);
         $statusesOrder = $this->dbo->mergeInClause(array_keys($this->statuses));
 
         $queries = [];
@@ -84,14 +86,16 @@ class FriendshipRepository implements FriendshipRepositoryInterface
         $queries[] = 
             "SELECT `fr`.* FROM `$tableName` AS `fr` " . $friendQueryParts["join"] . "
                 WHERE " . $friendQueryParts["where"] . "
-                    AND fr.friendId=:userId
-                    AND fr.status IN ($statusesInSql)";
+                    AND fr.friendId=:userId" .
+                    ( $statusesInSql ? " AND fr.status IN ($statusesInSql)" : "" ) .
+                    ( $friendIdInSql ? " AND fr.userId IN ($friendIdInSql)" : "" );
 
         $queries[] = 
             "SELECT `fr`.* FROM `$tableName` AS `fr` " . $userQueryParts["join"] . "
                 WHERE " . $userQueryParts["where"] . "
-                    AND fr.userId=:userId
-                    AND fr.status IN ($statusesInSql)";
+                    AND fr.userId=:userId" .
+                    ( $statusesInSql ? " AND fr.status IN ($statusesInSql)" : "" ) .
+                    ( $friendIdInSql ? " AND fr.friendId IN ($friendIdInSql)" : "" );
 
         $fullQuery = 
             "(" . implode(") UNION (", $queries) . ") 
@@ -125,27 +129,32 @@ class FriendshipRepository implements FriendshipRepositoryInterface
      * @param string $status
      * @return int
      */
-    protected function countUserFriendship($userId, array $statusIn)
+    protected function countUserFriendship($userId, array $statusIn, $friendIdIn)
     {
         $userQueryParts = \BOL_UserDao::getInstance()->getUserQueryFilter("fr", "friendId");
         $friendQueryParts = \BOL_UserDao::getInstance()->getUserQueryFilter("fr", "userId");
         $tableName = $this->friendshipDao->getTableName();
         $statuses = array_keys(array_intersect($this->statuses, $statusIn));
-        $statusesInSql = $this->dbo->mergeInClause($statuses);
+        $statusesInSql = empty($statusIn) ? null : $this->dbo->mergeInClause(
+            array_keys(array_intersect($this->statuses, $statusIn))
+        );
+        $friendIdInSql = empty($friendIdIn) ? null : $this->dbo->mergeInClause($friendIdIn);
 
         $queries = [];
 
         $queries[] = 
             "SELECT COUNT(`fr`.id) as `count` FROM `$tableName` AS `fr` " . $friendQueryParts["join"] . "
                 WHERE " . $friendQueryParts["where"] . "
-                    AND fr.friendId=:userId
-                    AND fr.status IN ($statusesInSql)";
+                    AND fr.friendId=:userId" .
+                    ( $statusesInSql ? " AND fr.status IN ($statusesInSql)" : "" ) . 
+                    ( $friendIdInSql ? " AND fr.userId IN ($friendIdInSql)" : "" );
 
         $queries[] = 
             "SELECT COUNT(`fr`.id) FROM `$tableName` AS `fr` " . $userQueryParts["join"] . "
                 WHERE " . $userQueryParts["where"] . "
-                    AND fr.userId=:userId
-                    AND fr.status IN ($statusesInSql)";
+                    AND fr.userId=:userId" .
+                    ( $statusesInSql ? " AND fr.status IN ($statusesInSql)" : "" ) . 
+                    ( $friendIdInSql ? " AND fr.friendId IN ($friendIdInSql)" : "" );
 
         $fullQuery = "SELECT SUM(`count`) FROM ((" . implode(") UNION (", $queries) . ")) AS unionQuery";
 
@@ -164,6 +173,7 @@ class FriendshipRepository implements FriendshipRepositoryInterface
             $out[$userId] = $this->findUserFriendshipDtos(
                 $userId,
                 $args["filter"]["friendshipStatusIn"],
+                $args["filter"]["friendIdIn"],
                 $args["offset"], 
                 $args["count"]
             );
@@ -179,7 +189,8 @@ class FriendshipRepository implements FriendshipRepositoryInterface
         foreach ($userIds as $userId) {
             $out[$userId] = $this->countUserFriendship(
                 $userId, 
-                $args["filter"]["friendshipStatusIn"]
+                $args["filter"]["friendshipStatusIn"],
+                $args["filter"]["friendIdIn"]
             );
         }
 
