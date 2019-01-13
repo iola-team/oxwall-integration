@@ -496,6 +496,7 @@ type AddFriendPayload {
     user: User!
     friend: User!
     friendship: Friendship!
+    edge: UserFriendEdge!
 }
 
 type DeleteFriendPayload implements DeletePayload {

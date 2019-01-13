@@ -449,7 +449,8 @@ return [
 
     FriendMutationResolver::class => function(ContainerInterface $container) {
         return new FriendMutationResolver(
-            $container->getIntegration()->getFriendshipRepository()
+            $container->getIntegration()->getFriendshipRepository(),
+            $container[Relay\EdgeFactory::class]
         );
     },
 

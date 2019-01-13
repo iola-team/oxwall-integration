@@ -5,13 +5,16 @@ namespace Everywhere\Api\Schema\Resolvers;
 use Everywhere\Api\Schema\CompositeResolver;
 use Everywhere\Api\Contract\Integration\FriendshipRepositoryInterface;
 use Everywhere\Api\Entities\Friendship;
+use Everywhere\Api\Contract\Schema\Relay\EdgeFactoryInterface;
 
 class FriendMutationResolver extends CompositeResolver
 {
-    public function __construct(FriendshipRepositoryInterface $friendshipRepository)
-    {
+    public function __construct(
+        FriendshipRepositoryInterface $friendshipRepository, 
+        EdgeFactoryInterface $edgeFactory
+    ) {
         parent::__construct([
-            "addFriend" => function($root, $args) use ($friendshipRepository) {
+            "addFriend" => function($root, $args) use ($friendshipRepository, $edgeFactory) {
                 $input = $args["input"];
                 $userId = $input["userId"]->getId();
                 $friendId = $input["friendId"]->getId();
@@ -38,7 +41,11 @@ class FriendMutationResolver extends CompositeResolver
                 return [
                     "user" => $userId,
                     "friend" => $friendId,
-                    "friendship" => $friendshipId
+                    "friendship" => $friendshipId,
+                    "edge" => $edgeFactory->createFromArguments($args, [
+                        "node" => $friendId,
+                        "friendship" => $friendshipId
+                    ])
                 ];
             },
 
