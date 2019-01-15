@@ -94,29 +94,18 @@ class PhotoCommentSubscriptionResolver extends SubscriptionResolver
 
     protected function filterEvents(Comment $comment, array $args)
     {
-        return true;
-
-        // @TODO: use it for notifications
-        /**
-         * @var $userIdObject IDObject
-         */
-        $userIdObject = empty($args["userId"]) ? null : $args["userId"];
+        if (empty($args["photoId"])) return false;
 
         /**
          * @var $photoIdObject IDObject
          */
-        $photoIdObject = empty($args["photoId"]) ? null : $args["photoId"];
+        $photoIdObject = $args["photoId"];
 
-        if ($photoIdObject && $comment->photoId == $photoIdObject->getId()) {
-            return true;
-        }
+        /**
+         * @var $commentEntity \BOL_CommentEntity
+         */
+        $commentEntity = $this->commentRepository->findCommentEntityById($comment->photoId);
 
-        if (!$userIdObject) {
-            return false;
-        }
-
-        $participantIds = $this->photoRepository->findCommentsParticipantIds([$comment->photoId])[$comment->photoId];
-
-        return in_array($userIdObject->getId(), $participantIds);
+        return $photoIdObject->getId() == $commentEntity->getEntityId();
     }
 }

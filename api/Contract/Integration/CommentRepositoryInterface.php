@@ -8,4 +8,10 @@ interface CommentRepositoryInterface
      * @return array<Comment>
      */
     public function findByIds($ids);
+
+    /**
+     * @param integer $id
+     * @return \BOL_CommentEntity
+     */
+    public function findCommentEntityById($id);
 }

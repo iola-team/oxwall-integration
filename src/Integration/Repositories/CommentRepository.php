@@ -34,4 +34,9 @@ class CommentRepository implements CommentRepositoryInterface
 
         return $out;
     }
+
+    public function findCommentEntityById($id)
+    {
+        return $this->commentService->findCommentEntityById($id);
+    }
 }
