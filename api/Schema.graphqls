@@ -12,7 +12,7 @@ scalar Upload
 type Subscription {
     onMessageAdd(chatId: ID, userId: ID): MessageCreatePayload!
     onMessageUpdate(chatId: ID, userId: ID): MessageUpdatePayload!
-    onPhotoCommentAdd(photoId: ID, userId: ID): PhotoCommentCreatePayload!
+    onPhotoCommentAdd(photoId: ID!): PhotoCommentCreatePayload!
 }
 
 type Query {

@@ -2,7 +2,7 @@
 
 namespace Everywhere\Api\Integration\Events;
 
-class PhotoCommentAddedEvent extends SubscriptionEvent
+class CommentAddedEvent extends SubscriptionEvent
 {
     const EVENT_NAME = "photoComment.added";
 

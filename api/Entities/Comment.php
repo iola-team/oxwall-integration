@@ -19,7 +19,14 @@ class Comment extends AbstractEntity
     public $userId;
 
     /**
-     * @var string
+     * Relation with photo via ow_base_comment_entity table
+     * @var integer
+     */
+    public $entityId;
+
+    /**
+     * @var integer
+     *
      */
     public $photoId;
 }

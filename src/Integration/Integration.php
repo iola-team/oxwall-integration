@@ -13,7 +13,7 @@ use Everywhere\Api\Contract\Integration\SubscriptionRepositoryInterface;
 use Everywhere\Api\Contract\Integration\IntegrationInterface;
 use Everywhere\Api\Integration\Events\MessageAddedEvent;
 use Everywhere\Api\Integration\Events\MessageUpdatedEvent;
-use Everywhere\Api\Integration\Events\PhotoCommentAddedEvent;
+use Everywhere\Api\Integration\Events\CommentAddedEvent;
 use Everywhere\Api\Integration\Events\SubscriptionEvent;
 use Everywhere\Oxwall\Integration\Repositories\AvatarRepository;
 use Everywhere\Oxwall\Integration\Repositories\ChatRepository;
@@ -56,9 +56,11 @@ class Integration implements IntegrationInterface
         $this->eventManager->bind("base_add_comment", function(\OW_Event $event) use($events) {
             $params = $event->getParams();
 
-            $events->emit(
-                new PhotoCommentAddedEvent($params["commentId"])
-            );
+            if ($params["entityType"] == "photo_comments") {
+                $events->emit(
+                    new CommentAddedEvent($params["commentId"])
+                );
+            }
         });
     }
 

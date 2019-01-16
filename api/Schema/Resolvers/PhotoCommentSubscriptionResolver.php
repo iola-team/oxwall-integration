@@ -8,7 +8,7 @@ use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
 use Everywhere\Api\Contract\Schema\DataLoaderInterface;
 use Everywhere\Api\Contract\Schema\SubscriptionFactoryInterface;
 use Everywhere\Api\Entities\Comment;
-use Everywhere\Api\Integration\Events\PhotoCommentAddedEvent;
+use Everywhere\Api\Integration\Events\CommentAddedEvent;
 use Everywhere\Api\Schema\IDObject;
 use Everywhere\Api\Schema\SubscriptionResolver;
 
@@ -43,7 +43,7 @@ class PhotoCommentSubscriptionResolver extends SubscriptionResolver
     {
         parent::__construct([
             "onPhotoCommentAdd" => function($root, $args) {
-                return $this->createSubscription($args, PhotoCommentAddedEvent::EVENT_NAME);
+                return $this->createSubscription($args, CommentAddedEvent::EVENT_NAME);
             },
         ]);
 
@@ -66,7 +66,7 @@ class PhotoCommentSubscriptionResolver extends SubscriptionResolver
                 });
             },
 
-            function ($data) use($args) {
+            function ($data) use ($args) {
                 return $this->loadComment($data)->then(function($comment) use($args) {
                     return $this->createCommentPayload($comment, $args);
                 });
@@ -94,18 +94,11 @@ class PhotoCommentSubscriptionResolver extends SubscriptionResolver
 
     protected function filterEvents(Comment $comment, array $args)
     {
-        if (empty($args["photoId"])) return false;
-
         /**
          * @var $photoIdObject IDObject
          */
         $photoIdObject = $args["photoId"];
 
-        /**
-         * @var $commentEntity \BOL_CommentEntity
-         */
-        $commentEntity = $this->commentRepository->findCommentEntityById($comment->photoId);
-
-        return $photoIdObject->getId() == $commentEntity->getEntityId();
+        return $photoIdObject->getId() == $comment->photoId;
     }
 }
