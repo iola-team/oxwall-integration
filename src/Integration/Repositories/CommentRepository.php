@@ -6,6 +6,10 @@ use Everywhere\Api\Entities\Comment;
 
 class CommentRepository implements CommentRepositoryInterface
 {
+    protected $entityTypeAlias = [
+        "photo_comments" => Comment::ENTITY_TYPE_PHOTO,
+    ];
+
     /**
      * @var \BOL_CommentService
      */
@@ -33,7 +37,6 @@ class CommentRepository implements CommentRepositoryInterface
             $comment->text = $item->message;
             $comment->createdAt = new \DateTime("@" . $item->createStamp);
             $comment->userId = (int) $item->userId;
-            $comment->entityId = (int) $item->commentEntityId;
 
             $out[$comment->id] = $comment;
 
@@ -42,14 +45,16 @@ class CommentRepository implements CommentRepositoryInterface
             }
         }
 
-        // Set photoId for comments
         $entities = $this->commentEntityDao->findByIdList($entityIds);
-        $entityIdsToPhotoIds = [];
+        $entitiesMap= [];
         foreach ($entities as $entity) {
-            $entityIdsToPhotoIds[$entity->id] = (int) $entity->entityId;
+            $entityIdsToPhotoIds[$entity->id] = $entity;
         }
+
         foreach ($out as $comment) {
-            $comment->photoId = $entityIdsToPhotoIds[$comment->entityId];
+            $entity = $entitiesMap[$comment->entityId];
+            $comment->entityId = $entity->entityId;
+            $comment->entityType = $this->entityTypeAlias[$entity->entityType];
         }
 
         return $out;

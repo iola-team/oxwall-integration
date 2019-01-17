@@ -99,6 +99,6 @@ class PhotoCommentSubscriptionResolver extends SubscriptionResolver
          */
         $photoIdObject = $args["photoId"];
 
-        return $photoIdObject->getId() == $comment->photoId;
+        return $comment->entityType == Comment::ENTITY_TYPE_PHOTO && $photoIdObject->getId() == $comment->entityId;
     }
 }

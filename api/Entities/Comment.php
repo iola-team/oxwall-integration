@@ -3,6 +3,8 @@ namespace Everywhere\Api\Entities;
 
 class Comment extends AbstractEntity
 {
+    const ENTITY_TYPE_PHOTO = "PHOTO";
+
     /**
      * @var string
      */
@@ -19,14 +21,12 @@ class Comment extends AbstractEntity
     public $userId;
 
     /**
-     * Relation with photo via ow_base_comment_entity table
      * @var integer
      */
     public $entityId;
 
     /**
-     * @var integer
-     *
+     * @var string
      */
-    public $photoId;
+    public $entityType;
 }

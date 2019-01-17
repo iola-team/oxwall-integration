@@ -56,11 +56,9 @@ class Integration implements IntegrationInterface
         $this->eventManager->bind("base_add_comment", function(\OW_Event $event) use($events) {
             $params = $event->getParams();
 
-            if ($params["entityType"] == "photo_comments") {
-                $events->emit(
-                    new CommentAddedEvent($params["commentId"])
-                );
-            }
+            $events->emit(
+                new CommentAddedEvent($params["commentId"])
+            );
         });
     }
 
