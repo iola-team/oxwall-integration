@@ -27,9 +27,12 @@ use Everywhere\Api\Schema\Resolvers\UserInfoResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoResolver;
 use Everywhere\Api\Schema\Resolvers\CommentResolver;
 use Everywhere\Api\Schema\Resolvers\ValueResolver;
+use Everywhere\Api\Schema\Resolvers\FriendMutationResolver;
+use Everywhere\Api\Schema\Resolvers\FriendshipResolver;
+use Everywhere\Api\Schema\Resolvers\FriendEdgeResolver;
 
 return [
-    "path" => __DIR__ . "/Schema.graphqls",
+    "path" => __DIR__ . "/Schema.graphql",
     "resolvers" => [
         // Object types
 
@@ -54,6 +57,7 @@ return [
         "Chat" => ChatResolver::class,
         "ChatMessagesConnection" => Relay\ConnectionResolver::class,
         "Message" => MessageResolver::class,
+        "Friendship" => FriendshipResolver::class,
 
         // Scalar types
         "Value" => ValueResolver::class,
@@ -76,6 +80,7 @@ return [
             PhotoMutationResolver::class,
             ProfileMutationResolver::class,
             MessageMutationResolver::class,
+            FriendMutationResolver::class
         ],
 
         "Subscription" => [

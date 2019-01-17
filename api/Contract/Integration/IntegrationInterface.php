@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: skambalin
- * Date: 19.10.17
- * Time: 16.21
- */
 
 namespace Everywhere\Api\Contract\Integration;
 
@@ -46,6 +40,11 @@ interface IntegrationInterface
      * @return ChatRepositoryInterface
      */
     public function getChatRepository();
+
+    /**
+     * @return FriendshipRepositoryInterface
+     */
+    public function getFriendshipRepository();
 
     /**
      * @return SubscriptionRepositoryInterface

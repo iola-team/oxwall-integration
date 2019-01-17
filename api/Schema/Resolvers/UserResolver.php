@@ -18,18 +18,21 @@ use Everywhere\Api\Schema\EntityResolver;
 use Everywhere\Api\Schema\IDObject;
 use GraphQL\Executor\Promise\Promise;
 use GraphQL\Type\Definition\ResolveInfo;
+use Everywhere\Api\Contract\Integration\FriendshipRepositoryInterface;
+use Everywhere\Api\Entities\Friendship;
+use Everywhere\Api\Contract\Schema\IDObjectInterface;
 
 class UserResolver extends EntityResolver
 {
     /**
      * @var DataLoaderInterface
      */
-    protected $friendListLoader;
+    protected $friendshipListLoader;
 
     /**
      * @var DataLoaderInterface
      */
-    protected $friendCountsLoader;
+    protected $friendshipCountsLoader;
 
     /**
      * @var DataLoaderInterface
@@ -72,7 +75,11 @@ class UserResolver extends EntityResolver
     protected $connectionFactory;
 
     public function __construct(
+        // Repositories
         UserRepositoryInterface $userRepository,
+        FriendshipRepositoryInterface $friendshipRepository,
+
+        // Factories
         DataLoaderFactoryInterface $loaderFactory,
         ConnectionFactoryInterface $connectionFactory
     ) {
@@ -83,12 +90,13 @@ class UserResolver extends EntityResolver
         );
 
         $this->connectionFactory = $connectionFactory;
-        $this->friendListLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
-            return $userRepository->findFriends($ids, $args);
+
+        $this->friendshipListLoader = $loaderFactory->create(function($ids, $args, $context) use($friendshipRepository) {
+            return $friendshipRepository->findByUserIds($ids, $args);
         }, []);
 
-        $this->friendCountsLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
-            return $userRepository->countFriends($ids, $args);
+        $this->friendshipCountsLoader = $loaderFactory->create(function($ids, $args, $context) use($friendshipRepository) {
+            return $friendshipRepository->countByUserIds($ids, $args);
         }, []);
 
         $this->photosLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
@@ -118,8 +126,22 @@ class UserResolver extends EntityResolver
         $this->chatsCountsLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
             return $userRepository->countChats($ids, $args);
         });
+    }
 
-
+    /**
+     * TODO: Get rid of this ugly conversion somehow. 
+     * Perhaps it would be better to do such convertion on type resolving phase, 
+     * since we usually do not need id types in resolver functions.
+     * The only exception is `node` resolver.
+     * 
+     * @param IDObjectInterface[] $idObjects
+     * @return string[]
+     */
+    protected function convertIdObjectsToLocalIds($idObjects)
+    {
+        return array_map(function(IDObjectInterface $idObject) {
+            return $idObject->getId();
+        }, $idObjects);
     }
 
     /**
@@ -139,10 +161,30 @@ class UserResolver extends EntityResolver
                     $user,
                     $args,
                     function($args) use($user) {
-                        return $this->friendListLoader->load($user->id, $args);
+                        $args["filter"]["friendIdIn"] = $this->convertIdObjectsToLocalIds(
+                            $args["filter"]["friendIdIn"]
+                        );
+
+                        return $this->friendshipListLoader
+                            ->load($user->id, $args)
+                            ->then(function($friendships) use($user) {
+                                return array_map(function(Friendship $friendship) use($user) {
+                                    return [
+                                        "node" => $friendship->userId == $user->id 
+                                            ? $friendship->friendId 
+                                            : $friendship->userId,
+                                        "friendship" => $friendship
+                                    ];
+                                }, $friendships);
+                            }
+                        );
                     },
                     function($args) use($user) {
-                        return $this->friendCountsLoader->load($user->id, $args);
+                        $args["filter"]["friendIdIn"] = $this->convertIdObjectsToLocalIds(
+                            $args["filter"]["friendIdIn"]
+                        );
+
+                        return $this->friendshipCountsLoader->load($user->id, $args);
                     }
                  );
 

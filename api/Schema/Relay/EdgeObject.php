@@ -12,11 +12,25 @@ class EdgeObject implements EdgeObjectInterface, \ArrayAccess
 {
     protected $cursorGetter;
     protected $nodeGetter;
+    protected $rootValue;
 
-    public function __construct(callable $cursorGetter, callable $nodeGetter = null)
+    public function __construct($rootValue, callable $cursorGetter, callable $nodeGetter)
     {
+        $this->rootValue = $rootValue;
         $this->cursorGetter = $cursorGetter;
         $this->nodeGetter = $nodeGetter;
+    }
+
+    public function getRootValue()
+    {
+        return $this->rootValue;
+    }
+
+    private function getFromRootValue($name, $defaultValue = null)
+    {
+        $rootValue = empty($this->rootValue) ? [] : (array) $this->rootValue;
+
+        return isset($rootValue[$name]) ? $rootValue[$name] : $defaultValue;
     }
 
     /**
@@ -32,12 +46,14 @@ class EdgeObject implements EdgeObjectInterface, \ArrayAccess
      */
     public function getCursor()
     {
-        return $this->getNode()->then($this->cursorGetter);
+        return call_user_func($this->cursorGetter);
     }
 
     public function offsetExists($offset)
     {
-        return in_array($offset, ['cursor', 'node']);
+        $rootValueKeys = is_array($this->rootValue) ? array_keys($this->rootValue) : [];
+
+        return in_array($offset, array_merge($rootValueKeys, ['cursor', 'node']));
     }
 
     public function offsetGet($offset)
@@ -49,6 +65,8 @@ class EdgeObject implements EdgeObjectInterface, \ArrayAccess
         if ($offset === "node") {
             return $this->getNode();
         }
+
+        return $this->getFromRootValue($offset);
     }
 
     private function throwAccessError()

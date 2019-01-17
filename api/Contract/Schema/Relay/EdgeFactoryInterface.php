@@ -2,45 +2,43 @@
 
 namespace Everywhere\Api\Contract\Schema\Relay;
 
-use Everywhere\Api\Contract\Entities\EntityInterface;
-
 interface EdgeFactoryInterface
 {
     /**
-     * Creates an edge object based on provided entity object and connection arguments
-     * Creates default cursor if $node was not provided
+     * Creates an edge object based on provided connection item and arguments
+     * Creates default cursor if item was not provided
      *
      * @param array $filter
-     * @param EntityInterface|string $node
+     * @param mixed|null $rootValue
      *
      * @return EdgeObjectInterface
      */
-    public function create($filter, $node = null);
+    public function create($filter, $rootValue = null);
 
     /**
-     * Creates an edge object for an entity after a cursor
+     * Creates an edge object for a connection item after a cursor
      *
      * @param array $cursor
-     * @param EntityInterface|string $node
+     * @param mixed $rootValue
      *
      * @return EdgeObjectInterface
      */
-    public function createBefore($cursor, $node);
+    public function createBefore($cursor, $rootValue);
 
     /**
-     * Creates an edge object for an entity before a cursor
+     * Creates an edge object for a connection item before a cursor
      *
      * @param array $cursor
-     * @param EntityInterface|string $node
+     * @param mixed $rootValue
      * @return EdgeObjectInterface
      */
-    public function createAfter($cursor, $node);
+    public function createAfter($cursor, $rootValue);
 
     /**
      * @param $arguments
-     * @param $node
+     * @param $rootValue
      *
      * @return EdgeObjectInterface
      */
-    public function createFromArguments($arguments, $node);
+    public function createFromArguments($arguments, $rootValue);
 }
