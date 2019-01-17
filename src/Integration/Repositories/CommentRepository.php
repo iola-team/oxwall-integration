@@ -37,6 +37,7 @@ class CommentRepository implements CommentRepositoryInterface
             $comment->text = $item->message;
             $comment->createdAt = new \DateTime("@" . $item->createStamp);
             $comment->userId = (int) $item->userId;
+            $comment->entityId = (int) $item->commentEntityId; // entityId
 
             $out[$comment->id] = $comment;
 
@@ -48,12 +49,12 @@ class CommentRepository implements CommentRepositoryInterface
         $entities = $this->commentEntityDao->findByIdList($entityIds);
         $entitiesMap= [];
         foreach ($entities as $entity) {
-            $entityIdsToPhotoIds[$entity->id] = $entity;
+            $entitiesMap[$entity->id] = $entity;
         }
 
         foreach ($out as $comment) {
             $entity = $entitiesMap[$comment->entityId];
-            $comment->entityId = $entity->entityId;
+            $comment->entityId = $entity->entityId; // photoId
             $comment->entityType = $this->entityTypeAlias[$entity->entityType];
         }
 
