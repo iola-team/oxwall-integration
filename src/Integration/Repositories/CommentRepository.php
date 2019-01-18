@@ -37,7 +37,7 @@ class CommentRepository implements CommentRepositoryInterface
             $comment->text = $item->message;
             $comment->createdAt = new \DateTime("@" . $item->createStamp);
             $comment->userId = (int) $item->userId;
-            $comment->entityId = (int) $item->commentEntityId; // entityId
+            $comment->entityId = (int) $item->commentEntityId; // entityId from related table (ow_base_comment_entity)
 
             $out[$comment->id] = $comment;
 
@@ -54,7 +54,7 @@ class CommentRepository implements CommentRepositoryInterface
 
         foreach ($out as $comment) {
             $entity = $entitiesMap[$comment->entityId];
-            $comment->entityId = $entity->entityId; // photoId
+            $comment->entityId = $entity->entityId; // id from related table (ow_photo, ow_video_clip and etc.)
             $comment->entityType = $this->entityTypeAlias[$entity->entityType];
         }
 
