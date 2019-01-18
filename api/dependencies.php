@@ -78,6 +78,10 @@ use Everywhere\Api\Schema\Resolvers\QueryResolver;
 use Everywhere\Api\Schema\Resolvers\UserResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoResolver;
 use Everywhere\Api\Schema\Resolvers\CommentResolver;
+use Everywhere\Api\Schema\Resolvers\FriendMutationResolver;
+use Everywhere\Api\Schema\Resolvers\FriendEdgeResolver;
+use Everywhere\Api\Schema\Resolvers\FriendshipResolver;
+use Everywhere\Api\Schema\DefaultResolver;
 
 return [
     PromiseAdapter::class => function() {
@@ -99,6 +103,9 @@ return [
             "context" => $container[ContextInterface::class],
             "schema" => $container[Schema::class],
             "promiseAdapter" => $container[PromiseAdapter::class],
+            "fieldResolver" => function($root, $args, $context, $info) use($container) {
+                return $container[DefaultResolver::class]->resolve($root, $args, $context, $info);
+            }
         ]);
     },
 
@@ -283,6 +290,12 @@ return [
 
     // Resolvers
 
+    DefaultResolver::class => function(ContainerInterface $container) {
+        return new DefaultResolver(
+            $container[IDFactoryInterface::class]
+        );
+    },
+
     QueryResolver::class => function(ContainerInterface $container) {
         return new QueryResolver(
             $container[ConnectionFactoryInterface::class],
@@ -294,6 +307,8 @@ return [
     UserResolver::class => function(ContainerInterface $container) {
         return new UserResolver(
             $container->getIntegration()->getUserRepository(),
+            $container->getIntegration()->getFriendshipRepository(),
+
             $container[DataLoaderFactory::class],
             $container[ConnectionFactoryInterface::class]
         );
@@ -440,6 +455,28 @@ return [
             $container->getIntegration()->getCommentRepository(),
             $container[SubscriptionFactoryInterface::class],
             $container[DataLoaderFactory::class]
+        );
+    },
+
+    FriendshipResolver::class => function(ContainerInterface $container) {
+        return new FriendshipResolver(
+            $container->getIntegration()->getFriendshipRepository(),
+            $container[DataLoaderFactory::class]
+        );
+    },
+
+    FriendMutationResolver::class => function(ContainerInterface $container) {
+        return new FriendMutationResolver(
+            $container->getIntegration()->getFriendshipRepository(),
+            $container[Relay\EdgeFactory::class]
+        );
+    },
+
+    MessageSubscriptionResolver::class => function(ContainerInterface $container) {
+        return new MessageSubscriptionResolver(
+            $container->getIntegration()->getChatRepository(),
+            $container[DataLoaderFactory::class],
+            $container[SubscriptionFactoryInterface::class]
         );
     },
 ];

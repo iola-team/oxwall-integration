@@ -22,6 +22,7 @@ use Everywhere\Oxwall\Integration\Repositories\SubscriptionRepository;
 use Everywhere\Oxwall\Integration\Repositories\UserRepository;
 use Everywhere\Oxwall\Integration\Repositories\PhotoRepository;
 use Everywhere\Oxwall\Integration\Repositories\CommentRepository;
+use Everywhere\Oxwall\Integration\Repositories\FriendshipRepository;
 
 class Integration implements IntegrationInterface
 {
@@ -100,5 +101,10 @@ class Integration implements IntegrationInterface
     public function getChatRepository()
     {
         return new ChatRepository();
+    }
+
+    public function getFriendshipRepository()
+    {
+        return new FriendshipRepository();
     }
 }

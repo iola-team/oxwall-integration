@@ -9,6 +9,8 @@ scalar Date
 scalar Cursor
 scalar Upload
 
+directive @type(name: String!) on FIELD_DEFINITION
+
 type Subscription {
     onMessageAdd(chatId: ID, userId: ID): MessageCreatePayload!
     onMessageUpdate(chatId: ID, userId: ID): MessageUpdatePayload!
@@ -51,7 +53,6 @@ interface Connection {
 }
 
 
-
 type Mutation {
     signInUser(input: SignInUserInput!): AuthPayload!
     signUpUser(input: SignUpUserInput!): AuthPayload!
@@ -64,6 +65,9 @@ type Mutation {
     saveProfileFieldValues(input: ProfileFieldSaveInput!): ProfileFieldSavePayload!
     addMessage(input: MessageInput!, after: Cursor, before: Cursor, at: Cursor): MessageCreatePayload!
     markMessagesAsRead(input: MarkMessagesAsReadInput!): [MessageUpdatePayload!]!
+
+    addFriend(input: AddFriendInput!): AddFriendPayload!
+    deleteFriend(input: DeleteFriendInput!): DeleteFriendPayload!
 }
 
 input MarkMessagesAsReadInput {
@@ -116,7 +120,7 @@ type User implements Node {
     avatar: Avatar
     chat(id: ID, recipientId: ID): Chat
 
-    friends(first: Int, after: Cursor, last: Int, before: Cursor): UserFriendsConnection!
+    friends(filter: UserFriendsFilterInput = {}, first: Int, after: Cursor, last: Int, before: Cursor): UserFriendsConnection!
     photos(first: Int, after: Cursor, last: Int, before: Cursor): UserPhotoConnection!
     chats(first: Int, after: Cursor, last: Int, before: Cursor): UserChatsConnection!
     messages(filter: UserMessagesFilterInput, first: Int, after: Cursor, last: Int, before: Cursor): UserMessagesConnection!
@@ -140,10 +144,16 @@ type UserConnection implements Connection {
     totalCount: Int
 }
 
+type UserFriendEdge implements Edge {
+    node: User!
+    cursor: Cursor!
+    friendship: Friendship!
+}
+
 type UserFriendsConnection implements Connection {
     pageInfo: PageInfo!
     metaInfo: ConnectionMetaInfo!
-    edges: [UserEdge!]!
+    edges: [UserFriendEdge!]!
     totalCount: Int
 }
 
@@ -166,7 +176,7 @@ type UserPhotoCreatePayload implements CreatePayload {
 }
 
 type UserPhotoDeletePayload implements DeletePayload {
-    deletedId: ID!
+    deletedId: ID! @type(name: "Photo")
     user: User!
 }
 
@@ -307,7 +317,7 @@ type Avatar implements Node {
 }
 
 type AvatarDeletePayload implements DeletePayload {
-    deletedId: ID!
+    deletedId: ID! @type(name: "Avatar")
     user: User!
 }
 
@@ -451,4 +461,48 @@ type MessageUpdatePayload {
     chatEdge: ChatEdge!
     node: Message!
     edge: MessageEdge!
+}
+
+enum FriendshipStatus {
+    IGNORED
+    PENDING
+    ACTIVE
+}
+
+type Friendship implements Node {
+    id: ID!
+    status: FriendshipStatus!
+    user: User!
+    friend: User!
+    createdAt: Date!
+    updatedAt: Date!
+}
+
+input UserFriendsFilterInput {
+    friendIdIn: [ID!] = []
+    friendshipStatusIn: [FriendshipStatus!] = [ACTIVE]
+}
+
+input AddFriendInput {
+    userId: ID!
+    friendId: ID!
+    status: FriendshipStatus
+}
+
+input DeleteFriendInput {
+    userId: ID!
+    friendId: ID!
+}
+
+type AddFriendPayload {
+    user: User!
+    friend: User!
+    friendship: Friendship!
+    edge: UserFriendEdge!
+}
+
+type DeleteFriendPayload implements DeletePayload {
+    deletedId: ID! @type(name: "Friendship")
+    user: User!
+    friend: User!
 }
