@@ -172,6 +172,7 @@ input UserPhotoCreateInput {
 type UserPhotoCreatePayload implements CreatePayload {
     user: User!
     node: Photo!
+    edge: PhotoEdge!
 }
 
 type UserPhotoDeletePayload implements DeletePayload {

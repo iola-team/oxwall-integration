@@ -6,13 +6,16 @@ use Everywhere\Api\Contract\Integration\PhotoRepositoryInterface;
 use Everywhere\Api\Entities\Photo;
 use Everywhere\Api\Schema\CompositeResolver;
 use Everywhere\Api\Schema\IDObject;
+use Everywhere\Api\Contract\Schema\Relay\EdgeFactoryInterface;
 
 class PhotoMutationResolver extends CompositeResolver
 {
-    public function __construct(PhotoRepositoryInterface $photoRepository)
-    {
+    public function __construct(
+        PhotoRepositoryInterface $photoRepository,
+        EdgeFactoryInterface $edgeFactory
+    ) {
         parent::__construct([
-            "addUserPhoto" => function($root, $args) use ($photoRepository) {
+            "addUserPhoto" => function($root, $args) use ($photoRepository, $edgeFactory) {
                 $input = $args["input"];
                 $userId = $input["userId"]->getId();
 
@@ -22,6 +25,7 @@ class PhotoMutationResolver extends CompositeResolver
                 return [
                     "node" => $photoId,
                     "user" => $userId,
+                    "edge" => $edgeFactory->createFromArguments($args, $photoId)
                 ];
             },
 

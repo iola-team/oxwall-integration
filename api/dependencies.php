@@ -436,7 +436,8 @@ return [
 
     PhotoMutationResolver::class => function(ContainerInterface $container) {
         return new PhotoMutationResolver(
-            $container->getIntegration()->getPhotoRepository()
+            $container->getIntegration()->getPhotoRepository(),
+            $container[Relay\EdgeFactory::class]
         );
     },
 
