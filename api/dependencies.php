@@ -81,6 +81,7 @@ use Everywhere\Api\Schema\Resolvers\FriendMutationResolver;
 use Everywhere\Api\Schema\Resolvers\FriendEdgeResolver;
 use Everywhere\Api\Schema\Resolvers\FriendshipResolver;
 use Everywhere\Api\Schema\DefaultResolver;
+use Everywhere\Api\Schema\Resolvers\UserFriendsConnectionResolver;
 
 return [
     PromiseAdapter::class => function() {
@@ -462,4 +463,12 @@ return [
             $container[SubscriptionFactoryInterface::class]
         );
     },
+
+    UserFriendsConnectionResolver::class => function(ContainerInterface $container) {
+        return new UserFriendsConnectionResolver(
+            $container->getIntegration()->getFriendshipRepository(),
+            $container[DataLoaderFactory::class],
+            $container[Relay\EdgeFactory::class]
+        );
+    }
 ];
