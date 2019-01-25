@@ -5,9 +5,13 @@ namespace Everywhere\Api\Schema\Relay;
 use Everywhere\Api\Contract\Entities\EntityInterface;
 use Everywhere\Api\Contract\Schema\DataLoaderInterface;
 use GraphQL\Executor\Promise\PromiseAdapter;
+use Everywhere\Api\Contract\Schema\IDObjectInterface;
 
 class EntityEdgeFactory extends EdgeFactory
 {
+    /**
+     * @var DataLoaderInterface
+     */
     protected $entityLoader;
 
     public function __construct(DataLoaderInterface $entityLoader, PromiseAdapter $promiseAdapter)
@@ -17,15 +21,31 @@ class EntityEdgeFactory extends EdgeFactory
         $this->entityLoader = $entityLoader;
     }
 
+    /**
+     * Loads entity for provided root value
+     * TODO: This logic is copied from `EntityResolver` - move it to some common place
+     *
+     * @param [type] $rootValue
+     * @return void
+     */
     protected function getNode($rootValue)
     {
         $node = parent::getNode($rootValue);
 
-        if (!$node || $node instanceof EntityInterface) {
-            return $this->promiseAdapter->createFulfilled($node);
+        if ($node === null) {
+            return null;
         }
 
-        return $this->entityLoader->load($node);
+        $id = $node instanceof IDObjectInterface
+            ? $node->getId()
+            : $node;
+
+        if ($node instanceof EntityInterface) {
+            $id = $node->getId();
+            $this->entityLoader->prime($id, $node);
+        }
+
+        return $this->entityLoader->load($id);
     }
 
     protected function getCursor($rootValue, $fromCursor, $direction)
@@ -35,7 +55,13 @@ class EntityEdgeFactory extends EdgeFactory
         });
     }
 
-    protected function getEntityCursor(EntityInterface $entity, $fromCursor, $direction)
+    /**
+     * @param EntityInterface $entity
+     * @param array $fromCursor
+     * @param int $direction
+     * @return array
+     */
+    protected function getEntityCursor($entity, $fromCursor, $direction)
     {
         return [];
     }

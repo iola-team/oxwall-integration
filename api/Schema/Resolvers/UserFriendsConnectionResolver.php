@@ -56,18 +56,19 @@ class UserFriendsConnectionResolver extends ConnectionResolver
     protected function getItems(ConnectionObjectInterface $connection, array $arguments)
     {
         $user = $connection->getRoot();
+        $edgeBuilder = function(Friendship $friendship) use($user) {
+            return [
+                "node" => $friendship->userId == $user->id
+                    ? $friendship->friendId 
+                    : $friendship->userId,
+                "friendship" => $friendship
+            ];
+        };
 
         return $this->friendshipListLoader
             ->load($user->id, $this->buildArgs($arguments))
-            ->then(function($friendships) use($user) {
-                return array_map(function(Friendship $friendship) use($user) {
-                    return [
-                        "node" => $friendship->userId == $user->id
-                            ? $friendship->friendId 
-                            : $friendship->userId,
-                        "friendship" => $friendship
-                    ];
-                }, $friendships);
+            ->then(function($friendships) use($edgeBuilder) {
+                return array_map($edgeBuilder, $friendships);
             }
         );
     }

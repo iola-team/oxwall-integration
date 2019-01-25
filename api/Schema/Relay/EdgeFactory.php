@@ -2,9 +2,7 @@
 
 namespace Everywhere\Api\Schema\Relay;
 
-use Everywhere\Api\Contract\Entities\EntityInterface;
 use Everywhere\Api\Contract\Schema\Relay\EdgeFactoryInterface;
-use Everywhere\Api\Contract\Schema\Relay\EdgeObjectInterface;
 use GraphQL\Error\InvariantViolation;
 use GraphQL\Executor\Promise\PromiseAdapter;
 

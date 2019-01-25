@@ -2,7 +2,6 @@
 
 namespace Everywhere\Api\Schema\TypeConfigDecorators;
 
-use Everywhere\Api\Contract\Entities\EntityInterface;
 use Everywhere\Api\Contract\Schema\IDFactoryInterface;
 use Everywhere\Api\Contract\Schema\IDObjectInterface;
 use Everywhere\Api\Contract\Schema\ObjectTypeResolverInterface;
