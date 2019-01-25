@@ -31,6 +31,7 @@ use Everywhere\Api\Schema\Resolvers\FriendMutationResolver;
 use Everywhere\Api\Schema\Resolvers\FriendshipResolver;
 use Everywhere\Api\Schema\Resolvers\FriendEdgeResolver;
 use Everywhere\Api\Schema\Resolvers\UserFriendsConnectionResolver;
+use Everywhere\Api\Schema\Resolvers\UserFriendEdgeResolver;
 
 return [
     "path" => __DIR__ . "/Schema.graphql",

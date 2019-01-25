@@ -62,7 +62,7 @@ class UserFriendsConnectionResolver extends ConnectionResolver
             ->then(function($friendships) use($user) {
                 return array_map(function(Friendship $friendship) use($user) {
                     return [
-                        "node" => $friendship->userId == $user->id 
+                        "node" => $friendship->userId == $user->id
                             ? $friendship->friendId 
                             : $friendship->userId,
                         "friendship" => $friendship
