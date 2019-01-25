@@ -117,6 +117,7 @@ class PhotoRepository implements PhotoRepositoryInterface
         return $out;
     }
 
+    // @TODO: Use this method for mentions subscription (photo comments)
     public function findCommentsParticipantIds($photoIds)
     {
         $out = [];
