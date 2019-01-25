@@ -38,7 +38,7 @@ class ConnectionResolver extends CompositeResolver
         $this->edgeFactory = $edgeFactory;
     }
 
-    private function getFilter(ConnectionObjectInterface $connection)
+    private function prepareArguments(ConnectionObjectInterface $connection)
     {
         return array_diff_key(
             $connection->getArguments(),
@@ -66,9 +66,9 @@ class ConnectionResolver extends CompositeResolver
 
     /**
      * Cursor may include any extra data we pass here.
-     * This data can be the connection filter...
+     * This data can be the connection arguments...
      *
-     * TODO: Review the code later and add filter data to cursors if needed
+     * TODO: Review the code later and add arguments data to cursors if needed
      *
      * @param ConnectionObjectInterface $connection
      *
@@ -110,7 +110,7 @@ class ConnectionResolver extends CompositeResolver
     private function getItemsWithOverflow(ConnectionObjectInterface $connection, $totalCount = null)
     {
         $pagination = $this->getPagination($connection);
-        $filter = $this->getFilter($connection);
+        $arguments = $this->prepareArguments($connection);
         $cursorArg = [];
 
         if ($pagination["after"]) {
@@ -125,7 +125,7 @@ class ConnectionResolver extends CompositeResolver
 
         return $this->getItems(
             $connection,
-            array_merge($filter, $cursorArg, [
+            array_merge($arguments, $cursorArg, [
                 "offset" => $slice["offset"],
                 "count" => $slice["count"] + 1 // Plus overflow to be able detect `hasNextPage` later
             ])
@@ -235,13 +235,13 @@ class ConnectionResolver extends CompositeResolver
 
     /**
      * @param ConnectionObjectInterface $connection
-     * @param array $filter
+     * @param array $arguments
      *
      * @return \GraphQL\Executor\Promise\Promise
      */
-    protected function getItems(ConnectionObjectInterface $connection, array $filter)
+    protected function getItems(ConnectionObjectInterface $connection, array $arguments)
     {
-        return $connection->getItems($filter);
+        return $connection->getItems($arguments);
     }
 
     /**
@@ -249,9 +249,9 @@ class ConnectionResolver extends CompositeResolver
      *
      * @return \GraphQL\Executor\Promise\Promise
      */
-    protected function getCount(ConnectionObjectInterface $connection)
+    protected function getCount(ConnectionObjectInterface $connection, array $arguments)
     {
-        return $connection->getCount($this->getFilter($connection));
+        return $connection->getCount($arguments);
     }
 
     /**
@@ -271,7 +271,9 @@ class ConnectionResolver extends CompositeResolver
         }
 
         $connectionArgs = $connection->getArguments();
-        $totalPromise = $this->isTotalCountRequired($connection) ? $this->getCount($connection) : null;
+        $totalPromise = $this->isTotalCountRequired($connection) 
+            ? $this->getCount($connection, $this->prepareArguments($connection))
+            : null;
 
         switch ($info->fieldName) {
             case "pageInfo":
@@ -296,7 +298,7 @@ class ConnectionResolver extends CompositeResolver
                 return $totalPromise ? $totalPromise->then($getEdges) : $getEdges();
 
             case "totalCount":
-                return $totalPromise ? $totalPromise : $this->getCount($connection);
+                return $totalPromise ? $totalPromise : $this->getCount($connection, $this->prepareArguments($connection));
         }
 
         return $value;
