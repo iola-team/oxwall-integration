@@ -17,7 +17,12 @@ class EdgeFactory implements EdgeFactoryInterface
         $this->promiseAdapter = $promiseAdapter;
     }
 
-    protected function buildCursor($rootValue, $fromCursor, $direction)
+    protected function getRoot($rootValue)
+    {
+        return $rootValue;
+    }
+
+    protected function getCursor($rootValue, $fromCursor, $direction)
     {
         /**
          * TODO: It is slightly dirty way of getting cursor from `rootValue`. Looks like spaghetti to me. Rethink it in future.
@@ -25,7 +30,7 @@ class EdgeFactory implements EdgeFactoryInterface
         return isset($rootValue["cursor"]) ? $rootValue["cursor"] : [];
     }
 
-    protected function loadNode($rootValue)
+    protected function getNode($rootValue)
     {
         /**
          * TODO: It is slightly dirty way of getting node from `rootValue`. Looks like spaghetti to me. Rethink it in future.
@@ -40,10 +45,10 @@ class EdgeFactory implements EdgeFactoryInterface
         return $out < 0 ? 0 : $out;
     }
 
-    private function getCursor($rootValue, $data, $direction = 0)
+    private function buildCursor($rootValue, $data, $direction = 0)
     {
         $cursorPromise = $this->promiseAdapter->createFulfilled(
-            $this->buildCursor($rootValue, $data, $direction)
+            $this->getCursor($rootValue, $data, $direction)
         );
 
         return $cursorPromise->then(function($cursor) use($data, $direction) {
@@ -53,22 +58,15 @@ class EdgeFactory implements EdgeFactoryInterface
         });
     }
 
-    private function getNode($rootValue)
-    {
-        return $this->promiseAdapter->createFulfilled(
-            $this->loadNode($rootValue)
-        );
-    }
-
     private function createEdge($rootValue, $data, $offset = 0)
     {
         return new EdgeObject(
-            $rootValue,
+            $this->getRoot($rootValue),
             function() use($rootValue, $data, $offset) {
-                return $this->getCursor($rootValue, $data, $offset);
+                return $this->buildCursor($rootValue, $data, $offset);
             },
             function() use($rootValue) {
-                return $this->getNode($rootValue);
+                return $this->promiseAdapter->createFulfilled($this->getNode($rootValue));
             }
         );
     }
