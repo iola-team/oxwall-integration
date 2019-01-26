@@ -99,10 +99,7 @@ class PhotoRepository implements PhotoRepositoryInterface
     {
         $out = [];
         foreach($photoIds as $photoId) {
-            $offsetVsPage = $args["offset"] / ($args["count"] - 1);
-            $page = $args["offset"]
-                ? (is_int($offsetVsPage) ? $offsetVsPage : 0) + 1
-                : 1;
+            $page = $args["offset"] ? floor($args["offset"] / ($args["count"] - 1)) + 1 : 1;
 
             /**
              * @var $commentDtos \BOL_Comment[]
