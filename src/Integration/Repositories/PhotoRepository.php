@@ -36,6 +36,7 @@ class PhotoRepository implements PhotoRepositoryInterface
         $this->photoService = \PHOTO_BOL_PhotoService::getInstance();
         $this->tempPhotoService = \PHOTO_BOL_PhotoTemporaryService::getInstance();
         $this->commentService = \BOL_CommentService::getInstance();
+        $this->commentDao = \BOL_CommentDao::getInstance();
         $this->eventManager = \OW::getEventManager();
     }
 
@@ -96,22 +97,30 @@ class PhotoRepository implements PhotoRepositoryInterface
 
     public function findComments($photoIds, array $args)
     {
-        $entities = array_map(function($photoId) use ($args) {
-            return [
-                "entityId" => (int)$photoId,
-                "entityType" => $this->commentEntityType,
-                "countOnPage" => $args["count"],
-            ];
-        }, $photoIds);
-        $items = \BOL_CommentDao::getInstance()->findBatchCommentsList($entities);
-
         $out = [];
-        foreach ($items as $item) {
-          if (empty($out[$item->entityId])) {
-            $out[$item->entityId] = [$item->getId()];
-          } else {
-            $out[$item->entityId][] = $item->getId();
-          }
+        foreach($photoIds as $photoId) {
+            $offsetVsPage = $args["offset"] / ($args["count"] - 1);
+            $page = $args["offset"]
+                ? (is_int($offsetVsPage) ? $offsetVsPage : 0) + 1
+                : 1;
+
+            /**
+             * @var $commentDtos \BOL_Comment[]
+             */
+            $commentDtos = $this->commentService->findCommentList(
+                (int)$this->commentEntityType,
+                (int)$photoId,
+                $page,
+                $args["count"]
+            );
+
+            foreach ($commentDtos as $commentDto) {
+                if (empty($out[(int)$photoId])) {
+                    $out[(int)$photoId] = [$commentDto->getId()];
+                } else {
+                    $out[(int)$photoId][] = $commentDto->getId();
+                }
+            }
         }
 
         return $out;
