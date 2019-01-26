@@ -468,6 +468,12 @@ enum FriendshipStatus {
     ACTIVE
 }
 
+enum FriendshipPhase {
+    REQUEST_RECEIVED
+    REQUEST_SENT
+    ACTIVE
+}
+
 type Friendship implements Node {
     id: ID!
     status: FriendshipStatus!
@@ -479,7 +485,7 @@ type Friendship implements Node {
 
 input UserFriendsFilterInput {
     friendIdIn: [ID!] = []
-    friendshipStatusIn: [FriendshipStatus!] = [ACTIVE]
+    friendshipPhaseIn: [FriendshipPhase!] = [ACTIVE]
 }
 
 input AddFriendInput {
