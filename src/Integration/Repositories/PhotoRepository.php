@@ -90,6 +90,8 @@ class PhotoRepository implements PhotoRepositoryInterface
 
     public function deleteByIds($ids)
     {
+        // @TODO: ACL
+        // @TODO: Delete the related comments + commentEntity
         foreach ($ids as $id) {
             $this->photoService->deletePhoto($id);
         }
