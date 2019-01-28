@@ -30,6 +30,8 @@ use Everywhere\Api\Schema\Resolvers\ValueResolver;
 use Everywhere\Api\Schema\Resolvers\FriendMutationResolver;
 use Everywhere\Api\Schema\Resolvers\FriendshipResolver;
 use Everywhere\Api\Schema\Resolvers\FriendEdgeResolver;
+use Everywhere\Api\Schema\Resolvers\UserFriendsConnectionResolver;
+use Everywhere\Api\Schema\Resolvers\UserFriendEdgeResolver;
 
 return [
     "path" => __DIR__ . "/Schema.graphql",
@@ -41,7 +43,7 @@ return [
         "User" => UserResolver::class,
         "UserInfo" => UserInfoResolver::class,
         "UserConnection" => Relay\ConnectionResolver::class,
-        "UserFriendsConnection" => Relay\ConnectionResolver::class,
+        "UserFriendsConnection" => UserFriendsConnectionResolver::class,
         "UserPhotoConnection" => Relay\ConnectionResolver::class,
         "UserChatsConnection" => Relay\ConnectionResolver::class,
 

@@ -2,7 +2,6 @@
 
 namespace Everywhere\Api\Schema\TypeConfigDecorators;
 
-use Everywhere\Api\Contract\Entities\EntityInterface;
 use Everywhere\Api\Contract\Schema\IDFactoryInterface;
 use Everywhere\Api\Contract\Schema\IDObjectInterface;
 use Everywhere\Api\Contract\Schema\ObjectTypeResolverInterface;
@@ -30,6 +29,11 @@ class ObjectTypeConfigDecorator extends TypeConfigDecorator
     protected $getResolver;
 
     /**
+     * @var ObjectTypeResolverInterface
+     */
+    protected $defaultResolver;
+
+    /**
      * @var PromiseAdapter
      */
     protected $promiseAdapter;
@@ -42,11 +46,13 @@ class ObjectTypeConfigDecorator extends TypeConfigDecorator
     public function __construct(
         array $resolversMap,
         callable $getResolver,
+        ObjectTypeResolverInterface $defaultResolver,
         IDFactoryInterface $idFactory,
         PromiseAdapter $promiseAdapter
     ) {
         $this->resolversMap = $resolversMap;
         $this->getResolver = $getResolver;
+        $this->defaultResolver = $defaultResolver;
         $this->promiseAdapter = $promiseAdapter;
         $this->idFactory = $idFactory;
     }
@@ -175,13 +181,23 @@ class ObjectTypeConfigDecorator extends TypeConfigDecorator
                 });
             }
 
-            return $outPromise->then(function($value) use($undefined, $info) {
-                if ($value !== $undefined) {
-                    return $this->normalizeValue($value, $info);
-                }
+            return $outPromise->then(
+                function($value) use($undefined, $normalizedRoot, $normalizedArgs, $context, $info) {
 
-                return $value;
-            });
+                    /**
+                     * Use default resolver If the value returned from field resolvers is undefined
+                     */
+                    $value = $value === $undefined
+                        ? $this->defaultResolver->resolve($normalizedRoot, $normalizedArgs, $context, $info)
+                        : $value;
+
+                    if ($value !== null) {
+                        return $this->normalizeValue($value, $info);
+                    }
+
+                    return $value;
+                }
+            );
         };
 
         return $configs;

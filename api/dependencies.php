@@ -81,6 +81,8 @@ use Everywhere\Api\Schema\Resolvers\FriendMutationResolver;
 use Everywhere\Api\Schema\Resolvers\FriendEdgeResolver;
 use Everywhere\Api\Schema\Resolvers\FriendshipResolver;
 use Everywhere\Api\Schema\DefaultResolver;
+use Everywhere\Api\Schema\Resolvers\UserFriendsConnectionResolver;
+use Everywhere\Api\Schema\Resolvers\UserFriendEdgeResolver;
 
 return [
     PromiseAdapter::class => function() {
@@ -177,6 +179,7 @@ return [
         $objectTypeDecorator = new ObjectTypeConfigDecorator(
             $resolversMap,
             $resolveClass,
+            $container[DefaultResolver::class],
             $container[IDFactoryInterface::class],
             $container[PromiseAdapter::class]
         );
@@ -462,4 +465,12 @@ return [
             $container[SubscriptionFactoryInterface::class]
         );
     },
+
+    UserFriendsConnectionResolver::class => function(ContainerInterface $container) {
+        return new UserFriendsConnectionResolver(
+            $container->getIntegration()->getFriendshipRepository(),
+            $container[DataLoaderFactory::class],
+            $container[Relay\EdgeFactory::class]
+        );
+    }
 ];

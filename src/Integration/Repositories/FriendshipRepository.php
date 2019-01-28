@@ -61,41 +61,70 @@ class FriendshipRepository implements FriendshipRepositoryInterface
     }
 
     /**
-     * Queries user friendship DTO list by userId and status
-     * TODO: Try to find a way to reuse existing methods instead of writing low-level queries
+     * TODO: Do not use magic strings for friendship phase - find a way to use constants
      *
-     * @param int $userId
-     * @param string $status
-     * @param int $offset
-     * @param int $count
-     * @return \FRIENDS_BOL_Friendship[]
+     * @param [type] $select
+     * @param array $phaseIn
+     * @param array $friendIdIn
+     * @return void
      */
-    protected function findUserFriendshipDtos($userId, array $statusIn, array $friendIdIn, $offset, $count)
+    protected function buildSubQueries($select, array $phaseIn, array $friendIdIn)
     {
         $userQueryParts = \BOL_UserDao::getInstance()->getUserQueryFilter("fr", "friendId");
         $friendQueryParts = \BOL_UserDao::getInstance()->getUserQueryFilter("fr", "userId");
         $tableName = $this->friendshipDao->getTableName();
-        $statusesInSql = empty($statusIn) ? null : $this->dbo->mergeInClause(
-            array_keys(array_intersect($this->statuses, $statusIn))
-        );
+
         $friendIdInSql = empty($friendIdIn) ? null : $this->dbo->mergeInClause($friendIdIn);
-        $statusesOrder = $this->dbo->mergeInClause(array_keys($this->statuses));
+        $pahseToStatus = [
+            "REQUEST_RECEIVED" => \FRIENDS_BOL_FriendshipDao::VAL_STATUS_PENDING,
+            "REQUEST_SENT" => \FRIENDS_BOL_FriendshipDao::VAL_STATUS_PENDING,
+            "ACTIVE" => \FRIENDS_BOL_FriendshipDao::VAL_STATUS_ACTIVE
+        ];
 
+        $phaseIn = empty($phaseIn) ? array_keys($pahseToStatus) : $phaseIn;
         $queries = [];
+        $queryPhases = array_intersect(["ACTIVE", "REQUEST_RECEIVED"], $phaseIn);
+        if ($queryPhases) {
+            $statusIn = array_intersect_key($pahseToStatus, array_flip($queryPhases));
+            $statusesInSql = $this->dbo->mergeInClause(array_unique(array_values($statusIn)));
 
-        $queries[] = 
-            "SELECT `fr`.* FROM `$tableName` AS `fr` " . $friendQueryParts["join"] . "
-                WHERE " . $friendQueryParts["where"] . "
-                    AND fr.friendId=:userId" .
-                    ( $statusesInSql ? " AND fr.status IN ($statusesInSql)" : "" ) .
-                    ( $friendIdInSql ? " AND fr.userId IN ($friendIdInSql)" : "" );
+            $queries[] = 
+                "SELECT $select FROM `$tableName` AS `fr` " . $friendQueryParts["join"] . "
+                    WHERE " . $friendQueryParts["where"] . "
+                        AND fr.friendId=:userId AND fr.status IN ($statusesInSql)" .
+                        ( $friendIdInSql ? " AND fr.userId IN ($friendIdInSql)" : "" );
+        }
 
-        $queries[] = 
-            "SELECT `fr`.* FROM `$tableName` AS `fr` " . $userQueryParts["join"] . "
-                WHERE " . $userQueryParts["where"] . "
-                    AND fr.userId=:userId" .
-                    ( $statusesInSql ? " AND fr.status IN ($statusesInSql)" : "" ) .
-                    ( $friendIdInSql ? " AND fr.friendId IN ($friendIdInSql)" : "" );
+        $queryPhases = array_intersect(["ACTIVE", "REQUEST_SENT"], $phaseIn);
+        if ($queryPhases) {
+            $statusIn = array_intersect_key($pahseToStatus, array_flip($queryPhases));
+            $statusesInSql = $this->dbo->mergeInClause(array_unique(array_values($statusIn)));
+
+            $queries[] = 
+                "SELECT $select FROM `$tableName` AS `fr` " . $userQueryParts["join"] . "
+                    WHERE " . $userQueryParts["where"] . "
+                        AND fr.userId=:userId AND fr.status IN ($statusesInSql)" .
+                        ( $friendIdInSql ? " AND fr.friendId IN ($friendIdInSql)" : "" );
+        }
+
+        return $queries;
+    }
+
+    /**
+     * Queries user friendship DTO list by userId and status
+     * TODO: Try to find a way to reuse existing methods instead of writing low-level queries
+     *
+     * @param int $userId
+     * @param string[] $phaseIn
+     * @param string[] $friendIdIn
+     * @param int $offset
+     * @param int $count
+     * @return \FRIENDS_BOL_Friendship[]
+     */
+    protected function findUserFriendshipDtos($userId, array $phaseIn, array $friendIdIn, $offset, $count)
+    {
+        $queries = $this->buildSubQueries("`fr`.*", $phaseIn, $friendIdIn);
+        $statusesOrder = $this->dbo->mergeInClause(array_keys($this->statuses));
 
         $fullQuery = 
             "(" . implode(") UNION (", $queries) . ") 
@@ -126,37 +155,14 @@ class FriendshipRepository implements FriendshipRepositoryInterface
      * TODO: Try to find a way to reuse existing methods instead of writing low-level queries
      *
      * @param int $userId
-     * @param string $status
+     * @param string[] $phaseIn
+     * @param string[] $friendIdIn
      * @return int
      */
-    protected function countUserFriendship($userId, array $statusIn, $friendIdIn)
+    protected function countUserFriendship($userId, array $phaseIn, array $friendIdIn)
     {
-        $userQueryParts = \BOL_UserDao::getInstance()->getUserQueryFilter("fr", "friendId");
-        $friendQueryParts = \BOL_UserDao::getInstance()->getUserQueryFilter("fr", "userId");
-        $tableName = $this->friendshipDao->getTableName();
-        $statuses = array_keys(array_intersect($this->statuses, $statusIn));
-        $statusesInSql = empty($statusIn) ? null : $this->dbo->mergeInClause(
-            array_keys(array_intersect($this->statuses, $statusIn))
-        );
-        $friendIdInSql = empty($friendIdIn) ? null : $this->dbo->mergeInClause($friendIdIn);
-
-        $queries = [];
-
-        $queries[] = 
-            "SELECT COUNT(`fr`.id) as `count` FROM `$tableName` AS `fr` " . $friendQueryParts["join"] . "
-                WHERE " . $friendQueryParts["where"] . "
-                    AND fr.friendId=:userId" .
-                    ( $statusesInSql ? " AND fr.status IN ($statusesInSql)" : "" ) . 
-                    ( $friendIdInSql ? " AND fr.userId IN ($friendIdInSql)" : "" );
-
-        $queries[] = 
-            "SELECT COUNT(`fr`.id) FROM `$tableName` AS `fr` " . $userQueryParts["join"] . "
-                WHERE " . $userQueryParts["where"] . "
-                    AND fr.userId=:userId" .
-                    ( $statusesInSql ? " AND fr.status IN ($statusesInSql)" : "" ) . 
-                    ( $friendIdInSql ? " AND fr.friendId IN ($friendIdInSql)" : "" );
-
-        $fullQuery = "SELECT SUM(`count`) FROM ((" . implode(") UNION (", $queries) . ")) AS unionQuery";
+        $queries = $this->buildSubQueries("COUNT(`fr`.id) as `count`", $phaseIn, $friendIdIn);
+        $fullQuery = "SELECT SUM(`count`) FROM ((" . implode(") UNION ALL (", $queries) . ")) AS unionQuery";
 
         return $this->dbo->queryForColumn(
             $fullQuery,
@@ -172,7 +178,7 @@ class FriendshipRepository implements FriendshipRepositoryInterface
         foreach ($userIds as $userId) {
             $out[$userId] = $this->findUserFriendshipDtos(
                 $userId,
-                $args["filter"]["friendshipStatusIn"],
+                $args["filter"]["friendshipPhaseIn"],
                 $args["filter"]["friendIdIn"],
                 $args["offset"], 
                 $args["count"]
@@ -189,7 +195,7 @@ class FriendshipRepository implements FriendshipRepositoryInterface
         foreach ($userIds as $userId) {
             $out[$userId] = $this->countUserFriendship(
                 $userId, 
-                $args["filter"]["friendshipStatusIn"],
+                $args["filter"]["friendshipPhaseIn"],
                 $args["filter"]["friendIdIn"]
             );
         }
