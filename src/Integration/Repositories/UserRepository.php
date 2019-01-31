@@ -117,7 +117,7 @@ class UserRepository implements UserRepositoryInterface
             $searchFields["email"] = $args["email"];
         }
 
-        if (isset($args["featured"])) {
+        if (isset($args["featured"]) && $args["featured"]) {
             $featuredUsers = $this->userService->findFeaturedList($args["offset"], $args["count"]);
             $userIds = array_column($featuredUsers, 'id');
 
