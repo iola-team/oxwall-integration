@@ -18,7 +18,7 @@ type Subscription {
 
 type Query {
     me: User
-    users(first: Int = 10, after: Cursor, search: String = "", email: String = ""): UserConnection!
+    users(first: Int = 10, after: Cursor, search: String = "", email: String = "", featured: Boolean = false): UserConnection!
     accountTypes: [AccountType!]!
     node(id: ID!): Node
 }

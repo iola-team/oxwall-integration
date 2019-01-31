@@ -22,10 +22,16 @@ class UserRepository implements UserRepositoryInterface
      */
     protected $conversationDao;
 
+    /**
+     * @var \BOL_UserService
+     */
+    protected $userService;
+
     public function __construct()
     {
         $this->conversationService = \MAILBOX_BOL_ConversationService::getInstance();
         $this->conversationDao = \MAILBOX_BOL_ConversationDao::getInstance();
+        $this->userService = \BOL_UserService::getInstance();
     }
 
     public function convertDisplayName($displayName, $postfix = 0)
@@ -33,7 +39,7 @@ class UserRepository implements UserRepositoryInterface
         $displayName = preg_replace('/-/', '_', \URLify::filter($displayName));
         $result = $displayName . (empty($postfix) ? '' : $postfix);
 
-        if (\BOL_UserService::getInstance()->isExistUserName($result)) {
+        if ($this->userService->isExistUserName($result)) {
             $postfix++;
 
             return $this->convertDisplayName($displayName, $postfix);
@@ -48,12 +54,12 @@ class UserRepository implements UserRepositoryInterface
         $displayNameField = OW::getConfig()->getValue("base", "display_name_question");
         $questionsData = [$displayNameField => $displayNameValue];
 
-        $userDto = \BOL_UserService::getInstance()->createUser($displayNameValue, $args["password"], $args["email"]);
+        $userDto = $this->userService->createUser($displayNameValue, $args["password"], $args["email"]);
         \BOL_QuestionService::getInstance()->saveQuestionsData($questionsData, $userDto->id);
 
         $user = new User();
         $user->id = $userDto->id;
-        $user->name = \BOL_UserService::getInstance()->getDisplayName($userDto->id);
+        $user->name = $this->userService->getDisplayName($userDto->id);
         $user->email = $userDto->email;
         $user->activityTime = (int) $userDto->activityStamp;
 
@@ -77,7 +83,7 @@ class UserRepository implements UserRepositoryInterface
     {
         $this->counter++;
 
-        $userDtoList = \BOL_UserService::getInstance()->findUserListByIdList($idList);
+        $userDtoList = $this->userService->findUserListByIdList($idList);
 
         $users = [];
 
@@ -87,7 +93,7 @@ class UserRepository implements UserRepositoryInterface
         foreach ($userDtoList as $userDto) {
             $user = new User($userDto->id);
 
-            $user->name = \BOL_UserService::getInstance()->getDisplayName($userDto->id);
+            $user->name = $this->userService->getDisplayName($userDto->id);
             $user->accountTypeId = $userDto->accountType;
             $user->email = $userDto->email;
             $user->activityTime = (int) $userDto->activityStamp;
@@ -111,7 +117,14 @@ class UserRepository implements UserRepositoryInterface
             $searchFields["email"] = $args["email"];
         }
 
-        $userIds = \BOL_UserService::getInstance()->findUserIdListByQuestionValues($searchFields, $args["offset"], $args["count"]);
+        if (isset($args["featured"])) {
+            $featuredUsers = $this->userService->findFeaturedList($args["offset"], $args["count"]);
+            $userIds = array_column($featuredUsers, 'id');
+
+            return $userIds;
+        }
+
+        $userIds = $this->userService->findUserIdListByQuestionValues($searchFields, $args["offset"], $args["count"]);
 
         return $userIds;
     }
@@ -119,10 +132,20 @@ class UserRepository implements UserRepositoryInterface
     public function countAll(array $args)
     {
         if (isset($args["email"])) {
-            return \BOL_UserService::getInstance()->isExistEmail($args["email"]) ? 1 : 0;
+            return $this->userService->isExistEmail($args["email"]) ? 1 : 0;
         }
 
-        return \BOL_UserService::getInstance()->count(true);
+        return $this->userService->count(true);
+    }
+
+    public function findFeaturedIds(array $args)
+    {
+        return $this->userService->findFeaturedList($args["offset"], $args["count"]);
+    }
+
+    public function countFeatured()
+    {
+        return $this->userService->countFeatured();
     }
 
     public function findFriends($userIds, array $args)
