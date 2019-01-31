@@ -131,21 +131,15 @@ class UserRepository implements UserRepositoryInterface
 
     public function countAll(array $args)
     {
-        if (isset($args["email"])) {
+        if (isset($args["email"]) && !empty($args["email"])) {
             return $this->userService->isExistEmail($args["email"]) ? 1 : 0;
         }
 
+        if (isset($args["featured"]) && $args["featured"]) {
+            return $this->userService->countFeatured();
+        }
+
         return $this->userService->count(true);
-    }
-
-    public function findFeaturedIds(array $args)
-    {
-        return $this->userService->findFeaturedList($args["offset"], $args["count"]);
-    }
-
-    public function countFeatured()
-    {
-        return $this->userService->countFeatured();
     }
 
     public function findFriends($userIds, array $args)
