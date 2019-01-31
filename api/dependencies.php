@@ -471,13 +471,5 @@ return [
             $container->getIntegration()->getFriendshipRepository(),
             $container[Relay\EdgeFactory::class]
         );
-    },
-
-    MessageSubscriptionResolver::class => function(ContainerInterface $container) {
-        return new MessageSubscriptionResolver(
-            $container->getIntegration()->getChatRepository(),
-            $container[DataLoaderFactory::class],
-            $container[SubscriptionFactoryInterface::class]
-        );
-    },
+    }
 ];
