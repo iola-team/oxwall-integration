@@ -346,6 +346,7 @@ type PhotoEdge implements Edge {
 type Comment implements Node {
     id: ID!
     text: String!
+    image: String
     createdAt: Date!
     user: User!
 }
