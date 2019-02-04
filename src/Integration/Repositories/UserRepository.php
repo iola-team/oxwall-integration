@@ -119,7 +119,12 @@ class UserRepository implements UserRepositoryInterface
 
         if (isset($args["featured"]) && $args["featured"]) {
             $featuredUsers = $this->userService->findFeaturedList($args["offset"], $args["count"]);
-            $userIds = array_column($featuredUsers, 'id');
+            /**
+             * @var $featuredUser \BOL_User
+             */
+            $userIds = array_map(function ($featuredUser) {
+                return $featuredUser->id;
+            }, $featuredUsers);
 
             return $userIds;
         }
