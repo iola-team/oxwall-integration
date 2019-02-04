@@ -347,6 +347,7 @@ type PhotoEdge implements Edge {
 type Comment implements Node {
     id: ID!
     text: String!
+    image: String
     createdAt: Date!
     user: User!
     photo: Photo!
@@ -470,6 +471,12 @@ enum FriendshipStatus {
     ACTIVE
 }
 
+enum FriendshipPhase {
+    REQUEST_RECEIVED
+    REQUEST_SENT
+    ACTIVE
+}
+
 type Friendship implements Node {
     id: ID!
     status: FriendshipStatus!
@@ -481,7 +488,7 @@ type Friendship implements Node {
 
 input UserFriendsFilterInput {
     friendIdIn: [ID!] = []
-    friendshipStatusIn: [FriendshipStatus!] = [ACTIVE]
+    friendshipPhaseIn: [FriendshipPhase!] = [ACTIVE]
 }
 
 input AddFriendInput {

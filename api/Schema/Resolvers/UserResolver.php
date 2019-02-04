@@ -27,16 +27,6 @@ class UserResolver extends EntityResolver
     /**
      * @var DataLoaderInterface
      */
-    protected $friendshipListLoader;
-
-    /**
-     * @var DataLoaderInterface
-     */
-    protected $friendshipCountsLoader;
-
-    /**
-     * @var DataLoaderInterface
-     */
     protected $photosLoader;
 
     /**
@@ -90,14 +80,6 @@ class UserResolver extends EntityResolver
         );
 
         $this->connectionFactory = $connectionFactory;
-
-        $this->friendshipListLoader = $loaderFactory->create(function($ids, $args, $context) use($friendshipRepository) {
-            return $friendshipRepository->findByUserIds($ids, $args);
-        }, []);
-
-        $this->friendshipCountsLoader = $loaderFactory->create(function($ids, $args, $context) use($friendshipRepository) {
-            return $friendshipRepository->countByUserIds($ids, $args);
-        }, []);
 
         $this->photosLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
             return $userRepository->findPhotos($ids, $args);
@@ -157,36 +139,7 @@ class UserResolver extends EntityResolver
     {
         switch ($fieldName) {
             case "friends":
-                return $this->connectionFactory->create(
-                    $user,
-                    $args,
-                    function($args) use($user) {
-                        $args["filter"]["friendIdIn"] = $this->convertIdObjectsToLocalIds(
-                            $args["filter"]["friendIdIn"]
-                        );
-
-                        return $this->friendshipListLoader
-                            ->load($user->id, $args)
-                            ->then(function($friendships) use($user) {
-                                return array_map(function(Friendship $friendship) use($user) {
-                                    return [
-                                        "node" => $friendship->userId == $user->id 
-                                            ? $friendship->friendId 
-                                            : $friendship->userId,
-                                        "friendship" => $friendship
-                                    ];
-                                }, $friendships);
-                            }
-                        );
-                    },
-                    function($args) use($user) {
-                        $args["filter"]["friendIdIn"] = $this->convertIdObjectsToLocalIds(
-                            $args["filter"]["friendIdIn"]
-                        );
-
-                        return $this->friendshipCountsLoader->load($user->id, $args);
-                    }
-                 );
+                return $this->connectionFactory->create($user, $args);
 
             case "comments":
                 return $this->commentsLoader->load($user->id, $args);

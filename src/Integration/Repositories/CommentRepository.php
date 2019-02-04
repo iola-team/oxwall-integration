@@ -39,6 +39,10 @@ class CommentRepository implements CommentRepositoryInterface
             $comment->userId = (int) $item->userId;
             $comment->entityId = (int) $item->commentEntityId; // entityId from related table (ow_base_comment_entity)
 
+            $image = json_decode($item->attachment);
+            $image = $image && isset($image->url) ? $image->url : null;
+            $comment->image = $image;
+
             $out[$comment->id] = $comment;
 
             if (!in_array($item->commentEntityId, $entityIds)) {
