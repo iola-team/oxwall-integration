@@ -9,6 +9,11 @@ class Comment extends AbstractEntity
     public $text;
 
     /**
+     * @var string
+     */
+    public $image;
+
+    /**
      * @var \DateTime
      */
     public $createdAt;

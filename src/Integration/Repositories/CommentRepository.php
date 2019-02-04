@@ -28,6 +28,10 @@ class CommentRepository implements CommentRepositoryInterface
             $comment->createdAt = new \DateTime("@" . $item->createStamp);
             $comment->userId = (int) $item->userId;
 
+            $image = json_decode($item->attachment);
+            $image = $image && isset($image->url) ? $image->url : null;
+            $comment->image = $image;
+
             $out[$comment->id] = $comment;
         }
 
