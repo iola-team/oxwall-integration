@@ -14,6 +14,7 @@ use Everywhere\Api\Schema\Resolvers\MessageMutationResolver;
 use Everywhere\Api\Schema\Resolvers\MessageResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoMutationResolver;
+use Everywhere\Api\Schema\Resolvers\PhotoCommentSubscriptionResolver;
 use Everywhere\Api\Schema\Resolvers\PresentationAwareTypeResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldSectionResolver;
@@ -86,7 +87,8 @@ return [
         ],
 
         "Subscription" => [
-            MessageSubscriptionResolver::class
+            MessageSubscriptionResolver::class,
+            PhotoCommentSubscriptionResolver::class,
         ]
     ]
 ];

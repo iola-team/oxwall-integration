@@ -33,6 +33,13 @@ interface PhotoRepositoryInterface
     public function findComments($ids, array $args);
 
     /**
+     * @param string[] $photoIds
+     *
+     * @return mixed[]
+     */
+    public function findCommentsParticipantIds($photoIds);
+
+    /**
      * @param $ids
      * @param array $args
      * @return mixed

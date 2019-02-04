@@ -14,6 +14,7 @@ directive @type(name: String!) on FIELD_DEFINITION
 type Subscription {
     onMessageAdd(chatId: ID, userId: ID): MessageCreatePayload!
     onMessageUpdate(chatId: ID, userId: ID): MessageUpdatePayload!
+    onPhotoCommentAdd(photoId: ID!): PhotoCommentCreatePayload!
 }
 
 type Query {
@@ -59,9 +60,9 @@ type Mutation {
     addUserAvatar(userId: ID!, file: Upload!): AvatarCreatePayload!
     deleteUserAvatar(id: ID!): AvatarDeletePayload!
     addUserPhoto(input: UserPhotoCreateInput!): UserPhotoCreatePayload!
+    addPhotoComment(input: PhotoCommentInput!): PhotoCommentCreatePayload!
     deleteUserPhoto(id: ID!): UserPhotoDeletePayload!
     saveProfileFieldValues(input: ProfileFieldSaveInput!): ProfileFieldSavePayload!
-    addPhotoComment(input: PhotoCommentInput!): PhotoCommentCreatePayload!
     addMessage(input: MessageInput!, after: Cursor, before: Cursor, at: Cursor): MessageCreatePayload!
     markMessagesAsRead(input: MarkMessagesAsReadInput!): [MessageUpdatePayload!]!
 
@@ -349,6 +350,7 @@ type Comment implements Node {
     image: String
     createdAt: Date!
     user: User!
+    photo: Photo!
 }
 
 type CommentEdge implements Edge {
