@@ -14,6 +14,22 @@ interface ChatRepositoryInterface
      */
     public function findChatsByIds($ids);
 
+    /**
+     *
+     * @param string[] $userIds
+     * @param array $args
+     * @return string[]
+     */
+    public function findChatIdsByUserIds($userIds, array $args);
+
+    /**
+     *
+     * @param string[] $userIds
+     * @param array $args
+     * @return int[]
+     */
+    public function countChatsByUserIds($userIds, array $args);
+
 
     /**
      * @param string[] $ids
