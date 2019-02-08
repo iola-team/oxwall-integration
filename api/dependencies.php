@@ -430,7 +430,8 @@ return [
         return new MessageSubscriptionResolver(
             $container->getIntegration()->getChatRepository(),
             $container[DataLoaderFactory::class],
-            $container[SubscriptionFactoryInterface::class]
+            $container[SubscriptionFactoryInterface::class],
+            $container[Relay\EdgeFactory::class]
         );
     },
 

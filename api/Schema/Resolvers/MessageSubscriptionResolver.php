@@ -87,7 +87,7 @@ class MessageSubscriptionResolver extends SubscriptionResolver
 
     protected function createMessagePayload(Message $message, array $args)
     {
-        $userId = $args["userId"];
+        $userId = empty($args["userId"]) ? null : $args["userId"];
 
         return [
             "node" => $message,
@@ -96,11 +96,11 @@ class MessageSubscriptionResolver extends SubscriptionResolver
             "chatEdge" => function($root, $arguments) use($userId, $message) {
                 return $this->edgeFactory->createFromArguments($arguments, [
                     "node" => $message->chatId,
-                    "userId" => $args["userId"]
+                    "userId" => $userId
                 ]);
             },
             "edge" => function($root, $arguments) use($message) {
-                $this->edgeFactory->createFromArguments($arguments, $message);
+                return $this->edgeFactory->createFromArguments($arguments, $message);
             }
         ];
     }
