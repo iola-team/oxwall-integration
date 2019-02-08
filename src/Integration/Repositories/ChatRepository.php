@@ -43,7 +43,7 @@ class ChatRepository implements ChatRepositoryInterface
     public function findMessagesByIds($ids)
     {
         /**
-         * @var $attachmentsByIds \MAILBOX_BOL_Attachment[]
+         * @var $attachmentsByMessagesIds \MAILBOX_BOL_Attachment[]
          */
         $attachmentsByMessagesIds = $this->conversationService->findAttachmentsByMessageIdList($ids);
 
