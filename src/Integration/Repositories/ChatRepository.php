@@ -45,7 +45,7 @@ class ChatRepository implements ChatRepositoryInterface
         /**
          * @var $attachmentsByIds \MAILBOX_BOL_Attachment[]
          */
-        $attachmentsByIds = $this->conversationService->findAttachmentsByMessageIdList($ids);
+        $attachmentsByMessagesIds = $this->conversationService->findAttachmentsByMessageIdList($ids);
 
         $out = [];
         foreach ($ids as $id) {
@@ -55,8 +55,8 @@ class ChatRepository implements ChatRepositoryInterface
             $messageDto = $this->conversationService->getMessage($id);
 
             $image = null;
-            if (array_key_exists($messageDto->id, $attachmentsByIds)) {
-                $attachment = $attachmentsByIds[$messageDto->id][0];
+            if (array_key_exists($messageDto->id, $attachmentsByMessagesIds)) {
+                $attachment = $attachmentsByMessagesIds[$messageDto->id][0];
                 $ext = \UTIL_File::getExtension($attachment->fileName);
                 $fileName = $this->conversationService->getAttachmentFileName($attachment->id, $attachment->hash, $ext, $attachment->fileName);
 
