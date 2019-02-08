@@ -32,12 +32,9 @@ class UserChatsConnectionResolver extends ConnectionResolver
     public function __construct(
         ChatRepositoryInterface $chatRepository,
         DataLoaderFactoryInterface $loaderFactory,
-        ConnectionFactoryInterface $connectionFactory,
         EdgeFactoryInterface $edgeFactory
     ) {
         parent::__construct($edgeFactory);
-
-        $this->connectionFactory = $connectionFactory;
 
         $this->chatsListLoader = $loaderFactory->create(function($ids, $args, $context) use($chatRepository) {
             return $chatRepository->findChatIdsByUserIds($ids, $args);
@@ -57,13 +54,7 @@ class UserChatsConnectionResolver extends ConnectionResolver
     {
         return [
             "node" => $chatId,
-            "unreadMessages" => function($root, $arguments) use($chatId, $user) {
-                return $this->connectionFactory->create($chatId, array_merge($arguments, [
-                    "filter" => [
-                        "notReadBy" => $user->id
-                    ]
-                ]));
-            }
+            "userId" => $user->id
         ];
     }
 

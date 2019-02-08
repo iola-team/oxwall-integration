@@ -12,6 +12,7 @@ use Everywhere\Api\Integration\Events\MessageAddedEvent;
 use Everywhere\Api\Integration\Events\MessageUpdatedEvent;
 use Everywhere\Api\Schema\IDObject;
 use Everywhere\Api\Schema\SubscriptionResolver;
+use Everywhere\Api\Contract\Schema\Relay\EdgeFactoryInterface;
 
 class MessageSubscriptionResolver extends SubscriptionResolver
 {
@@ -30,10 +31,16 @@ class MessageSubscriptionResolver extends SubscriptionResolver
      */
     protected $chatRepository;
 
+    /**
+     * @var EdgeFactoryInterface
+     */
+    protected $edgeFactory;
+
     public function __construct(
         ChatRepositoryInterface $chatRepository,
         DataLoaderFactoryInterface $loaderFactory,
-        SubscriptionFactoryInterface $subscriptionFactory
+        SubscriptionFactoryInterface $subscriptionFactory,
+        EdgeFactoryInterface $edgeFactory
     )
     {
         parent::__construct([
@@ -50,6 +57,7 @@ class MessageSubscriptionResolver extends SubscriptionResolver
             return $chatRepository->findMessagesByIds($ids);
         });
 
+        $this->edgeFactory = $edgeFactory;
         $this->subscriptionFactory = $subscriptionFactory;
         $this->chatRepository = $chatRepository;
     }
@@ -79,18 +87,21 @@ class MessageSubscriptionResolver extends SubscriptionResolver
 
     protected function createMessagePayload(Message $message, array $args)
     {
+        $userId = $args["userId"];
+
         return [
             "node" => $message,
-            "user" => $message->userId,
+            "user" => $userId,
             "chat" => $message->chatId,
-            "chatEdge" => [
-                "cursor" => "tmp-cursor", // TODO: use real cursor
-                "node" => $message->chatId
-            ],
-            "edge" => [
-                "cursor" => "tmp-cursor", // TODO: use real cursor
-                "node" => $message
-            ]
+            "chatEdge" => function($root, $arguments) use($userId, $message) {
+                return $this->edgeFactory->createFromArguments($arguments, [
+                    "node" => $message->chatId,
+                    "userId" => $args["userId"]
+                ]);
+            },
+            "edge" => function($root, $arguments) use($message) {
+                $this->edgeFactory->createFromArguments($arguments, $message);
+            }
         ];
     }
 

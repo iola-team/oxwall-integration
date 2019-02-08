@@ -33,6 +33,7 @@ use Everywhere\Api\Schema\Resolvers\FriendshipResolver;
 use Everywhere\Api\Schema\Resolvers\UserFriendsConnectionResolver;
 use Everywhere\Api\Schema\Resolvers\UserChatsConnectionResolver;
 use Everywhere\Api\Schema\Resolvers\ChatMessagesConnectionResolver;
+use Everywhere\Api\Schema\Resolvers\ChatEdgeResolver;
 
 return [
     "path" => __DIR__ . "/Schema.graphql",
@@ -59,6 +60,7 @@ return [
         "ProfileFieldSection" => ProfileFieldSectionResolver::class,
         "Profile" => ProfileResolver::class,
         "Chat" => ChatResolver::class,
+        "ChatEdge" => ChatEdgeResolver::class,
         "Message" => MessageResolver::class,
         "Friendship" => FriendshipResolver::class,
 

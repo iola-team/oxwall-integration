@@ -86,6 +86,7 @@ use Everywhere\Api\Schema\Resolvers\UserFriendsConnectionResolver;
 use Everywhere\Api\Schema\Resolvers\UserFriendEdgeResolver;
 use Everywhere\Api\Schema\Resolvers\UserChatsConnectionResolver;
 use Everywhere\Api\Schema\Resolvers\ChatMessagesConnectionResolver;
+use Everywhere\Api\Schema\Resolvers\ChatEdgeResolver;
 
 return [
     PromiseAdapter::class => function() {
@@ -490,7 +491,6 @@ return [
         return new UserChatsConnectionResolver(
             $container->getIntegration()->getChatRepository(),
             $container[DataLoaderFactory::class],
-            $container[ConnectionFactoryInterface::class],
             $container[Relay\EdgeFactory::class]
         );
     },
@@ -500,6 +500,12 @@ return [
             $container->getIntegration()->getChatRepository(),
             $container[DataLoaderFactory::class],
             $container[Relay\EdgeFactory::class]
+        );
+    },
+
+    ChatEdgeResolver::class => function(ContainerInterface $container) {
+        return new ChatEdgeResolver(
+            $container[ConnectionFactoryInterface::class]
         );
     }
 ];
