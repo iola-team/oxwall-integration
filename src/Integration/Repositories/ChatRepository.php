@@ -15,6 +15,11 @@ class ChatRepository implements ChatRepositoryInterface
     protected $conversationService;
 
     /**
+     * @var \MAILBOX_BOL_ConversationDao
+     */
+    protected $conversationDao;
+
+    /**
      * @var \MAILBOX_BOL_MessageDao
      */
     protected $messageDao;
@@ -22,6 +27,7 @@ class ChatRepository implements ChatRepositoryInterface
     public function __construct()
     {
         $this->conversationService = \MAILBOX_BOL_ConversationService::getInstance();
+        $this->conversationDao = \MAILBOX_BOL_ConversationDao::getInstance();
         $this->messageDao = \MAILBOX_BOL_MessageDao::getInstance();
     }
 
@@ -35,6 +41,35 @@ class ChatRepository implements ChatRepositoryInterface
             $chat->userId = $conversationDto->initiatorId;
 
             $out[$id] = $chat;
+        }
+
+        return $out;
+    }
+
+    public function findChatIdsByUserIds($ids, array $args)
+    {
+        $activeModes = $this->conversationService->getActiveModeList();
+
+        $out = [];
+        foreach ($ids as $id) {
+            $out[$id] = [];
+            $conversationInfoList = $this->conversationDao->findConversationItemListByUserId(
+                $id, $activeModes, $args["offset"], $args["count"]
+            );
+
+            foreach ($conversationInfoList as $conversationInfo) {
+                $out[$id][] = $conversationInfo["id"];
+            }
+        }
+
+        return $out;
+    }
+
+    public function countChatsByUserIds($ids, array $args)
+    {
+        $out = [];
+        foreach ($ids as $id) {
+            $out[$id] = $this->conversationService->countConversationListByUserId($id);
         }
 
         return $out;

@@ -25,14 +25,6 @@ class ChatResolver extends EntityResolver
             return $chatRepository->findChatsParticipantIds($ids);
         });
 
-        $messagesLoader = $loaderFactory->create(function($ids, $args) use($chatRepository) {
-            return $chatRepository->findChatsMessageIds($ids, $args);
-        });
-
-        $messageCountsLoader = $loaderFactory->create(function($ids, $args) use($chatRepository) {
-            return $chatRepository->countChatsMessages($ids, $args);
-        });
-
         $this->addFieldResolver("user", function(Chat $chat) {
             return $chat->userId;
         });
@@ -41,26 +33,8 @@ class ChatResolver extends EntityResolver
             return $participantsLoader->load($chat->id);
         });
 
-        $this->addFieldResolver(
-            "messages",
-            function (Chat $chat, $args) use($connectionFactory, $messagesLoader, $messageCountsLoader) {
-                $connectionArgs = array_merge($args, [
-                    "filter" => [
-                        "notReadBy" => empty($args["filter"]["notReadBy"]) ? null : $args["filter"]["notReadBy"]->getId()
-                    ]
-                ]);
-
-                return $connectionFactory->create(
-                    $chat,
-                    $connectionArgs,
-                    function ($args) use($chat, $messagesLoader) {
-                        return $messagesLoader->load($chat->id, $args);
-                    },
-                    function($args) use($chat, $messageCountsLoader) {
-                        return $messageCountsLoader->load($chat->id, $args);
-                    }
-                );
-            }
-        );
+        $this->addFieldResolver("messages", function (Chat $chat, $args) use($connectionFactory) {
+            return $connectionFactory->create($chat->id, $args);
+        });
     }
 }

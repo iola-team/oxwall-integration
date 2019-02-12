@@ -105,7 +105,7 @@ type PageInfo {
 }
 
 input UserMessagesFilterInput {
-    unread: Boolean,
+    unread: Boolean
 }
 
 type User implements Node {
@@ -127,9 +127,9 @@ type User implements Node {
 }
 
 type UserInfo {
-    headline: String,
-    location: String,
-    about: String,
+    headline: String
+    location: String
+    about: String
 }
 
 type UserEdge implements Edge {
@@ -397,6 +397,7 @@ type Chat implements Node {
 type ChatEdge implements Edge {
     node: Chat!
     cursor: Cursor!
+    unreadMessages(first: Int, after: Cursor, last: Int, before: Cursor): ChatMessagesConnection!
 }
 
 type UserChatsConnection implements Connection {

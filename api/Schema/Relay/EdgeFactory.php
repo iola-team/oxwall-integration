@@ -25,7 +25,7 @@ class EdgeFactory implements EdgeFactoryInterface
         /**
          * TODO: It is slightly dirty way of getting cursor from `rootValue`. Looks like spaghetti to me. Rethink it in future.
          */
-        return isset($rootValue["cursor"]) ? $rootValue["cursor"] : [];
+        return is_array($rootValue) && isset($rootValue["cursor"]) ? $rootValue["cursor"] : [];
     }
 
     protected function getNode($rootValue)
@@ -33,7 +33,7 @@ class EdgeFactory implements EdgeFactoryInterface
         /**
          * TODO: It is slightly dirty way of getting node from `rootValue`. Looks like spaghetti to me. Rethink it in future.
          */
-        return isset($rootValue["node"]) ? $rootValue["node"] : $rootValue;
+        return is_array($rootValue) && isset($rootValue["node"]) ? $rootValue["node"] : $rootValue;
     }
 
     private function calculateOffset($data, $direction)

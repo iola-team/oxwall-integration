@@ -17,15 +17,9 @@ class UserRepository implements UserRepositoryInterface
      */
     protected $conversationService;
 
-    /**
-     * @var \MAILBOX_BOL_ConversationDao
-     */
-    protected $conversationDao;
-
     public function __construct()
     {
         $this->conversationService = \MAILBOX_BOL_ConversationService::getInstance();
-        $this->conversationDao = \MAILBOX_BOL_ConversationDao::getInstance();
     }
 
     public function convertDisplayName($displayName, $postfix = 0)
@@ -125,27 +119,6 @@ class UserRepository implements UserRepositoryInterface
         return \BOL_UserService::getInstance()->count(true);
     }
 
-    public function findFriends($userIds, array $args)
-    {
-        $this->counter++;
-        $out = [];
-        foreach ($userIds as $userId) {
-            $out[$userId] =  \FRIENDS_BOL_Service::getInstance()->findFriendIdList($userId, $args["offset"], $args["count"]);
-        }
-
-        return $out;
-    }
-
-    public function countFriends($ids, array $args)
-    {
-        $out = [];
-        foreach ($ids as $id) {
-            $out[$id] = \FRIENDS_BOL_Service::getInstance()->countFriends($id);
-        }
-
-        return $out;
-    }
-
     public function findPhotos($ids, array $args)
     {
         $out = [];
@@ -216,32 +189,6 @@ class UserRepository implements UserRepositoryInterface
             ) {
                 $out[$userId] = $conversationDto->id;
             }
-        }
-
-        return $out;
-    }
-
-    public function findChats($ids, array $args)
-    {
-        $activeModes = $this->conversationService->getActiveModeList();
-
-        $out = [];
-        foreach ($ids as $id) {
-            $out[$id] = [];
-            $conversationInfoList = $this->conversationDao->findConversationItemListByUserId($id, $activeModes, $args["offset"], $args["count"]);
-            foreach ($conversationInfoList as $conversationInfo) {
-                $out[$id][] = $conversationInfo["id"];
-            }
-        }
-
-        return $out;
-    }
-
-    public function countChats($ids, array $args)
-    {
-        $out = [];
-        foreach ($ids as $id) {
-            $out[$id] = $this->conversationService->countConversationListByUserId($id);
         }
 
         return $out;
