@@ -409,6 +409,7 @@ type UserChatsConnection implements Connection {
 
 type MessageContent {
     text: String
+    image: String
 }
 
 type Message implements Node {
