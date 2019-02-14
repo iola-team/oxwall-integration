@@ -30,8 +30,8 @@ class UserRepository implements UserRepositoryInterface
 
     public function convertDisplayName($displayName, $postfix = 0)
     {
-        $displayName = preg_replace('/-/', '_', \URLify::filter($displayName));
-        $result = $displayName . (empty($postfix) ? '' : $postfix);
+        $displayName = preg_replace("/-/", "_", \URLify::filter($displayName));
+        $result = $displayName . (empty($postfix) ? "" : $postfix);
 
         if ($this->userService->isExistUserName($result)) {
             $postfix++;
@@ -102,16 +102,16 @@ class UserRepository implements UserRepositoryInterface
     {
         $searchFields = [];
 
-        if (isset($args["search"])) {
-            $displayNameField = OW::getConfig()->getValue('base', 'display_name_question');
-            $searchFields[$displayNameField] = $args["search"];
+        if (!empty($args["filter"]["search"])) {
+            $displayNameField = OW::getConfig()->getValue("base", "display_name_question");
+            $searchFields[$displayNameField] = $args["filter"]["search"];
         }
 
-        if (isset($args["email"])) {
-            $searchFields["email"] = $args["email"];
+        if (!empty($args["filter"]["email"])) {
+            $searchFields["email"] = $args["filter"]["email"];
         }
 
-        if (isset($args["featured"]) && $args["featured"]) {
+        if (!empty($args["filter"]["featured"])) {
             $featuredUsers = $this->userService->findFeaturedList($args["offset"], $args["count"]);
             /**
              * @var $featuredUser \BOL_User
