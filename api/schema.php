@@ -14,6 +14,7 @@ use Everywhere\Api\Schema\Resolvers\MessageMutationResolver;
 use Everywhere\Api\Schema\Resolvers\MessageResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoMutationResolver;
+use Everywhere\Api\Schema\Resolvers\PhotoCommentSubscriptionResolver;
 use Everywhere\Api\Schema\Resolvers\PresentationAwareTypeResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldSectionResolver;
@@ -29,9 +30,10 @@ use Everywhere\Api\Schema\Resolvers\CommentResolver;
 use Everywhere\Api\Schema\Resolvers\ValueResolver;
 use Everywhere\Api\Schema\Resolvers\FriendMutationResolver;
 use Everywhere\Api\Schema\Resolvers\FriendshipResolver;
-use Everywhere\Api\Schema\Resolvers\FriendEdgeResolver;
 use Everywhere\Api\Schema\Resolvers\UserFriendsConnectionResolver;
-use Everywhere\Api\Schema\Resolvers\UserFriendEdgeResolver;
+use Everywhere\Api\Schema\Resolvers\UserChatsConnectionResolver;
+use Everywhere\Api\Schema\Resolvers\ChatMessagesConnectionResolver;
+use Everywhere\Api\Schema\Resolvers\ChatEdgeResolver;
 
 return [
     "path" => __DIR__ . "/Schema.graphql",
@@ -45,7 +47,8 @@ return [
         "UserConnection" => Relay\ConnectionResolver::class,
         "UserFriendsConnection" => UserFriendsConnectionResolver::class,
         "UserPhotoConnection" => Relay\ConnectionResolver::class,
-        "UserChatsConnection" => Relay\ConnectionResolver::class,
+        "UserChatsConnection" => UserChatsConnectionResolver::class,
+        "ChatMessagesConnection" => ChatMessagesConnectionResolver::class,
 
         "Photo" => PhotoResolver::class,
         "Comment" => CommentResolver::class,
@@ -57,7 +60,7 @@ return [
         "ProfileFieldSection" => ProfileFieldSectionResolver::class,
         "Profile" => ProfileResolver::class,
         "Chat" => ChatResolver::class,
-        "ChatMessagesConnection" => Relay\ConnectionResolver::class,
+        "ChatEdge" => ChatEdgeResolver::class,
         "Message" => MessageResolver::class,
         "Friendship" => FriendshipResolver::class,
 
@@ -86,7 +89,8 @@ return [
         ],
 
         "Subscription" => [
-            MessageSubscriptionResolver::class
+            MessageSubscriptionResolver::class,
+            PhotoCommentSubscriptionResolver::class,
         ]
     ]
 ];

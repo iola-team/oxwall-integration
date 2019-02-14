@@ -44,6 +44,7 @@ use Everywhere\Api\Schema\Resolvers\MessageResolver;
 use Everywhere\Api\Schema\Resolvers\MessageSubscriptionResolver;
 use Everywhere\Api\Schema\Resolvers\NodeResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoMutationResolver;
+use Everywhere\Api\Schema\Resolvers\PhotoCommentSubscriptionResolver;
 use Everywhere\Api\Schema\Resolvers\PresentationAwareTypeResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileFieldSectionResolver;
@@ -83,6 +84,9 @@ use Everywhere\Api\Schema\Resolvers\FriendshipResolver;
 use Everywhere\Api\Schema\DefaultResolver;
 use Everywhere\Api\Schema\Resolvers\UserFriendsConnectionResolver;
 use Everywhere\Api\Schema\Resolvers\UserFriendEdgeResolver;
+use Everywhere\Api\Schema\Resolvers\UserChatsConnectionResolver;
+use Everywhere\Api\Schema\Resolvers\ChatMessagesConnectionResolver;
+use Everywhere\Api\Schema\Resolvers\ChatEdgeResolver;
 
 return [
     PromiseAdapter::class => function() {
@@ -422,6 +426,15 @@ return [
         );
     },
 
+    MessageSubscriptionResolver::class => function(ContainerInterface $container) {
+        return new MessageSubscriptionResolver(
+            $container->getIntegration()->getChatRepository(),
+            $container[DataLoaderFactory::class],
+            $container[SubscriptionFactoryInterface::class],
+            $container[Relay\EdgeFactory::class]
+        );
+    },
+
     AuthMutationResolver::class => function(ContainerInterface $container) {
         return new AuthMutationResolver(
             $container[AuthenticationServiceInterface::class],
@@ -444,6 +457,15 @@ return [
         );
     },
 
+    PhotoCommentSubscriptionResolver::class => function(ContainerInterface $container) {
+        return new PhotoCommentSubscriptionResolver(
+            $container->getIntegration()->getPhotoRepository(),
+            $container->getIntegration()->getCommentRepository(),
+            $container[SubscriptionFactoryInterface::class],
+            $container[DataLoaderFactory::class]
+        );
+    },
+
     FriendshipResolver::class => function(ContainerInterface $container) {
         return new FriendshipResolver(
             $container->getIntegration()->getFriendshipRepository(),
@@ -458,19 +480,33 @@ return [
         );
     },
 
-    MessageSubscriptionResolver::class => function(ContainerInterface $container) {
-        return new MessageSubscriptionResolver(
-            $container->getIntegration()->getChatRepository(),
-            $container[DataLoaderFactory::class],
-            $container[SubscriptionFactoryInterface::class]
-        );
-    },
-
     UserFriendsConnectionResolver::class => function(ContainerInterface $container) {
         return new UserFriendsConnectionResolver(
             $container->getIntegration()->getFriendshipRepository(),
             $container[DataLoaderFactory::class],
             $container[Relay\EdgeFactory::class]
+        );
+    },
+
+    UserChatsConnectionResolver::class => function(ContainerInterface $container) {
+        return new UserChatsConnectionResolver(
+            $container->getIntegration()->getChatRepository(),
+            $container[DataLoaderFactory::class],
+            $container[Relay\EdgeFactory::class]
+        );
+    },
+
+    ChatMessagesConnectionResolver::class => function(ContainerInterface $container) {
+        return new ChatMessagesConnectionResolver(
+            $container->getIntegration()->getChatRepository(),
+            $container[DataLoaderFactory::class],
+            $container[Relay\EdgeFactory::class]
+        );
+    },
+
+    ChatEdgeResolver::class => function(ContainerInterface $container) {
+        return new ChatEdgeResolver(
+            $container[ConnectionFactoryInterface::class]
         );
     }
 ];

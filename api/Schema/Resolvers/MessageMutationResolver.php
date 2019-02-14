@@ -39,6 +39,7 @@ class MessageMutationResolver extends CompositeResolver
             return $idObject->getId();
         }, $input["recipientIds"]);
 
+        $userId = $input["userId"]->getId();
         $messageId = $this->chatRepository->addMessage([
             "userId" => $input["userId"]->getId(),
             "content" => $input["content"],
@@ -55,8 +56,12 @@ class MessageMutationResolver extends CompositeResolver
             "user" => $message->userId,
             "chat" => $message->chatId,
             "node" => $message,
-            "edge" => function() use ($args, $message) {
-                return $this->edgeFactory->createFromArguments($args, $message);
+            "edge" => $this->edgeFactory->createFromArguments($args, $message),
+            "chatEdge" => function($root, $arguments) use($userId, $message) {
+                return $this->edgeFactory->createFromArguments($arguments, [
+                    "node" => $message->chatId,
+                    "userId" => $userId
+                ]);
             }
         ];
     }
@@ -69,7 +74,6 @@ class MessageMutationResolver extends CompositeResolver
         }, $input["messageIds"]);
 
         $userId = $input["userId"]->getId();
-
         $markedMessageIds = $this->chatRepository->markMessagesAsRead([
             "userId" => $userId,
             "messageIds" => $messageIds
@@ -86,8 +90,12 @@ class MessageMutationResolver extends CompositeResolver
                 "user" => $message->userId,
                 "chat" => $message->chatId,
                 "node" => $message,
-                "edge" => function() use ($args, $message) {
-                    return $this->edgeFactory->createFromArguments($args, $message);
+                "edge" => $this->edgeFactory->createFromArguments($args, $message),
+                "chatEdge" => function($root, $arguments) use($userId, $message) {
+                    return $this->edgeFactory->createFromArguments($arguments, [
+                        "node" => $message->chatId,
+                        "userId" => $userId
+                    ]);
                 }
             ];
         }

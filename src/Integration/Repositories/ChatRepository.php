@@ -15,6 +15,11 @@ class ChatRepository implements ChatRepositoryInterface
     protected $conversationService;
 
     /**
+     * @var \MAILBOX_BOL_ConversationDao
+     */
+    protected $conversationDao;
+
+    /**
      * @var \MAILBOX_BOL_MessageDao
      */
     protected $messageDao;
@@ -22,6 +27,7 @@ class ChatRepository implements ChatRepositoryInterface
     public function __construct()
     {
         $this->conversationService = \MAILBOX_BOL_ConversationService::getInstance();
+        $this->conversationDao = \MAILBOX_BOL_ConversationDao::getInstance();
         $this->messageDao = \MAILBOX_BOL_MessageDao::getInstance();
     }
 
@@ -40,11 +46,57 @@ class ChatRepository implements ChatRepositoryInterface
         return $out;
     }
 
-    public function findMessagesByIds($ids)
+    public function findChatIdsByUserIds($ids, array $args)
+    {
+        $activeModes = $this->conversationService->getActiveModeList();
+
+        $out = [];
+        foreach ($ids as $id) {
+            $out[$id] = [];
+            $conversationInfoList = $this->conversationDao->findConversationItemListByUserId(
+                $id, $activeModes, $args["offset"], $args["count"]
+            );
+
+            foreach ($conversationInfoList as $conversationInfo) {
+                $out[$id][] = $conversationInfo["id"];
+            }
+        }
+
+        return $out;
+    }
+
+    public function countChatsByUserIds($ids, array $args)
     {
         $out = [];
         foreach ($ids as $id) {
+            $out[$id] = $this->conversationService->countConversationListByUserId($id);
+        }
+
+        return $out;
+    }
+
+    public function findMessagesByIds($ids)
+    {
+        /**
+         * @var $attachmentsByMessagesIds \MAILBOX_BOL_Attachment[]
+         */
+        $attachmentsByMessagesIds = $this->conversationService->findAttachmentsByMessageIdList($ids);
+
+        $out = [];
+        foreach ($ids as $id) {
+            /**
+             * @var $messageDto \MAILBOX_BOL_Message
+             */
             $messageDto = $this->conversationService->getMessage($id);
+
+            $image = null;
+            if (array_key_exists($messageDto->id, $attachmentsByMessagesIds)) {
+                $attachment = $attachmentsByMessagesIds[$messageDto->id][0];
+                $ext = \UTIL_File::getExtension($attachment->fileName);
+                $fileName = $this->conversationService->getAttachmentFileName($attachment->id, $attachment->hash, $ext, $attachment->fileName);
+
+                $image = $this->conversationService->getAttachmentUrl() . $fileName;
+            }
 
             $message = new Message($messageDto->id);
             $message->status = $messageDto->recipientRead ? Message::STATUS_READ : Message::STATUS_DELIVERED;
@@ -52,7 +104,8 @@ class ChatRepository implements ChatRepositoryInterface
             $message->chatId = $messageDto->conversationId;
             $message->createdAt = new \DateTime("@" . $messageDto->timeStamp);
             $message->content = [
-                "text" => $messageDto->text
+                "text" => $messageDto->text,
+                "image" => $image
             ];
 
             $out[$id] = $message;

@@ -26,11 +26,18 @@ class PhotoRepository implements PhotoRepositoryInterface
 
     protected $commentEntityType = "photo_comments";
 
+    /**
+     * @var \OW_EventManager
+     */
+    protected $eventManager;
+
     public function __construct()
     {
         $this->photoService = \PHOTO_BOL_PhotoService::getInstance();
         $this->tempPhotoService = \PHOTO_BOL_PhotoTemporaryService::getInstance();
         $this->commentService = \BOL_CommentService::getInstance();
+        $this->commentDao = \BOL_CommentDao::getInstance();
+        $this->eventManager = \OW::getEventManager();
     }
 
     /**
@@ -81,24 +88,59 @@ class PhotoRepository implements PhotoRepositoryInterface
         return $out;
     }
 
+    public function deleteByIds($ids)
+    {
+        // @TODO: ACL
+        // @TODO: Delete the related comments + commentEntity
+        foreach ($ids as $id) {
+            $this->photoService->deletePhoto($id);
+        }
+    }
+
     public function findComments($photoIds, array $args)
     {
-        $entities = array_map(function($photoId) use ($args) {
-            return [
-                "entityId" => (int)$photoId,
-                "entityType" => $this->commentEntityType,
-                "countOnPage" => $args["count"],
-            ];
-        }, $photoIds);
-        $items = \BOL_CommentDao::getInstance()->findBatchCommentsList($entities);
-
         $out = [];
-        foreach ($items as $item) {
-          if (empty($out[$item->entityId])) {
-            $out[$item->entityId] = [$item->getId()];
-          } else {
-            $out[$item->entityId][] = $item->getId();
-          }
+        foreach($photoIds as $photoId) {
+            $page = $args["offset"] ? floor($args["offset"] / ($args["count"] - 1)) + 1 : 1;
+
+            /**
+             * @var $commentDtos \BOL_Comment[]
+             */
+            $commentDtos = $this->commentService->findCommentList(
+                (int)$this->commentEntityType,
+                (int)$photoId,
+                $page,
+                $args["count"]
+            );
+
+            foreach ($commentDtos as $commentDto) {
+                if (empty($out[(int)$photoId])) {
+                    $out[(int)$photoId] = [$commentDto->getId()];
+                } else {
+                    $out[(int)$photoId][] = $commentDto->getId();
+                }
+            }
+        }
+
+        return $out;
+    }
+
+    // @TODO: Use this method for mentions subscription (photo comments)
+    public function findCommentsParticipantIds($photoIds)
+    {
+        $out = [];
+        foreach ($photoIds as $id) {
+            // @TODO: commentService doesn't have the method "get photo comments participants" (rewrite the foreach+in_array to raw SQL?)
+            $commentsDto = $this->commentService->findFullCommentList($this->commentEntityType, $id);
+            $out[$id] = [];
+
+            foreach ($commentsDto as $commentDto) {
+                $userId = $commentDto->getUserId();
+
+                if (!in_array($userId, $out[$id])) {
+                    $out[$id][] = $userId;
+                }
+            }
         }
 
         return $out;
@@ -123,8 +165,19 @@ class PhotoRepository implements PhotoRepositoryInterface
         $message = $input["text"];
 
         $commentDto = $this->commentService->addComment($this->commentEntityType, $entityId, $pluginKey, $userId, $message, $attachment);
+        $commentId = $commentDto->id;
 
-        return $commentDto->id;
+        $event = new \OW_Event("base_add_comment", [
+            "entityType" => $this->commentEntityType,
+            "entityId" => $entityId,
+            "userId" => $userId,
+            "commentId" => $commentId,
+            "pluginKey" => $pluginKey,
+            "attachment" => $attachment,
+        ]);
+        \OW::getEventManager()->trigger($event);
+
+        return $commentId;
     }
 
     public function addUserPhoto($userId, array $input)
@@ -142,12 +195,5 @@ class PhotoRepository implements PhotoRepositoryInterface
         $photoDto = $this->tempPhotoService->moveTemporaryPhoto($tempPhotoId, $albumId, "");
 
         return $photoDto->id;
-    }
-
-    public function deleteByIds($ids)
-    {
-        foreach ($ids as $id) {
-            $this->photoService->deletePhoto($id);
-        }
     }
 }

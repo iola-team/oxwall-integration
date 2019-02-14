@@ -208,6 +208,8 @@ class ConnectionResolver extends CompositeResolver
              */
             $first = reset($edges);
 
+            $hasNextPage = empty($items) ? false : count($items) > count($edges);
+
             $hasPreviousPage = empty($first)
                 ? $pagination["after"]["offset"] > 0
                 : $first->getCursor()->then(function($cursor) {
@@ -216,7 +218,7 @@ class ConnectionResolver extends CompositeResolver
             );
 
             return [
-                "hasNextPage" => count($items) > count($edges),
+                "hasNextPage" => $hasNextPage,
                 "hasPreviousPage" => $hasPreviousPage,
                 "startCursor" => empty($first) ? null : $first->getCursor(),
                 "endCursor" => empty($last) ? null : $last->getCursor()

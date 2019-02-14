@@ -5,7 +5,7 @@ namespace Everywhere\Api\Schema;
 use Everywhere\Api\Contract\Schema\ConnectionObjectInterface;
 use GraphQL\Error\InvariantViolation;
 use GraphQL\Executor\Promise\PromiseAdapter;
-use GraphQL\Utils;
+use GraphQL\Utils\Utils;
 
 class ConnectionObject implements ConnectionObjectInterface
 {

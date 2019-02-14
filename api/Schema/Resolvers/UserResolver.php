@@ -100,30 +100,6 @@ class UserResolver extends EntityResolver
         $this->chatLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
             return $userRepository->findChat($ids, $args);
         });
-
-        $this->chatsLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
-            return $userRepository->findChats($ids, $args);
-        });
-
-        $this->chatsCountsLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
-            return $userRepository->countChats($ids, $args);
-        });
-    }
-
-    /**
-     * TODO: Get rid of this ugly conversion somehow. 
-     * Perhaps it would be better to do such convertion on type resolving phase, 
-     * since we usually do not need id types in resolver functions.
-     * The only exception is `node` resolver.
-     * 
-     * @param IDObjectInterface[] $idObjects
-     * @return string[]
-     */
-    protected function convertIdObjectsToLocalIds($idObjects)
-    {
-        return array_map(function(IDObjectInterface $idObject) {
-            return $idObject->getId();
-        }, $idObjects);
     }
 
     /**
@@ -166,16 +142,7 @@ class UserResolver extends EntityResolver
                 ]);
 
             case "chats":
-                return $this->connectionFactory->create(
-                    $user,
-                    $args,
-                    function($args) use($user) {
-                        return $this->chatsLoader->load($user->id, $args);
-                    },
-                    function($args) use($user) {
-                        return $this->chatsCountsLoader->load($user->id, $args);
-                    }
-                );
+                return $this->connectionFactory->create($user, $args);
 
             /**
              * Pass user entity as root value to UserInfo and UserProfile resolvers

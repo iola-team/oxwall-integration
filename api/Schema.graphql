@@ -14,6 +14,7 @@ directive @type(name: String!) on FIELD_DEFINITION
 type Subscription {
     onMessageAdd(chatId: ID, userId: ID): MessageCreatePayload!
     onMessageUpdate(chatId: ID, userId: ID): MessageUpdatePayload!
+    onPhotoCommentAdd(photoId: ID!): PhotoCommentCreatePayload!
 }
 
 type Query {
@@ -59,9 +60,9 @@ type Mutation {
     addUserAvatar(userId: ID!, file: Upload!): AvatarCreatePayload!
     deleteUserAvatar(id: ID!): AvatarDeletePayload!
     addUserPhoto(input: UserPhotoCreateInput!): UserPhotoCreatePayload!
+    addPhotoComment(input: PhotoCommentInput!): PhotoCommentCreatePayload!
     deleteUserPhoto(id: ID!): UserPhotoDeletePayload!
     saveProfileFieldValues(input: ProfileFieldSaveInput!): ProfileFieldSavePayload!
-    addPhotoComment(input: PhotoCommentInput!): PhotoCommentCreatePayload!
     addMessage(input: MessageInput!, after: Cursor, before: Cursor, at: Cursor): MessageCreatePayload!
     markMessagesAsRead(input: MarkMessagesAsReadInput!): [MessageUpdatePayload!]!
 
@@ -104,7 +105,7 @@ type PageInfo {
 }
 
 input UserMessagesFilterInput {
-    unread: Boolean,
+    unread: Boolean
 }
 
 type User implements Node {
@@ -126,9 +127,9 @@ type User implements Node {
 }
 
 type UserInfo {
-    headline: String,
-    location: String,
-    about: String,
+    headline: String
+    location: String
+    about: String
 }
 
 type UserEdge implements Edge {
@@ -346,8 +347,10 @@ type PhotoEdge implements Edge {
 type Comment implements Node {
     id: ID!
     text: String!
+    image: String
     createdAt: Date!
     user: User!
+    photo: Photo!
 }
 
 type CommentEdge implements Edge {
@@ -394,6 +397,7 @@ type Chat implements Node {
 type ChatEdge implements Edge {
     node: Chat!
     cursor: Cursor!
+    unreadMessages(first: Int, after: Cursor, last: Int, before: Cursor): ChatMessagesConnection!
 }
 
 type UserChatsConnection implements Connection {
@@ -405,6 +409,7 @@ type UserChatsConnection implements Connection {
 
 type MessageContent {
     text: String
+    image: String
 }
 
 type Message implements Node {
