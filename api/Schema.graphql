@@ -19,7 +19,7 @@ type Subscription {
 
 type Query {
     me: User
-    users(first: Int = 10, after: Cursor, search: String = "", email: String = ""): UserConnection!
+    users(filter: UsersFilterInput = {}, first: Int = 10, after: Cursor): UserConnection!
     accountTypes: [AccountType!]!
     node(id: ID!): Node
 }
@@ -68,6 +68,12 @@ type Mutation {
 
     addFriend(input: AddFriendInput!): AddFriendPayload!
     deleteFriend(input: DeleteFriendInput!): DeleteFriendPayload!
+}
+
+input UsersFilterInput {
+    search: String = ""
+    email: String = ""
+    featured: Boolean = false
 }
 
 input MarkMessagesAsReadInput {

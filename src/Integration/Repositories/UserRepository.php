@@ -17,17 +17,23 @@ class UserRepository implements UserRepositoryInterface
      */
     protected $conversationService;
 
+    /**
+     * @var \BOL_UserService
+     */
+    protected $userService;
+
     public function __construct()
     {
         $this->conversationService = \MAILBOX_BOL_ConversationService::getInstance();
+        $this->userService = \BOL_UserService::getInstance();
     }
 
     public function convertDisplayName($displayName, $postfix = 0)
     {
-        $displayName = preg_replace('/-/', '_', \URLify::filter($displayName));
-        $result = $displayName . (empty($postfix) ? '' : $postfix);
+        $displayName = preg_replace("/-/", "_", \URLify::filter($displayName));
+        $result = $displayName . (empty($postfix) ? "" : $postfix);
 
-        if (\BOL_UserService::getInstance()->isExistUserName($result)) {
+        if ($this->userService->isExistUserName($result)) {
             $postfix++;
 
             return $this->convertDisplayName($displayName, $postfix);
@@ -42,12 +48,12 @@ class UserRepository implements UserRepositoryInterface
         $displayNameField = OW::getConfig()->getValue("base", "display_name_question");
         $questionsData = [$displayNameField => $displayNameValue];
 
-        $userDto = \BOL_UserService::getInstance()->createUser($displayNameValue, $args["password"], $args["email"]);
+        $userDto = $this->userService->createUser($displayNameValue, $args["password"], $args["email"]);
         \BOL_QuestionService::getInstance()->saveQuestionsData($questionsData, $userDto->id);
 
         $user = new User();
         $user->id = $userDto->id;
-        $user->name = \BOL_UserService::getInstance()->getDisplayName($userDto->id);
+        $user->name = $this->userService->getDisplayName($userDto->id);
         $user->email = $userDto->email;
         $user->activityTime = (int) $userDto->activityStamp;
 
@@ -71,7 +77,7 @@ class UserRepository implements UserRepositoryInterface
     {
         $this->counter++;
 
-        $userDtoList = \BOL_UserService::getInstance()->findUserListByIdList($idList);
+        $userDtoList = $this->userService->findUserListByIdList($idList);
 
         $users = [];
 
@@ -81,7 +87,7 @@ class UserRepository implements UserRepositoryInterface
         foreach ($userDtoList as $userDto) {
             $user = new User($userDto->id);
 
-            $user->name = \BOL_UserService::getInstance()->getDisplayName($userDto->id);
+            $user->name = $this->userService->getDisplayName($userDto->id);
             $user->accountTypeId = $userDto->accountType;
             $user->email = $userDto->email;
             $user->activityTime = (int) $userDto->activityStamp;
@@ -96,27 +102,43 @@ class UserRepository implements UserRepositoryInterface
     {
         $searchFields = [];
 
-        if (isset($args["search"])) {
-            $displayNameField = OW::getConfig()->getValue('base', 'display_name_question');
-            $searchFields[$displayNameField] = $args["search"];
+        if (!empty($args["filter"]["search"])) {
+            $displayNameField = OW::getConfig()->getValue("base", "display_name_question");
+            $searchFields[$displayNameField] = $args["filter"]["search"];
         }
 
-        if (isset($args["email"])) {
-            $searchFields["email"] = $args["email"];
+        if (!empty($args["filter"]["email"])) {
+            $searchFields["email"] = $args["filter"]["email"];
         }
 
-        $userIds = \BOL_UserService::getInstance()->findUserIdListByQuestionValues($searchFields, $args["offset"], $args["count"]);
+        if (!empty($args["filter"]["featured"])) {
+            $featuredUsers = $this->userService->findFeaturedList($args["offset"], $args["count"]);
+            /**
+             * @var $featuredUser \BOL_User
+             */
+            $userIds = array_map(function ($featuredUser) {
+                return $featuredUser->id;
+            }, $featuredUsers);
+
+            return $userIds;
+        }
+
+        $userIds = $this->userService->findUserIdListByQuestionValues($searchFields, $args["offset"], $args["count"]);
 
         return $userIds;
     }
 
     public function countAll(array $args)
     {
-        if (isset($args["email"])) {
-            return \BOL_UserService::getInstance()->isExistEmail($args["email"]) ? 1 : 0;
+        if (isset($args["email"]) && !empty($args["email"])) {
+            return $this->userService->isExistEmail($args["email"]) ? 1 : 0;
         }
 
-        return \BOL_UserService::getInstance()->count(true);
+        if (isset($args["featured"]) && $args["featured"]) {
+            return $this->userService->countFeatured();
+        }
+
+        return $this->userService->count(true);
     }
 
     public function findPhotos($ids, array $args)
