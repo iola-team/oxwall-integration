@@ -52,21 +52,31 @@ $app->add($container[AuthenticationMiddleware::class]);
 $app->post("/graphql", GraphqlController::class . ":query")
     ->add($container[UploadMiddleware::class]);
 
-$app->group('/subscriptions', function() use($app) {
+/**
+ * Health Check
+ * (To check if the integration plugin was correctly installed)
+ */
+$app->get("/health", function ($request, $response, $args) {
+    return json_encode([
+        "success" => "All good in the hood",
+    ]);
+});
+
+$app->group("/subscriptions", function() use($app) {
     /**
      * Subscription register route
      */
-    $app->post('/{streamId}', SubscriptionController::class . ":create");
+    $app->post("/{streamId}", SubscriptionController::class . ":create");
 
     /**
      * Subscription unregister route
      */
-    $app->delete('/{streamId}/{subscriptionId}', SubscriptionController::class . ":delete");
+    $app->delete("/{streamId}/{subscriptionId}", SubscriptionController::class . ":delete");
 
     /**
      * Subscription stream route
      */
-    $app->get('/{streamId}', SubscriptionController::class . ":stream")
+    $app->get("/{streamId}", SubscriptionController::class . ":stream")
         ->add(SubscriptionMiddleware::class)
         ->setOutputBuffering(false);
 });
@@ -75,7 +85,7 @@ $app->group('/subscriptions', function() use($app) {
 /**
  * Subscription test route
  */
-$app->get('/subscriptions-write/{messageId}', function(ServerRequestInterface $request, ResponseInterface $response, $args) use ($container) {
+$app->get("/subscriptions-write/{messageId}", function(ServerRequestInterface $request, ResponseInterface $response, $args) use ($container) {
 
     /**
      * @var $eventManager EventManagerInterface
