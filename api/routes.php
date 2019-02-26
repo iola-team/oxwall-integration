@@ -52,16 +52,6 @@ $app->add($container[AuthenticationMiddleware::class]);
 $app->post("/graphql", GraphqlController::class . ":query")
     ->add($container[UploadMiddleware::class]);
 
-/**
- * Health Check
- * (To check if the integration plugin was correctly installed)
- */
-$app->get("/health", function ($request, $response, $args) {
-    return json_encode([
-        "success" => "All good in the hood",
-    ]);
-});
-
 $app->group("/subscriptions", function() use($app) {
     /**
      * Subscription register route
@@ -95,4 +85,12 @@ $app->get("/subscriptions-write/{messageId}", function(ServerRequestInterface $r
     $eventManager->emit(new MessageUpdatedEvent($args["messageId"]));
 
     return "\nDone!\n\n";
+});
+
+/**
+ * Health Check
+ * (To check if the integration plugin was correctly installed)
+ */
+$app->get("/health", function ($request, $response, $args) {
+    return json_encode(["success" => "All good in the hood"]);
 });
