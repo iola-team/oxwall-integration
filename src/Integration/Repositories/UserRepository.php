@@ -102,6 +102,10 @@ class UserRepository implements UserRepositoryInterface
     {
         $searchFields = [];
 
+        if (isset($args["filter"]["ids"])) {
+            return $this->userService->findUserIdListByIdList($args["filter"]["ids"]);
+        }
+
         if (!empty($args["filter"]["search"])) {
             $displayNameField = OW::getConfig()->getValue("base", "display_name_question");
             $searchFields[$displayNameField] = $args["filter"]["search"];
@@ -111,31 +115,45 @@ class UserRepository implements UserRepositoryInterface
             $searchFields["email"] = $args["filter"]["email"];
         }
 
-        if (!empty($args["filter"]["featured"])) {
-            $featuredUsers = $this->userService->findFeaturedList($args["offset"], $args["count"]);
-            /**
-             * @var $featuredUser \BOL_User
-             */
-            $userIds = array_map(function ($featuredUser) {
-                return $featuredUser->id;
-            }, $featuredUsers);
+        $idMapper = function ($featuredUser) {
+            return $featuredUser->id;
+        };
 
-            return $userIds;
+        // TODO: Refactor the method to use ListType enum ("online", "featured", etc...) instead of separate flags
+        if (!empty($args["filter"]["online"])) {
+            $onlineList = $this->userService->findOnlineList($args["offset"], $args["count"]);
+            
+            return array_map($idMapper, $onlineList);
         }
 
-        $userIds = $this->userService->findUserIdListByQuestionValues($searchFields, $args["offset"], $args["count"]);
+        if (!empty($args["filter"]["featured"])) {
+            $featuredUsers = $this->userService->findFeaturedList($args["offset"], $args["count"]);
 
-        return $userIds;
+            return array_map($idMapper, $featuredUsers);
+        }
+
+        return $this->userService->findUserIdListByQuestionValues($searchFields, $args["offset"], $args["count"]);
     }
 
     public function countAll(array $args)
     {
+        if (isset($args["filter"]["ids"])) {
+            $existingUserIds = $this->userService->findUserIdListByIdList($args["filter"]["ids"]);
+
+            return count($existingUserIds);
+        }
+
         if (isset($args["email"]) && !empty($args["email"])) {
             return $this->userService->isExistEmail($args["email"]) ? 1 : 0;
         }
 
+        // TODO: Refactor the method to use ListType enum ("online", "featured", etc...) instead of separate flags
         if (isset($args["featured"]) && $args["featured"]) {
             return $this->userService->countFeatured();
+        }
+
+        if (isset($args["online"]) && $args["online"]) {
+            return $this->userService->countOnline();
         }
 
         return $this->userService->count(true);

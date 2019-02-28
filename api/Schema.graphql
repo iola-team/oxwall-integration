@@ -71,9 +71,11 @@ type Mutation {
 }
 
 input UsersFilterInput {
-    search: String = ""
-    email: String = ""
+    ids: [ID!] = []
+    search: String = null
+    email: String = null
     featured: Boolean = false
+    online: Boolean = false
 }
 
 input MarkMessagesAsReadInput {
