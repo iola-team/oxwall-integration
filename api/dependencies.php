@@ -87,6 +87,8 @@ use Everywhere\Api\Schema\Resolvers\UserFriendEdgeResolver;
 use Everywhere\Api\Schema\Resolvers\UserChatsConnectionResolver;
 use Everywhere\Api\Schema\Resolvers\ChatMessagesConnectionResolver;
 use Everywhere\Api\Schema\Resolvers\ChatEdgeResolver;
+use GraphQL\Validator\DocumentValidator;
+use GraphQL\Validator\Rules\NoUnusedVariables;
 
 return [
     PromiseAdapter::class => function() {
@@ -102,12 +104,28 @@ return [
     },
 
     ServerConfig::class => function(ContainerInterface $container) {
+        $allValidationRules = DocumentValidator::allRules();
+        
+        /**
+         * Disable unused variables validation.
+         * When a variable is used in a query only for `@client` properties,
+         * the server complains about unused variable,
+         * since `apollo-client` strips all `@client` properties from the result query.
+         * 
+         * TODO:
+         * The issue first appered in `SearchResultHistoryQuery`.
+         * Check if it still the case after updating apollo-client to 2.5.0+
+         * 
+         */
+        unset($allValidationRules[NoUnusedVariables::class]);
+
         return ServerConfig::create([
             "debug" => true,
             "queryBatching" => true,
             "context" => $container[ContextInterface::class],
             "schema" => $container[Schema::class],
             "promiseAdapter" => $container[PromiseAdapter::class],
+            "validationRules" => $allValidationRules,
             "fieldResolver" => function($root, $args, $context, $info) use($container) {
                 return $container[DefaultResolver::class]->resolve($root, $args, $context, $info);
             }

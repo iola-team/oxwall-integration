@@ -19,6 +19,7 @@ use Everywhere\Api\Schema\CompositeResolver;
 use Everywhere\Api\Schema\ConnectionObject;
 use Everywhere\Api\Schema\ConnectionResult;
 use GraphQL\Type\Definition\ResolveInfo;
+use Everywhere\Api\Contract\Schema\IDObjectInterface;
 
 class QueryResolver extends CompositeResolver
 {
@@ -34,6 +35,16 @@ class QueryResolver extends CompositeResolver
         });
 
         $this->addFieldResolver("users", function($root, $args) use($userRepository, $connectionFactory) {
+            $filter = & $args["filter"];
+            $filter["ids"] = empty($filter["ids"])
+                ? null
+                /**
+                 * TODO: Figure out how to stop converting id objects each time they should be used in args
+                 */
+                : array_map(function(IDObjectInterface $idObject) {
+                    return $idObject->getId();
+                }, $filter["ids"]);
+
             return $connectionFactory->create(
                 $root,
                 $args,
