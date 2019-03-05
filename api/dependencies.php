@@ -105,17 +105,17 @@ return [
 
     ServerConfig::class => function(ContainerInterface $container) {
         $allValidationRules = DocumentValidator::allRules();
-        
+
         /**
          * Disable unused variables validation.
          * When a variable is used in a query only for `@client` properties,
          * the server complains about unused variable,
          * since `apollo-client` strips all `@client` properties from the result query.
-         * 
+         *
          * TODO:
          * The issue first appered in `SearchResultHistoryQuery`.
          * Check if it still the case after updating apollo-client to 2.5.0+
-         * 
+         *
          */
         unset($allValidationRules[NoUnusedVariables::class]);
 
