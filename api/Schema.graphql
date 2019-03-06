@@ -100,9 +100,15 @@ type AuthPayload {
     user: User
 }
 
-type ResetPasswordInstructions {
+enum ResetPasswordInstructionsErrorCode {
+    ERROR_COMMON
+    ERROR_NOT_FOUND
+    ERROR_DUPLICATE
+}
+
+type ResetPasswordInstructionsPayload {
     success: Boolean!
-    error: String
+    errorCode: ResetPasswordInstructionsErrorCode
 }
 
 

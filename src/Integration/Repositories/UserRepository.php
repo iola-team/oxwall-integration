@@ -10,6 +10,12 @@ use OW;
 
 class UserRepository implements UserRepositoryInterface
 {
+    protected $resetPasswordInstructionsErrorCode = [
+        "ERROR_COMMON" => "ERROR_COMMON",
+        "ERROR_NOT_FOUND" => "ERROR_NOT_FOUND",
+        "ERROR_DUPLICATE" => "ERROR_DUPLICATE"
+    ];
+
     public $counter = 0;
 
     /**
@@ -75,26 +81,29 @@ class UserRepository implements UserRepositoryInterface
 
     public function sendResetPasswordInstructions($email)
     {
-        $errorMessage = "Something went wrong."; // @TODO: Add details to the message (maybe add the link "Send the request to Technical Support?)"
+        $errorCode = null;
         $language = OW::getLanguage();
 
         try {
             $this->userService->processResetForm(["email" => $email]);
-            $errorMessage = null;
         } catch (\LogicException $error) {
             switch ($error->getMessage()) {
                 case $language->text("base", "forgot_password_no_user_error_message"):
-                    $errorMessage = "There is no user with this email address.";
+                    $errorCode = $this->resetPasswordInstructionsErrorCode["ERROR_NOT_FOUND"];
                     break;
                 case $language->text("base", "forgot_password_request_exists_error_message"):
-                    $errorMessage = "Reset code already sent. Please try again in 10 minutes.";
+                    $errorCode = $this->resetPasswordInstructionsErrorCode["ERROR_DUPLICATE"];
+                    break;
+                default:
+                    $errorCode = $this->resetPasswordInstructionsErrorCode["ERROR_COMMON"];
                     break;
             }
         } catch (\Exception $error) {
             // Possible mail send error
+            $errorCode = $this->resetPasswordInstructionsErrorCode["ERROR_COMMON"];
         }
 
-        return $errorMessage;
+        return $errorCode;
     }
 
     public function findByIds($idList)

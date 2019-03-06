@@ -80,11 +80,11 @@ class AuthMutationResolver extends CompositeResolver
     }
 
     public function resolveSendResetPasswordInstructions($root, $args, ContextInterface $context) {
-        $errorMessage = $this->userRepository->sendResetPasswordInstructions($args["email"]);
-        $result = ["success" => !$errorMessage];
+        $errorCode = $this->userRepository->sendResetPasswordInstructions($args["email"]);
+        $result = ["success" => !$errorCode];
 
-        if ($errorMessage) {
-            $result["error"] = $errorMessage;
+        if ($errorCode) {
+            $result["errorCode"] = $errorCode;
         }
 
         return $result;
