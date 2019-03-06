@@ -10,7 +10,7 @@ use OW;
 
 class UserRepository implements UserRepositoryInterface
 {
-    protected $resetPasswordInstructionsErrorCode = [
+    protected $resetPasswordInstructionsErrorCodes = [
         "ERROR_COMMON" => "ERROR_COMMON",
         "ERROR_NOT_FOUND" => "ERROR_NOT_FOUND",
         "ERROR_DUPLICATE" => "ERROR_DUPLICATE"
@@ -89,18 +89,18 @@ class UserRepository implements UserRepositoryInterface
         } catch (\LogicException $error) {
             switch ($error->getMessage()) {
                 case $language->text("base", "forgot_password_no_user_error_message"):
-                    $errorCode = $this->resetPasswordInstructionsErrorCode["ERROR_NOT_FOUND"];
+                    $errorCode = $this->resetPasswordInstructionsErrorCodes["ERROR_NOT_FOUND"];
                     break;
                 case $language->text("base", "forgot_password_request_exists_error_message"):
-                    $errorCode = $this->resetPasswordInstructionsErrorCode["ERROR_DUPLICATE"];
+                    $errorCode = $this->resetPasswordInstructionsErrorCodes["ERROR_DUPLICATE"];
                     break;
                 default:
-                    $errorCode = $this->resetPasswordInstructionsErrorCode["ERROR_COMMON"];
+                    $errorCode = $this->resetPasswordInstructionsErrorCodes["ERROR_COMMON"];
                     break;
             }
         } catch (\Exception $error) {
             // Possible mail send error
-            $errorCode = $this->resetPasswordInstructionsErrorCode["ERROR_COMMON"];
+            $errorCode = $this->resetPasswordInstructionsErrorCodes["ERROR_COMMON"];
         }
 
         return $errorCode;
