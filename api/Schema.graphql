@@ -56,7 +56,7 @@ interface Connection {
 type Mutation {
     signInUser(input: SignInUserInput!): AuthPayload!
     signUpUser(input: SignUpUserInput!): AuthPayload!
-    sendResetPasswordLink(email: String!): ResetPasswordLinkPayload!
+    sendResetPasswordInstructions(email: String!): ResetPasswordInstructionsPayload!
 
     addUserAvatar(userId: ID!, file: Upload!): AvatarCreatePayload!
     deleteUserAvatar(id: ID!): AvatarDeletePayload!
@@ -100,7 +100,7 @@ type AuthPayload {
     user: User
 }
 
-type ResetPasswordLinkPayload {
+type ResetPasswordInstructions {
     success: Boolean!
     error: String
 }

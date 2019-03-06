@@ -36,7 +36,7 @@ class AuthMutationResolver extends CompositeResolver
         parent::__construct([
             "signUpUser" => [$this, "resolveSignUp"],
             "signInUser" => [$this, "resolveSignIn"],
-            "sendResetPasswordLink" => [$this, "resolveSendResetPasswordLink"]
+            "sendResetPasswordInstructions" => [$this, "resolveSendResetPasswordInstructions"]
         ]);
 
         $this->authService = $authService;
@@ -79,8 +79,8 @@ class AuthMutationResolver extends CompositeResolver
         ];
     }
 
-    public function resolveSendResetPasswordLink($root, $args, ContextInterface $context) {
-        $errorMessage = $this->userRepository->sendResetPasswordLink($args["email"]);
+    public function resolveSendResetPasswordInstructions($root, $args, ContextInterface $context) {
+        $errorMessage = $this->userRepository->sendResetPasswordInstructions($args["email"]);
         $result = ["success" => !$errorMessage];
 
         if ($errorMessage) {

@@ -73,7 +73,7 @@ class UserRepository implements UserRepositoryInterface
         return $result->getUserId();
     }
 
-    public function sendResetPasswordLink($email)
+    public function sendResetPasswordInstructions($email)
     {
         $errorMessage = "Something went wrong."; // @TODO: Add details to the message (maybe add the link "Send the request to Technical Support?)"
         $language = OW::getLanguage();
