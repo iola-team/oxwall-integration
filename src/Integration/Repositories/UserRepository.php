@@ -10,12 +10,6 @@ use OW;
 
 class UserRepository implements UserRepositoryInterface
 {
-    protected $resetPasswordInstructionsErrorCodes = [
-        "ERROR_COMMON" => "ERROR_COMMON",
-        "ERROR_NOT_FOUND" => "ERROR_NOT_FOUND",
-        "ERROR_DUPLICATE" => "ERROR_DUPLICATE"
-    ];
-
     public $counter = 0;
 
     /**
@@ -89,18 +83,52 @@ class UserRepository implements UserRepositoryInterface
         } catch (\LogicException $error) {
             switch ($error->getMessage()) {
                 case $language->text("base", "forgot_password_no_user_error_message"):
-                    $errorCode = $this->resetPasswordInstructionsErrorCodes["ERROR_NOT_FOUND"];
+                    $errorCode = "ERROR_NOT_FOUND";
                     break;
                 case $language->text("base", "forgot_password_request_exists_error_message"):
-                    $errorCode = $this->resetPasswordInstructionsErrorCodes["ERROR_DUPLICATE"];
+                    $errorCode = "ERROR_DUPLICATE";
                     break;
                 default:
-                    $errorCode = $this->resetPasswordInstructionsErrorCodes["ERROR_COMMON"];
+                    $errorCode = "ERROR_COMMON";
                     break;
             }
         } catch (\Exception $error) {
             // Possible mail send error
-            $errorCode = $this->resetPasswordInstructionsErrorCodes["ERROR_COMMON"];
+            $errorCode = "ERROR_COMMON";
+        }
+
+        return $errorCode;
+    }
+
+    public function sendConfirmEmailInstructions($email)
+    {
+        $errorCode = null;
+
+        try {
+            if (\OW::getConfig()->getValue("base", "confirm_email")) {
+                /**
+                 * @var $userDto \BOL_User
+                 */
+                $userDto = $this->userService->findByEmail($email);
+
+                if ($userDto) {
+                    $this->userService->sendWellcomeLetter($userDto);
+
+                    /**
+                     * @var $userDto \BOL_User
+                     */
+                    $userDto = $this->userService->findByEmail($email);
+
+                    if (!$userDto->emailVerify) {
+                        $errorCode = "ERROR_COMMON";
+                    }
+                } else {
+                    $errorCode = "ERROR_NOT_FOUND";
+                }
+            }
+        } catch (\Exception $error) {
+            // Possible mail send error
+            $errorCode = "ERROR_COMMON";
         }
 
         return $errorCode;

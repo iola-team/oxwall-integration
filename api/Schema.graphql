@@ -57,6 +57,7 @@ type Mutation {
     signInUser(input: SignInUserInput!): AuthPayload!
     signUpUser(input: SignUpUserInput!): AuthPayload!
     sendResetPasswordInstructions(email: String!): ResetPasswordInstructionsPayload!
+    sendConfirmEmailInstructions(email: String!): ConfirmEmailInstructionsPayload!
 
     addUserAvatar(userId: ID!, file: Upload!): AvatarCreatePayload!
     deleteUserAvatar(id: ID!): AvatarDeletePayload!
@@ -111,6 +112,15 @@ type ResetPasswordInstructionsPayload {
     errorCode: ResetPasswordInstructionsErrorCode
 }
 
+enum ConfirmEmailInstructionsErrorCode {
+    ERROR_COMMON
+    ERROR_NOT_FOUND
+}
+
+type ConfirmEmailInstructionsPayload {
+    success: Boolean!
+    errorCode: ConfirmEmailInstructionsErrorCode
+}
 
 
 type ConnectionMetaInfo {
