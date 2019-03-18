@@ -112,14 +112,8 @@ class UserRepository implements UserRepositoryInterface
                 $userDto = $this->userService->findByEmail($email);
 
                 if ($userDto) {
-                    $this->userService->sendWellcomeLetter($userDto);
-
-                    /**
-                     * @var $userDto \BOL_User
-                     */
-                    $userDto = $this->userService->findByEmail($email);
-
                     if (!$userDto->emailVerify) {
+                        $this->userService->sendWellcomeLetter($userDto);
                         $errorCode = "ERROR_COMMON";
                     }
                 } else {
