@@ -151,7 +151,7 @@ type User implements Node {
     name: String!
     email: String!
     activityTime: Date!
-    emailIsVerified: Boolean!
+    isEmailVerified: Boolean!
 
     info: UserInfo!
     profile: Profile!

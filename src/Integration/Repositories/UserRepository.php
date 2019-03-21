@@ -56,7 +56,7 @@ class UserRepository implements UserRepositoryInterface
         $user->name = $this->userService->getDisplayName($userDto->id);
         $user->email = $userDto->email;
         $user->activityTime = (int) $userDto->activityStamp;
-        $user->emailIsVerified = $userDto->emailVerify;
+        $user->isEmailVerified = $userDto->emailVerify;
 
         return $user;
     }
@@ -146,7 +146,7 @@ class UserRepository implements UserRepositoryInterface
             $user->accountTypeId = $userDto->accountType;
             $user->email = $userDto->email;
             $user->activityTime = (int) $userDto->activityStamp;
-            $user->emailIsVerified = $userDto->emailVerify;
+            $user->isEmailVerified = $userDto->emailVerify;
 
             $users[$userDto->id] = $user;
         }

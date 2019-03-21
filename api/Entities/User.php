@@ -29,7 +29,7 @@ class User extends AbstractEntity
     /**
      * @var boolean
      */
-    public $emailIsVerified;
+    public $isEmailVerified;
 
     /**
      * @var mixed
