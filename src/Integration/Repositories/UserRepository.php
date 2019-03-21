@@ -56,6 +56,7 @@ class UserRepository implements UserRepositoryInterface
         $user->name = $this->userService->getDisplayName($userDto->id);
         $user->email = $userDto->email;
         $user->activityTime = (int) $userDto->activityStamp;
+        $user->emailIsVerified = $userDto->emailVerify;
 
         return $user;
     }
@@ -73,13 +74,13 @@ class UserRepository implements UserRepositoryInterface
         return $result->getUserId();
     }
 
-    public function sendResetPasswordInstructions($email)
+    public function sendResetPasswordInstructions($input)
     {
         $errorCode = null;
         $language = OW::getLanguage();
 
         try {
-            $this->userService->processResetForm(["email" => $email]);
+            $this->userService->processResetForm($input);
         } catch (\LogicException $error) {
             switch ($error->getMessage()) {
                 case $language->text("base", "forgot_password_no_user_error_message"):
@@ -100,7 +101,7 @@ class UserRepository implements UserRepositoryInterface
         return $errorCode;
     }
 
-    public function sendConfirmEmailInstructions($email)
+    public function sendEmailVerificationInstructions($input)
     {
         $errorCode = null;
 
@@ -109,12 +110,11 @@ class UserRepository implements UserRepositoryInterface
                 /**
                  * @var $userDto \BOL_User
                  */
-                $userDto = $this->userService->findByEmail($email);
+                $userDto = $this->userService->findByEmail($input["email"]);
 
                 if ($userDto) {
                     if (!$userDto->emailVerify) {
                         $this->userService->sendWellcomeLetter($userDto);
-                        $errorCode = "ERROR_COMMON";
                     }
                 } else {
                     $errorCode = "ERROR_NOT_FOUND";
@@ -146,6 +146,7 @@ class UserRepository implements UserRepositoryInterface
             $user->accountTypeId = $userDto->accountType;
             $user->email = $userDto->email;
             $user->activityTime = (int) $userDto->activityStamp;
+            $user->emailIsVerified = $userDto->emailVerify;
 
             $users[$userDto->id] = $user;
         }
