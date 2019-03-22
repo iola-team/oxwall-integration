@@ -27,7 +27,7 @@ $exceptionsKeys = [
 ];
 
 foreach ($exceptionsKeys as $exceptionKey) {
-    \OW::getRequestHandler()->addCatchAllRequestsExclude('base.members_only', RootController::class);
+    \OW::getRequestHandler()->addCatchAllRequestsExclude($exceptionKey, RootController::class);
 }
 
 /**
