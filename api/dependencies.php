@@ -76,6 +76,7 @@ use GraphQL\Type\Schema;
 use Overblog\DataLoader\Promise\Adapter\Webonyx\GraphQL\SyncPromiseAdapter;
 use Everywhere\Api\Schema\Resolvers\QueryResolver;
 use Everywhere\Api\Schema\Resolvers\UserResolver;
+use Everywhere\Api\Schema\Resolvers\UserSubscriptionResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoResolver;
 use Everywhere\Api\Schema\Resolvers\CommentResolver;
 use Everywhere\Api\Schema\Resolvers\FriendMutationResolver;
@@ -335,6 +336,14 @@ return [
 
             $container[DataLoaderFactory::class],
             $container[ConnectionFactoryInterface::class]
+        );
+    },
+
+    UserSubscriptionResolver::class => function(ContainerInterface $container) {
+        return new UserSubscriptionResolver(
+            $container->getIntegration()->getUserRepository(),
+            $container[SubscriptionFactoryInterface::class],
+            $container[DataLoaderFactory::class]
         );
     },
 

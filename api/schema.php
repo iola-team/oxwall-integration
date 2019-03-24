@@ -24,6 +24,7 @@ use Everywhere\Api\Schema\Resolvers\QueryResolver;
 use Everywhere\Api\Schema\Resolvers\UploadResolver;
 use Everywhere\Api\Schema\Resolvers\ProfileResolver;
 use Everywhere\Api\Schema\Resolvers\UserResolver;
+use Everywhere\Api\Schema\Resolvers\UserSubscriptionResolver;
 use Everywhere\Api\Schema\Resolvers\UserInfoResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoResolver;
 use Everywhere\Api\Schema\Resolvers\CommentResolver;
@@ -89,6 +90,7 @@ return [
         ],
 
         "Subscription" => [
+            UserSubscriptionResolver::class,
             MessageSubscriptionResolver::class,
             PhotoCommentSubscriptionResolver::class,
         ]

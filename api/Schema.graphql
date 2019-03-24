@@ -12,6 +12,8 @@ scalar Upload
 directive @type(name: String!) on FIELD_DEFINITION
 
 type Subscription {
+    onUserApproved(userId: ID!): UserApprovePayload!
+    onUserEmailVerified(userId: ID!): UserEmailVerificationPayload!
     onMessageAdd(chatId: ID, userId: ID): MessageCreatePayload!
     onMessageUpdate(chatId: ID, userId: ID): MessageUpdatePayload!
     onPhotoCommentAdd(photoId: ID!): PhotoCommentCreatePayload!
@@ -505,6 +507,14 @@ type MessageUpdatePayload {
     chatEdge: ChatEdge!
     node: Message!
     edge: MessageEdge!
+}
+
+type UserApprovePayload {
+    user: User!
+}
+
+type UserEmailVerificationPayload {
+    user: User!
 }
 
 enum FriendshipStatus {
