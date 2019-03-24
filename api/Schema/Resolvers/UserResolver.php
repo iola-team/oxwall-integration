@@ -27,6 +27,16 @@ class UserResolver extends EntityResolver
     /**
      * @var DataLoaderInterface
      */
+    protected $isApprovedLoader;
+
+    /**
+     * @var DataLoaderInterface
+     */
+    protected $isEmailVerifiedLoader;
+
+    /**
+     * @var DataLoaderInterface
+     */
     protected $photosLoader;
 
     /**
@@ -81,6 +91,14 @@ class UserResolver extends EntityResolver
 
         $this->connectionFactory = $connectionFactory;
 
+        $this->isApprovedLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
+            return $userRepository->getIsApprovedByIds($ids, $args);
+        });
+
+        $this->isEmailVerifiedLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
+            return $userRepository->getIsEmailVerifiedByIds($ids, $args);
+        });
+
         $this->photosLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
             return $userRepository->findPhotos($ids, $args);
         }, []);
@@ -114,6 +132,12 @@ class UserResolver extends EntityResolver
     protected function resolveField($user, $fieldName, $args, ContextInterface $context, ResolveInfo $info)
     {
         switch ($fieldName) {
+            case "isApproved":
+                return $this->isApprovedLoader->load($user->id, $args);
+
+            case "isEmailVerified":
+                return $this->isEmailVerifiedLoader->load($user->id, $args);
+
             case "friends":
                 return $this->connectionFactory->create($user, $args);
 

@@ -58,6 +58,13 @@ class UserRepository implements UserRepositoryInterface
         $user->activityTime = (int) $userDto->activityStamp;
         $user->isEmailVerified = $userDto->emailVerify;
 
+        $event = new \OW_Event(\OW_EventManager::ON_USER_REGISTER, [
+            "method" => "iola",
+            "userId" => $user->id,
+            "params" => $args
+        ]);
+        OW::getEventManager()->trigger($event);
+
         return $user;
     }
 
@@ -106,7 +113,7 @@ class UserRepository implements UserRepositoryInterface
         $errorCode = null;
 
         try {
-            if (\OW::getConfig()->getValue("base", "confirm_email")) {
+            if (OW::getConfig()->getValue("base", "confirm_email")) {
                 /**
                  * @var $userDto \BOL_User
                  */
@@ -146,7 +153,6 @@ class UserRepository implements UserRepositoryInterface
             $user->accountTypeId = $userDto->accountType;
             $user->email = $userDto->email;
             $user->activityTime = (int) $userDto->activityStamp;
-            $user->isEmailVerified = $userDto->emailVerify;
 
             $users[$userDto->id] = $user;
         }
@@ -213,6 +219,33 @@ class UserRepository implements UserRepositoryInterface
         }
 
         return $this->userService->count(true);
+    }
+
+    public function getIsApprovedByIds($ids, array $args) {
+        $out = [];
+        $userApproveDao = \BOL_UserApproveDao::getInstance();
+        $unapprovedUserIds = $userApproveDao->findUnapproveStatusForUserList($ids);
+
+        foreach($ids as $userId) {
+            $out[$userId] = !in_array($userId, $unapprovedUserIds);
+        }
+
+        return $out;
+    }
+
+    public function getIsEmailVerifiedByIds($ids, array $args) {
+        $out = [];
+
+        /**
+         * @var $usersDto \BOL_User[]
+         */
+        $usersDto = $this->userService->findUserListByIdList($ids);
+
+        foreach ($usersDto as $userDto) {
+            $out[$userDto->id] = $userDto->emailVerify;
+        }
+
+        return $out;
     }
 
     public function findPhotos($ids, array $args)
