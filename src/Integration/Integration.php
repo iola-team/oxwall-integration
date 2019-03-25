@@ -39,11 +39,19 @@ class Integration implements IntegrationInterface
 
     public function init(EventManagerInterface $events)
     {
+        $this->eventManager->bind("moderation.approve", function(OW_Event $event) use($events) {
+            $params = $event->getParams();
+
+            $events->emit(
+                new UserApprovedEvent($params["entityId"])
+            );
+        });
+
         $this->eventManager->bind("base.email_verify", function(OW_Event $event) use($events) {
             $params = $event->getParams();
 
             $events->emit(
-                new UserEmailVerifiedEvent($params["userId"])
+                new UserEmailVerifiedEvent($params["userId"]) // <<< @TODO: check params
             );
         });
 
