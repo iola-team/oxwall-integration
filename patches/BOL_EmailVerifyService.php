@@ -356,20 +356,20 @@ class BOL_EmailVerifyService
 
                     break;
             }
+
+            /**
+             * Trigger event after email verification
+             */
+            $event = new OW_Event("base.onAfterEmailVerification", [
+                "isValid" => $result["isValid"],
+                "type" => $emailVerifyData->type,
+                "userId" => (int) $emailVerifyData->userId,
+                "email" => $emailVerifyData->email,
+                "hash" => $emailVerifyData->hash
+            ]);
+
+            OW::getEventManager()->trigger($event);
         }
-
-        /**
-         * Trigger event after email verification
-         */
-        $event = new OW_Event("base.onAfterEmailVerification", [
-            "isValid" => $result["isValid"],
-            "type" => $emailVerifyData->type,
-            "userId" => (int) $emailVerifyData->userId,
-            "email" => $emailVerifyData->email,
-            "hash" => $emailVerifyData->hash
-        ]);
-
-        OW::getEventManager()->trigger($event);
 
         return $result;
     }
