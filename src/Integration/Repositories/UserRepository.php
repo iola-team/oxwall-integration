@@ -137,7 +137,7 @@ class UserRepository implements UserRepositoryInterface
 
     public function findById($id)
     {
-        return $this->userService->findUserById((int) $id);
+        return $this->userService->findUserById($id);
     }
 
     public function findByIds($idList)

@@ -57,7 +57,7 @@ class Integration implements IntegrationInterface
             /**
              * @var $userDto \BOL_User
              */
-            $userDto = $this->getUserRepository()->findById([$userDtoBeforeSave->id]);
+            $userDto = $this->getUserRepository()->findById($userDtoBeforeSave->id);
 
             $events->emit(
                 new UserEmailVerifiedEvent($userDto->id)
