@@ -8,4 +8,3 @@
  */
 
 require_once __DIR__ . "/MAILBOX_BOL_ConversationService.php";
-require_once __DIR__ . "/BOL_EmailVerifyService.php";
