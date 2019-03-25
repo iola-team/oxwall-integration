@@ -47,12 +47,14 @@ class Integration implements IntegrationInterface
             );
         });
 
-        $this->eventManager->bind("base.email_verify", function(OW_Event $event) use($events) {
+        $this->eventManager->bind("base.onAfterEmailVerification", function(OW_Event $event) use($events) {
             $params = $event->getParams();
 
-            $events->emit(
-                new UserEmailVerifiedEvent($params["userId"]) // <<< @TODO: check params
-            );
+            if ($params["type"] === "user") {
+                $events->emit(
+                    new UserEmailVerifiedEvent($params["userId"])
+                );
+            }
         });
 
         $this->eventManager->bind("mailbox.send_message", function(OW_Event $event) use($events) {
