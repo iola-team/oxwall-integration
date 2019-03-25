@@ -47,14 +47,21 @@ class Integration implements IntegrationInterface
             );
         });
 
-        $this->eventManager->bind("base.onAfterEmailVerification", function(OW_Event $event) use($events) {
+        $this->eventManager->bind("base.before_save_user", function(OW_Event $event) use($events) {
             $params = $event->getParams();
 
-            if ($params["type"] === "user") {
-                $events->emit(
-                    new UserEmailVerifiedEvent($params["userId"])
-                );
-            }
+            /**
+             * @var $userDtoBeforeSave \BOL_User
+             */
+            $userDtoBeforeSave = $params["dto"];
+            /**
+             * @var $userDto \BOL_User
+             */
+            $userDto = $this->getUserRepository()->findById([$userDtoBeforeSave->id]);
+
+            $events->emit(
+                new UserEmailVerifiedEvent($userDto->id)
+            );
         });
 
         $this->eventManager->bind("mailbox.send_message", function(OW_Event $event) use($events) {
