@@ -8,14 +8,12 @@ class ExtensionManager
      * @var \OW_EventManager
      */
     protected $eventManager;
+    protected $extensionMap = [];
 
-    protected $extensionMap = [
-
-    ];
-
-    public function __construct()
+    public function __construct(array $extensionMap = [])
     {
         $this->eventManager = \OW::getEventManager();
+        $this->extensionMap = $extensionMap;
     }
 
     /**
