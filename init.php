@@ -8,7 +8,10 @@ namespace Everywhere\Oxwall;
 require_once __DIR__ . "/patches/patch.php";
 require_once __DIR__ . "/vendor/autoload.php";
 
-$extensionManager = new ExtensionManager();
+/**
+ * Oxwall classes extension
+ */
+$extensionManager = new ExtensionManager([]);
 $extensionManager->init();
 
 /**
