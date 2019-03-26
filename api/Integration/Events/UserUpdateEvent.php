@@ -2,9 +2,9 @@
 
 namespace Everywhere\Api\Integration\Events;
 
-class UserApprovedEvent extends SubscriptionEvent
+class UserUpdateEvent extends SubscriptionEvent
 {
-    const EVENT_NAME = "user.approved";
+    const EVENT_NAME = "user.update";
 
     public function __construct($userId)
     {

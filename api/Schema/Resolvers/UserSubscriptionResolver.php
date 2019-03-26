@@ -6,9 +6,7 @@ use Everywhere\Api\Contract\Integration\UserRepositoryInterface;
 use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
 use Everywhere\Api\Contract\Schema\DataLoaderInterface;
 use Everywhere\Api\Contract\Schema\SubscriptionFactoryInterface;
-use Everywhere\Api\Entities\User;
-use Everywhere\Api\Integration\Events\UserApprovedEvent;
-use Everywhere\Api\Integration\Events\UserEmailVerifiedEvent;
+use Everywhere\Api\Integration\Events\UserUpdateEvent;
 use Everywhere\Api\Schema\IDObject;
 use Everywhere\Api\Schema\SubscriptionResolver;
 
@@ -36,11 +34,8 @@ class UserSubscriptionResolver extends SubscriptionResolver
     )
     {
         parent::__construct([
-            "onUserApproved" => function($root, $args) {
-                return $this->createSubscription($args, UserApprovedEvent::EVENT_NAME);
-            },
-            "onUserEmailVerified" => function($root, $args) {
-                return $this->createSubscription($args, UserEmailVerifiedEvent::EVENT_NAME);
+            "onUserUpdate" => function($root, $args) {
+                return $this->createSubscription($args, UserUpdateEvent::EVENT_NAME);
             },
         ]);
 
@@ -57,15 +52,13 @@ class UserSubscriptionResolver extends SubscriptionResolver
         return $this->subscriptionFactory->create(
             $eventName,
             function ($data) use ($args) {
-                return $this->loadUser($data)->then(function($user) use($args) {
-                    return $this->filterEvents($user, $args);
-                });
+                return $this->filterEvents($data["userId"], $args);
             },
 
             function ($data) use ($args) {
-                return $this->loadUser($data)->then(function($user) use($args) {
-                    return $this->createUserPayload($user, $args);
-                });
+                return [
+                    "user" => $data["userId"]
+                ];
             }
         );
     }
@@ -75,18 +68,13 @@ class UserSubscriptionResolver extends SubscriptionResolver
         return $this->userLoader->load($data["userId"]);
     }
 
-    protected function createUserPayload(User $user, array $args)
-    {
-        return ["user" => $user->id];
-    }
-
-    protected function filterEvents(User $user, array $args)
+    protected function filterEvents($currentUserId, array $args)
     {
         /**
          * @var $userIdObject IDObject
          */
         $userIdObject = $args["userId"];
 
-        return $user->id == $userIdObject->getId();
+        return $currentUserId == $userIdObject->getId();
     }
 }

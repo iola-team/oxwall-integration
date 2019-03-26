@@ -11,8 +11,7 @@ namespace Everywhere\Oxwall\Integration;
 use Everywhere\Api\Contract\App\EventManagerInterface;
 use Everywhere\Api\Contract\Integration\SubscriptionRepositoryInterface;
 use Everywhere\Api\Contract\Integration\IntegrationInterface;
-use Everywhere\Api\Integration\Events\UserApprovedEvent;
-use Everywhere\Api\Integration\Events\UserEmailVerifiedEvent;
+use Everywhere\Api\Integration\Events\UserUpdateEvent;
 use Everywhere\Api\Integration\Events\MessageAddedEvent;
 use Everywhere\Api\Integration\Events\MessageUpdatedEvent;
 use Everywhere\Api\Integration\Events\CommentAddedEvent;
@@ -39,11 +38,11 @@ class Integration implements IntegrationInterface
 
     public function init(EventManagerInterface $events)
     {
-        $this->eventManager->bind("moderation.approve", function(OW_Event $event) use($events) {
+        $this->eventManager->bind("base.on_user_approve", function(OW_Event $event) use($events) {
             $params = $event->getParams();
 
             $events->emit(
-                new UserApprovedEvent($params["entityId"])
+                new UserUpdateEvent($params["userId"])
             );
         });
 
@@ -60,7 +59,7 @@ class Integration implements IntegrationInterface
             $userDto = $this->getUserRepository()->findById($userDtoBeforeSave->id);
 
             $events->emit(
-                new UserEmailVerifiedEvent($userDto->id)
+                new UserUpdateEvent($userDto->id)
             );
         });
 

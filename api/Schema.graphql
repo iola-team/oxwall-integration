@@ -12,8 +12,7 @@ scalar Upload
 directive @type(name: String!) on FIELD_DEFINITION
 
 type Subscription {
-    onUserApproved(userId: ID!): UserApprovePayload!
-    onUserEmailVerified(userId: ID!): UserEmailVerificationPayload!
+    onUserUpdate(userId: ID!): UserUpdatePayload!
     onMessageAdd(chatId: ID, userId: ID): MessageCreatePayload!
     onMessageUpdate(chatId: ID, userId: ID): MessageUpdatePayload!
     onPhotoCommentAdd(photoId: ID!): PhotoCommentCreatePayload!
@@ -509,11 +508,7 @@ type MessageUpdatePayload {
     edge: MessageEdge!
 }
 
-type UserApprovePayload {
-    user: User!
-}
-
-type UserEmailVerificationPayload {
+type UserUpdatePayload {
     user: User!
 }
 
