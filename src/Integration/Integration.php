@@ -50,13 +50,15 @@ class Integration implements IntegrationInterface
             $params = $event->getParams();
 
             /**
-             * @var $userDtoBeforeSave \BOL_User
-             */
-            $userDtoBeforeSave = $params["dto"];
-            /**
              * @var $userDto \BOL_User
              */
-            $userDto = $this->getUserRepository()->findById($userDtoBeforeSave->id);
+            $userDto = $params["dto"];
+
+//            @TODO: For some reason the $userDtoAfterSave is equal to $userDto... so we can't filter it with $userDto->emailVerify != $userDtoAfterSave->emailVerify
+//            /**
+//             * @var $userDtoAfterSave \BOL_User
+//             */
+//            $userDtoAfterSave = $this->getUserRepository()->findById($userDto->id);
 
             $events->emit(
                 new UserUpdateEvent($userDto->id)

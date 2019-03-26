@@ -63,11 +63,6 @@ class UserSubscriptionResolver extends SubscriptionResolver
         );
     }
 
-    protected function loadUser($data)
-    {
-        return $this->userLoader->load($data["userId"]);
-    }
-
     protected function filterEvents($currentUserId, array $args)
     {
         /**
