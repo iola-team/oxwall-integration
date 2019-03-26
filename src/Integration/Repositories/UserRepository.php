@@ -121,7 +121,7 @@ class UserRepository implements UserRepositoryInterface
 
                 if ($userDto) {
                     if (!$userDto->emailVerify) {
-                        $this->userService->sendWellcomeLetter($userDto);
+                        \BOL_EmailVerifyService::getInstance()->sendUserVerificationMail($userDto);
                     }
                 } else {
                     $errorCode = "ERROR_NOT_FOUND";
