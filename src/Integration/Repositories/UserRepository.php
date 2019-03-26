@@ -135,23 +135,17 @@ class UserRepository implements UserRepositoryInterface
         return $errorCode;
     }
 
-    public function findById($id)
-    {
-        return $this->userService->findUserById($id);
-    }
-
     public function findByIds($idList)
     {
         $this->counter++;
 
-        $userDtoList = $this->userService->findUserListByIdList($idList);
-
+        $usersDto = $this->userService->findUserListByIdList($idList);
         $users = [];
 
         /**
          * @var $userDto \BOL_User
          */
-        foreach ($userDtoList as $userDto) {
+        foreach ($usersDto as $userDto) {
             $user = new User($userDto->id);
 
             $user->name = $this->userService->getDisplayName($userDto->id);
@@ -238,14 +232,17 @@ class UserRepository implements UserRepositoryInterface
         return $out;
     }
 
-    public function getIsEmailVerifiedByIds($ids, array $args) {
+    public function getIsEmailVerifiedByIds($ids, array $args = []) {
         $out = [];
 
-        /**
-         * @var $usersDto \BOL_User[]
-         */
-        $usersDto = $this->userService->findUserListByIdList($ids);
+        // FYI: $example is used to bypass the Oxwall cache (userService->findUserListByIdList)
+        $example = new \OW_Example();
+        $example->andFieldInArray("id", $ids);
+        $usersDto = \BOL_UserDao::getInstance()->findListByExample($example);
 
+        /**
+         * @var $userDto \BOL_User
+         */
         foreach ($usersDto as $userDto) {
             $out[$userDto->id] = $userDto->emailVerify;
         }

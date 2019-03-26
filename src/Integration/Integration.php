@@ -50,19 +50,18 @@ class Integration implements IntegrationInterface
             $params = $event->getParams();
 
             /**
-             * @var $userDto \BOL_User
+             * @var $userDtoNext \BOL_User
              */
-            $userDto = $params["dto"];
-
-//            @TODO: For some reason the $userDtoAfterSave is equal to $userDto... so we can't filter it with $userDto->emailVerify != $userDtoAfterSave->emailVerify
-//            /**
-//             * @var $userDtoAfterSave \BOL_User
-//             */
-//            $userDtoAfterSave = $this->getUserRepository()->findById($userDto->id);
-
-            $events->emit(
-                new UserUpdateEvent($userDto->id)
+            $userDtoNext = $params["dto"];
+            $userIsEmailVerified = (int) reset(
+                $this->getUserRepository()->getIsEmailVerifiedByIds([$userDtoNext->id])
             );
+
+            if ($userIsEmailVerified != $userDtoNext->emailVerify) {
+                $events->emit(
+                    new UserUpdateEvent($userDtoNext->id)
+                );
+            }
         });
 
         $this->eventManager->bind("mailbox.send_message", function(OW_Event $event) use($events) {
