@@ -323,6 +323,7 @@ return [
     QueryResolver::class => function(ContainerInterface $container) {
         return new QueryResolver(
             $container[ConnectionFactoryInterface::class],
+            $container->getIntegration()->getConfigRepository(),
             $container->getIntegration()->getUserRepository(),
             $container->getIntegration()->getProfileRepository()
         );

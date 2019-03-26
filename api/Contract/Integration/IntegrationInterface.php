@@ -12,6 +12,11 @@ interface IntegrationInterface
     public function init(EventManagerInterface $eventManager);
 
     /**
+     * @return ConfigRepositoryInterface
+     */
+    public function getConfigRepository();
+
+    /**
      * @return UserRepositoryInterface
      */
     public function getUserRepository();
