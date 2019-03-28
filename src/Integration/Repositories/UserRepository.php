@@ -113,19 +113,17 @@ class UserRepository implements UserRepositoryInterface
         $errorCode = null;
 
         try {
-            if (OW::getConfig()->getValue("base", "confirm_email")) {
-                /**
-                 * @var $userDto \BOL_User
-                 */
-                $userDto = $this->userService->findByEmail($input["email"]);
+            /**
+             * @var $userDto \BOL_User
+             */
+            $userDto = $this->userService->findByEmail($input["email"]);
 
-                if ($userDto) {
-                    if (!$userDto->emailVerify) {
-                        \BOL_EmailVerifyService::getInstance()->sendUserVerificationMail($userDto);
-                    }
-                } else {
-                    $errorCode = "ERROR_NOT_FOUND";
+            if ($userDto) {
+                if (!$userDto->emailVerify) {
+                    \BOL_EmailVerifyService::getInstance()->sendUserVerificationMail($userDto);
                 }
+            } else {
+                $errorCode = "ERROR_NOT_FOUND";
             }
         } catch (\Exception $error) {
             // Possible mail send error

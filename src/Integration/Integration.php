@@ -50,18 +50,13 @@ class Integration implements IntegrationInterface
             $params = $event->getParams();
 
             /**
-             * @var $userDtoNext \BOL_User
+             * @var $userDto \BOL_User
              */
-            $userDtoNext = $params["dto"];
-            $userIsEmailVerified = (int) reset(
-                $this->getUserRepository()->getIsEmailVerifiedByIds([$userDtoNext->id])
-            );
+            $userDto = $params["dto"];
 
-            if ($userIsEmailVerified != $userDtoNext->emailVerify) {
-                $events->emit(
-                    new UserUpdateEvent($userDtoNext->id)
-                );
-            }
+            $events->emit(
+                new UserUpdateEvent($userDto->id)
+            );
         });
 
         $this->eventManager->bind("mailbox.send_message", function(OW_Event $event) use($events) {

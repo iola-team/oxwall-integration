@@ -341,7 +341,6 @@ return [
 
     UserSubscriptionResolver::class => function(ContainerInterface $container) {
         return new UserSubscriptionResolver(
-            $container->getIntegration()->getUserRepository(),
             $container[SubscriptionFactoryInterface::class]
         );
     },

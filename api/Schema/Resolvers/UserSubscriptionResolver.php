@@ -2,7 +2,6 @@
 
 namespace Everywhere\Api\Schema\Resolvers;
 
-use Everywhere\Api\Contract\Integration\UserRepositoryInterface;
 use Everywhere\Api\Contract\Schema\SubscriptionFactoryInterface;
 use Everywhere\Api\Integration\Events\UserUpdateEvent;
 use Everywhere\Api\Schema\IDObject;
@@ -11,17 +10,11 @@ use Everywhere\Api\Schema\SubscriptionResolver;
 class UserSubscriptionResolver extends SubscriptionResolver
 {
     /**
-     * @var UserRepositoryInterface
-     */
-    protected $userRepository;
-
-    /**
      * @var SubscriptionFactoryInterface
      */
     protected $subscriptionFactory;
 
     public function __construct(
-        UserRepositoryInterface $userRepository,
         SubscriptionFactoryInterface $subscriptionFactory
     )
     {
@@ -31,7 +24,6 @@ class UserSubscriptionResolver extends SubscriptionResolver
             },
         ]);
 
-        $this->userRepository = $userRepository;
         $this->subscriptionFactory = $subscriptionFactory;
     }
 
