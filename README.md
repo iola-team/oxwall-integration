@@ -1,9 +1,8 @@
-# GraphQL API for Oxwall Messenger App
+# Oxwall Integration for iola Messenger App
 
 ## Install
 - `git clone --recursive https://gitlab.com/thisissparkle/oxwall-integration`
 - `composer install`
 
-## Run
-Use for test [ChromeiQL](https://chrome.google.com/webstore/detail/chromeiql/fkkiamalmpiidkljmicmjfbieiclmeij)
-- `http://ox.loc/everywhere/api/graphql`
+## Test
+- [GraphIQL Feen](https://chrome.google.com/webstore/detail/graphiql-feen/mcbfdonlkfpbfdpimkjilhdneikhfklp) with Server URL `*OXWALL_URL*/everywhere/api/graphql`
