@@ -1,4 +1,4 @@
-# GraphQL API for Oxwall Messenger
+# GraphQL API for Oxwall Messenger App
 
 ## Install
 - `git clone --recursive https://gitlab.com/thisissparkle/oxwall-integration`
