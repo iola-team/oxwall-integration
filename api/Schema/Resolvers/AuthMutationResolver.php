@@ -35,7 +35,9 @@ class AuthMutationResolver extends CompositeResolver
     ) {
         parent::__construct([
             "signUpUser" => [$this, "resolveSignUp"],
-            "signInUser" => [$this, "resolveSignIn"]
+            "signInUser" => [$this, "resolveSignIn"],
+            "sendResetPasswordInstructions" => [$this, "resolveSendResetPasswordInstructions"],
+            "sendEmailVerificationInstructions" => [$this, "resolveSendEmailVerificationInstructions"]
         ]);
 
         $this->authService = $authService;
@@ -76,5 +78,27 @@ class AuthMutationResolver extends CompositeResolver
             "accessToken" => $this->tokenBuilder->build($identity),
             "user" => $identity->userId
         ];
+    }
+
+    public function resolveSendResetPasswordInstructions($root, $args, ContextInterface $context) {
+        $errorCode = $this->userRepository->sendResetPasswordInstructions($args["input"]);
+        $result = ["success" => !$errorCode];
+
+        if ($errorCode) {
+            $result["errorCode"] = $errorCode;
+        }
+
+        return $result;
+    }
+
+    public function resolveSendEmailVerificationInstructions($root, $args, ContextInterface $context) {
+        $errorCode = $this->userRepository->sendEmailVerificationInstructions($args["input"]);
+        $result = ["success" => !$errorCode];
+
+        if ($errorCode) {
+            $result["errorCode"] = $errorCode;
+        }
+
+        return $result;
     }
 }

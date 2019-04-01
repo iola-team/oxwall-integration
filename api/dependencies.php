@@ -76,6 +76,7 @@ use GraphQL\Type\Schema;
 use Overblog\DataLoader\Promise\Adapter\Webonyx\GraphQL\SyncPromiseAdapter;
 use Everywhere\Api\Schema\Resolvers\QueryResolver;
 use Everywhere\Api\Schema\Resolvers\UserResolver;
+use Everywhere\Api\Schema\Resolvers\UserSubscriptionResolver;
 use Everywhere\Api\Schema\Resolvers\PhotoResolver;
 use Everywhere\Api\Schema\Resolvers\CommentResolver;
 use Everywhere\Api\Schema\Resolvers\FriendMutationResolver;
@@ -105,17 +106,17 @@ return [
 
     ServerConfig::class => function(ContainerInterface $container) {
         $allValidationRules = DocumentValidator::allRules();
-        
+
         /**
          * Disable unused variables validation.
          * When a variable is used in a query only for `@client` properties,
          * the server complains about unused variable,
          * since `apollo-client` strips all `@client` properties from the result query.
-         * 
+         *
          * TODO:
          * The issue first appered in `SearchResultHistoryQuery`.
          * Check if it still the case after updating apollo-client to 2.5.0+
-         * 
+         *
          */
         unset($allValidationRules[NoUnusedVariables::class]);
 
@@ -336,6 +337,12 @@ return [
 
             $container[DataLoaderFactory::class],
             $container[ConnectionFactoryInterface::class]
+        );
+    },
+
+    UserSubscriptionResolver::class => function(ContainerInterface $container) {
+        return new UserSubscriptionResolver(
+            $container[SubscriptionFactoryInterface::class]
         );
     },
 

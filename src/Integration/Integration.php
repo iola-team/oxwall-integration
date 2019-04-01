@@ -11,6 +11,7 @@ namespace Everywhere\Oxwall\Integration;
 use Everywhere\Api\Contract\App\EventManagerInterface;
 use Everywhere\Api\Contract\Integration\SubscriptionRepositoryInterface;
 use Everywhere\Api\Contract\Integration\IntegrationInterface;
+use Everywhere\Api\Integration\Events\UserUpdateEvent;
 use Everywhere\Api\Integration\Events\MessageAddedEvent;
 use Everywhere\Api\Integration\Events\MessageUpdatedEvent;
 use Everywhere\Api\Integration\Events\CommentAddedEvent;
@@ -24,6 +25,8 @@ use Everywhere\Oxwall\Integration\Repositories\UserRepository;
 use Everywhere\Oxwall\Integration\Repositories\PhotoRepository;
 use Everywhere\Oxwall\Integration\Repositories\CommentRepository;
 use Everywhere\Oxwall\Integration\Repositories\FriendshipRepository;
+use OW;
+use OW_Event;
 
 class Integration implements IntegrationInterface
 {
@@ -31,12 +34,33 @@ class Integration implements IntegrationInterface
 
     public function __construct()
     {
-        $this->eventManager = \OW::getEventManager();
+        $this->eventManager = OW::getEventManager();
     }
 
     public function init(EventManagerInterface $events)
     {
-        $this->eventManager->bind("mailbox.send_message", function(\OW_Event $event) use($events) {
+        $this->eventManager->bind("base.on_user_approve", function(OW_Event $event) use($events) {
+            $params = $event->getParams();
+
+            $events->emit(
+                new UserUpdateEvent($params["userId"])
+            );
+        });
+
+        $this->eventManager->bind("base.before_save_user", function(OW_Event $event) use($events) {
+            $params = $event->getParams();
+
+            /**
+             * @var $userDto \BOL_User
+             */
+            $userDto = $params["dto"];
+
+            $events->emit(
+                new UserUpdateEvent($userDto->id)
+            );
+        });
+
+        $this->eventManager->bind("mailbox.send_message", function(OW_Event $event) use($events) {
             /**
              * @var $messageDto \MAILBOX_BOL_Message
              */
@@ -47,7 +71,7 @@ class Integration implements IntegrationInterface
             );
         });
 
-        $this->eventManager->bind("mailbox.onMessageUpdate", function(\OW_Event $event) use($events) {
+        $this->eventManager->bind("mailbox.onMessageUpdate", function(OW_Event $event) use($events) {
             $params = $event->getParams();
 
             $events->emit(
@@ -55,7 +79,7 @@ class Integration implements IntegrationInterface
             );
         });
 
-        $this->eventManager->bind("base_add_comment", function(\OW_Event $event) use($events) {
+        $this->eventManager->bind("base_add_comment", function(OW_Event $event) use($events) {
             $params = $event->getParams();
 
             $events->emit(
@@ -66,7 +90,7 @@ class Integration implements IntegrationInterface
 
 
     public static function getTmpDir() {
-        return \OW::getPluginManager()->getPlugin('esapi')->getPluginFilesDir();
+        return OW::getPluginManager()->getPlugin('esapi')->getPluginFilesDir();
     }
 
     public function getConfigRepository()

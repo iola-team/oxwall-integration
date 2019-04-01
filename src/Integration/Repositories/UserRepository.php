@@ -56,6 +56,14 @@ class UserRepository implements UserRepositoryInterface
         $user->name = $this->userService->getDisplayName($userDto->id);
         $user->email = $userDto->email;
         $user->activityTime = (int) $userDto->activityStamp;
+        $user->isEmailVerified = $userDto->emailVerify;
+
+        $event = new \OW_Event(\OW_EventManager::ON_USER_REGISTER, [
+            "method" => "iola",
+            "userId" => $user->id,
+            "params" => $args
+        ]);
+        OW::getEventManager()->trigger($event);
 
         return $user;
     }
@@ -73,18 +81,69 @@ class UserRepository implements UserRepositoryInterface
         return $result->getUserId();
     }
 
+    public function sendResetPasswordInstructions($input)
+    {
+        $errorCode = null;
+        $language = OW::getLanguage();
+
+        try {
+            $this->userService->processResetForm($input);
+        } catch (\LogicException $error) {
+            switch ($error->getMessage()) {
+                case $language->text("base", "forgot_password_no_user_error_message"):
+                    $errorCode = "ERROR_NOT_FOUND";
+                    break;
+                case $language->text("base", "forgot_password_request_exists_error_message"):
+                    $errorCode = "ERROR_DUPLICATE";
+                    break;
+                default:
+                    $errorCode = "ERROR_COMMON";
+                    break;
+            }
+        } catch (\Exception $error) {
+            // Possible mail send error
+            $errorCode = "ERROR_COMMON";
+        }
+
+        return $errorCode;
+    }
+
+    public function sendEmailVerificationInstructions($input)
+    {
+        $errorCode = null;
+
+        try {
+            /**
+             * @var $userDto \BOL_User
+             */
+            $userDto = $this->userService->findByEmail($input["email"]);
+
+            if ($userDto) {
+                if (!$userDto->emailVerify) {
+                    \BOL_EmailVerifyService::getInstance()->sendUserVerificationMail($userDto);
+                }
+            } else {
+                $errorCode = "ERROR_NOT_FOUND";
+            }
+        } catch (\Exception $error) {
+            // Possible mail send error
+            $errorCode = "ERROR_COMMON";
+        }
+
+        return $errorCode;
+    }
+
     public function findByIds($idList)
     {
         $this->counter++;
 
-        $userDtoList = $this->userService->findUserListByIdList($idList);
-
+        $usersDto = $this->userService->findUserListByIdList($idList);
         $users = [];
 
         /**
          * @var $userDto \BOL_User
          */
-        foreach ($userDtoList as $userDto) {
+        foreach ($usersDto as $userDto) {
             $user = new User($userDto->id);
 
             $user->name = $this->userService->getDisplayName($userDto->id);
@@ -122,7 +181,7 @@ class UserRepository implements UserRepositoryInterface
         // TODO: Refactor the method to use ListType enum ("online", "featured", etc...) instead of separate flags
         if (!empty($args["filter"]["online"])) {
             $onlineList = $this->userService->findOnlineList($args["offset"], $args["count"]);
-            
+
             return array_map($idMapper, $onlineList);
         }
 
@@ -157,6 +216,36 @@ class UserRepository implements UserRepositoryInterface
         }
 
         return $this->userService->count(true);
+    }
+
+    public function getIsApprovedByIds($ids, array $args) {
+        $out = [];
+        $userApproveDao = \BOL_UserApproveDao::getInstance();
+        $unapprovedUserIds = $userApproveDao->findUnapproveStatusForUserList($ids);
+
+        foreach($ids as $userId) {
+            $out[$userId] = !in_array($userId, $unapprovedUserIds);
+        }
+
+        return $out;
+    }
+
+    public function getIsEmailVerifiedByIds($ids, array $args = []) {
+        $out = [];
+
+        // FYI: $example is used to bypass the Oxwall cache (userService->findUserListByIdList)
+        $example = new \OW_Example();
+        $example->andFieldInArray("id", $ids);
+        $usersDto = \BOL_UserDao::getInstance()->findListByExample($example);
+
+        /**
+         * @var $userDto \BOL_User
+         */
+        foreach ($usersDto as $userDto) {
+            $out[$userDto->id] = $userDto->emailVerify;
+        }
+
+        return $out;
     }
 
     public function findPhotos($ids, array $args)

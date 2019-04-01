@@ -27,6 +27,16 @@ class User extends AbstractEntity
     public $activityTime;
 
     /**
+     * @var boolean
+     */
+    public $isApproved;
+
+    /**
+     * @var boolean
+     */
+    public $isEmailVerified;
+
+    /**
      * @var mixed
      */
     public $accountTypeId;

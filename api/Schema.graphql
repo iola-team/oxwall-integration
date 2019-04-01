@@ -12,6 +12,7 @@ scalar Upload
 directive @type(name: String!) on FIELD_DEFINITION
 
 type Subscription {
+    onUserUpdate(userId: ID!): UserUpdatePayload!
     onMessageAdd(chatId: ID, userId: ID): MessageCreatePayload!
     onMessageUpdate(chatId: ID, userId: ID): MessageUpdatePayload!
     onPhotoCommentAdd(photoId: ID!): PhotoCommentCreatePayload!
@@ -57,6 +58,8 @@ interface Connection {
 type Mutation {
     signInUser(input: SignInUserInput!): AuthPayload!
     signUpUser(input: SignUpUserInput!): AuthPayload!
+    sendResetPasswordInstructions(input: ResetPasswordInstructionsInput!): ResetPasswordInstructionsPayload!
+    sendEmailVerificationInstructions(input: EmailVerificationInstructionsInput!): EmailVerificationInstructionsPayload!
 
     addUserAvatar(userId: ID!, file: Upload!): AvatarCreatePayload!
     deleteUserAvatar(id: ID!): AvatarDeletePayload!
@@ -95,11 +98,39 @@ input SignUpUserInput {
   password: String!
 }
 
+input ResetPasswordInstructionsInput {
+  email: String!
+}
+
+input EmailVerificationInstructionsInput {
+  email: String!
+}
+
 type AuthPayload {
     accessToken: String
     user: User
 }
 
+enum ResetPasswordInstructionsErrorCode {
+    COMMON
+    NOT_FOUND
+    DUPLICATE
+}
+
+type ResetPasswordInstructionsPayload {
+    success: Boolean!
+    errorCode: ResetPasswordInstructionsErrorCode
+}
+
+enum EmailVerificationInstructionsErrorCode {
+    COMMON
+    NOT_FOUND
+}
+
+type EmailVerificationInstructionsPayload {
+    success: Boolean!
+    errorCode: EmailVerificationInstructionsErrorCode
+}
 
 
 type ConnectionMetaInfo {
@@ -127,6 +158,8 @@ type User implements Node {
     name: String!
     email: String!
     activityTime: Date!
+    isApproved: Boolean!
+    isEmailVerified: Boolean!
 
     info: UserInfo!
     profile: Profile!
@@ -479,6 +512,10 @@ type MessageUpdatePayload {
     chatEdge: ChatEdge!
     node: Message!
     edge: MessageEdge!
+}
+
+type UserUpdatePayload {
+    user: User!
 }
 
 enum FriendshipStatus {
