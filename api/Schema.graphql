@@ -111,9 +111,9 @@ type AuthPayload {
 }
 
 enum ResetPasswordInstructionsErrorCode {
-    ERROR_COMMON
-    ERROR_NOT_FOUND
-    ERROR_DUPLICATE
+    COMMON
+    NOT_FOUND
+    DUPLICATE
 }
 
 type ResetPasswordInstructionsPayload {
@@ -122,8 +122,8 @@ type ResetPasswordInstructionsPayload {
 }
 
 enum EmailVerificationInstructionsErrorCode {
-    ERROR_COMMON
-    ERROR_NOT_FOUND
+    COMMON
+    NOT_FOUND
 }
 
 type EmailVerificationInstructionsPayload {
