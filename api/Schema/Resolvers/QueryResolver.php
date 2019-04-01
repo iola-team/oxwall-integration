@@ -8,8 +8,9 @@
 
 namespace Everywhere\Api\Schema\Resolvers;
 
-use Everywhere\Api\Contract\Integration\ProfileRepositoryInterface;
+use Everywhere\Api\Contract\Integration\ConfigRepositoryInterface;
 use Everywhere\Api\Contract\Integration\UserRepositoryInterface;
+use Everywhere\Api\Contract\Integration\ProfileRepositoryInterface;
 use Everywhere\Api\Contract\Schema\ConnectionFactoryInterface;
 use Everywhere\Api\Contract\Schema\ContextInterface;
 use Everywhere\Api\Contract\Schema\ObjectResolverInterface;
@@ -25,10 +26,15 @@ class QueryResolver extends CompositeResolver
 {
     public function __construct(
         ConnectionFactoryInterface $connectionFactory,
+        ConfigRepositoryInterface $configRepository,
         UserRepositoryInterface $userRepository,
         ProfileRepositoryInterface $profileRepository
     ) {
         parent::__construct();
+
+        $this->addFieldResolver("config", function($root, $args) use($configRepository) {
+            return $configRepository->getAll($args);
+        });
 
         $this->addFieldResolver("me", function($root, $args, ContextInterface $context) {
             return $context->getViewer()->getUserId();

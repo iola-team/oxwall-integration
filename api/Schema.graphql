@@ -18,6 +18,7 @@ type Subscription {
 }
 
 type Query {
+    config: Config
     me: User
     users(filter: UsersFilterInput = {}, first: Int = 10, after: Cursor): UserConnection!
     accountTypes: [AccountType!]!
@@ -114,6 +115,11 @@ type PageInfo {
 
 input UserMessagesFilterInput {
     unread: Boolean
+}
+
+type Config {
+    emailConfirmIsRequired: Boolean!
+    userApproveIsRequired: Boolean!
 }
 
 type User implements Node {

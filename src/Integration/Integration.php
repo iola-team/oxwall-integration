@@ -15,6 +15,7 @@ use Everywhere\Api\Integration\Events\MessageAddedEvent;
 use Everywhere\Api\Integration\Events\MessageUpdatedEvent;
 use Everywhere\Api\Integration\Events\CommentAddedEvent;
 use Everywhere\Api\Integration\Events\SubscriptionEvent;
+use Everywhere\Oxwall\Integration\Repositories\ConfigRepository;
 use Everywhere\Oxwall\Integration\Repositories\AvatarRepository;
 use Everywhere\Oxwall\Integration\Repositories\ChatRepository;
 use Everywhere\Oxwall\Integration\Repositories\ProfileRepository;
@@ -66,6 +67,11 @@ class Integration implements IntegrationInterface
 
     public static function getTmpDir() {
         return \OW::getPluginManager()->getPlugin('esapi')->getPluginFilesDir();
+    }
+
+    public function getConfigRepository()
+    {
+        return new ConfigRepository();
     }
 
     public function getUserRepository()
