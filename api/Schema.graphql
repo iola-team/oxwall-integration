@@ -118,8 +118,8 @@ input UserMessagesFilterInput {
 }
 
 type Config {
-    emailConfirmIsRequired: Boolean
-    userApproveIsRequired: Boolean
+    emailConfirmIsRequired: Boolean!
+    userApproveIsRequired: Boolean!
 }
 
 type User implements Node {
