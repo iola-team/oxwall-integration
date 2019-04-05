@@ -121,8 +121,14 @@ class ProfileRepository implements ProfileRepositoryInterface
             case \BOL_QuestionService::QUESTION_PRESENTATION_BIRTHDATE:
             case \BOL_QuestionService::QUESTION_PRESENTATION_DATE:
             case \BOL_QuestionService::QUESTION_PRESENTATION_AGE:
-                $minYear = $questionConfigs["year_range"]["from"];
-                $maxYear = $questionConfigs["year_range"]["to"];
+                $currentYear = (int) date("Y");
+                $minYear = isset($questionConfigs["year_range"]["from"])
+                    ? $questionConfigs["year_range"]["from"]
+                    : $currentYear;
+
+                $maxYear = isset($questionConfigs["year_range"]["to"])
+                    ? $questionConfigs["year_range"]["to"]
+                    : $currentYear - 100;
 
                 return [
                     "minDate" => (new \DateTime())->setDate($minYear, 1, 1),
