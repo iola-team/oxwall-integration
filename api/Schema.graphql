@@ -488,7 +488,8 @@ type UserMessagesConnection implements Connection {
 }
 
 input MessageContentInput {
-    text: String,
+    text: String
+    image: String
 }
 
 input MessageInput {
