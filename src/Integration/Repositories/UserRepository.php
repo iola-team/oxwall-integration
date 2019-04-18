@@ -294,7 +294,7 @@ class UserRepository implements UserRepositoryInterface
     {
         $conversationDto = null;
 
-        if (isset($args["id"])) {
+        if (!empty($args["id"])) {
             $conversationDto = $this->conversationService->getConversation($args["id"]);
         }
 
