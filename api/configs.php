@@ -6,7 +6,7 @@ return [
     "displayErrorDetails" => true,
     "schema" => require __DIR__ . '/schema.php',
     "jwt" => [
-        "secret" => "qqreq",
-        "lifeTime" => 6000
+        "secret" => "iola",
+        "lifeTime" => 60 * 60 * 24 * 30 * 12 // One year
     ]
 ];
