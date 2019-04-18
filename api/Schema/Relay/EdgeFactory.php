@@ -90,13 +90,11 @@ class EdgeFactory implements EdgeFactoryInterface
             "after" => null, "before" => null, "at" => null
         ];
 
-
-        $filteredArgs = array_intersect_key($arguments, $paginationArgs);
-
+        $filteredArgs = array_filter(array_intersect_key($arguments, $paginationArgs));
         if (count($filteredArgs) > 1) {
             throw new InvariantViolation(
                 'You can specify only one cursor when creating an edge. The following are provided: '
-                . "`" . implode(array_keys($filteredArgs), '`, `') . "`"
+                . "`" . implode('`, `', array_keys($filteredArgs)) . "`"
             );
         }
 
