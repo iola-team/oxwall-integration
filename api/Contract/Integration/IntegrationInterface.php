@@ -3,13 +3,14 @@
 namespace Everywhere\Api\Contract\Integration;
 
 use Everywhere\Api\Contract\App\EventManagerInterface;
+use Everywhere\Api\Contract\Schema\ViewerInterface;
 
 interface IntegrationInterface
 {
     /**
      * @param EventManagerInterface $eventManager
      */
-    public function init(EventManagerInterface $eventManager);
+    public function init(EventManagerInterface $eventManager, ViewerInterface $viewer);
 
     /**
      * @return ConfigRepositoryInterface

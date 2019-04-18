@@ -23,12 +23,6 @@ class Server implements ServerInterface
 
     public function __construct($baseUrl, IntegrationInterface $integration)
     {
-        /**
-         * There are a lot of nesting invocation in `graphql` schema parsing.
-         * So, have to increase this `xdebug` config.
-         */
-        ini_set('xdebug.max_nesting_level', 200);
-
         $this->baseUrl = $baseUrl;
         $this->integration = $integration;
     }
@@ -45,6 +39,10 @@ class Server implements ServerInterface
         );
 
         require __DIR__ . '/routes.php';
+
+        /**
+         * TODO: Think of moving init phase somewhere where viewer id is already known.
+         */
         require __DIR__ . '/init.php';
 
         $this->app = $app;

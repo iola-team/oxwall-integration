@@ -39,4 +39,10 @@ foreach ($exceptionsKeys as $exceptionKey) {
 $rootRoute = new RootRoute("everywhere-api", "everywhere/api");
 \OW::getRouter()->addRoute($rootRoute);
 
-App::getInstance()->init();
+/**
+ * Init Application
+ */
+\OW::getEventManager()->bind(\OW_EventManager::ON_PLUGINS_INIT, function() {
+    App::getInstance()->init();
+});
+
