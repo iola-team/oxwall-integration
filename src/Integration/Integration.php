@@ -27,6 +27,7 @@ use Everywhere\Oxwall\Integration\Repositories\CommentRepository;
 use Everywhere\Oxwall\Integration\Repositories\FriendshipRepository;
 use OW;
 use OW_Event;
+use Everywhere\Api\Contract\Schema\ViewerInterface;
 
 class Integration implements IntegrationInterface
 {
@@ -37,7 +38,7 @@ class Integration implements IntegrationInterface
         $this->eventManager = OW::getEventManager();
     }
 
-    public function init(EventManagerInterface $events)
+    public function init(EventManagerInterface $events, ViewerInterface $viewer)
     {
         $this->eventManager->bind("base.on_user_approve", function(OW_Event $event) use($events) {
             $params = $event->getParams();
@@ -86,6 +87,23 @@ class Integration implements IntegrationInterface
                 new CommentAddedEvent($params["commentId"])
             );
         });
+
+        /**
+         * Add SQL WHERE condition to all user queries to hide currently logged user.
+         * 
+         * TODO: Find a way to somehow move this logic to UserRepository
+         */
+        $this->eventManager->bind(
+            \BOL_UserService::EVENT_USER_QUERY_FILTER,
+            function(\BASE_CLASS_QueryBuilderEvent $event) use($viewer) {
+                $params = $event->getParams();
+                $userId = $viewer->getUserId();
+                $userTable = $params["tables"][\BASE_CLASS_QueryBuilderEvent::TABLE_USER];
+                $userField = $params["fields"][\BASE_CLASS_QueryBuilderEvent::FIELD_USER_ID];
+
+                $event->addWhere("{$userTable}.{$userField} <> $userId");
+            }
+        );
     }
 
 
