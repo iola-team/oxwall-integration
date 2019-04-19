@@ -174,8 +174,12 @@ class UserRepository implements UserRepositoryInterface
             $searchFields["email"] = $args["filter"]["email"];
         }
 
-        $idMapper = function ($featuredUser) {
-            return $featuredUser->id;
+        if (!empty($searchFields)) {
+            return $this->userService->findUserIdListByQuestionValues($searchFields, $args["offset"], $args["count"]);
+        }
+
+        $idMapper = function ($user) {
+            return $user->id;
         };
 
         // TODO: Refactor the method to use ListType enum ("online", "featured", etc...) instead of separate flags
@@ -191,7 +195,7 @@ class UserRepository implements UserRepositoryInterface
             return array_map($idMapper, $featuredUsers);
         }
 
-        return $this->userService->findUserIdListByQuestionValues($searchFields, $args["offset"], $args["count"]);
+        return $this->userService->findLatestUserIdsList($args["offset"], $args["count"]);
     }
 
     public function countAll(array $args)

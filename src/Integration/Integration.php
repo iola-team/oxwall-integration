@@ -96,6 +96,10 @@ class Integration implements IntegrationInterface
         $this->eventManager->bind(
             \BOL_UserService::EVENT_USER_QUERY_FILTER,
             function(\BASE_CLASS_QueryBuilderEvent $event) use($viewer) {
+                if (!$viewer->isAuthenticated()) {
+                    return;
+                }
+
                 $params = $event->getParams();
                 $userId = $viewer->getUserId();
                 $userTable = $params["tables"][\BASE_CLASS_QueryBuilderEvent::TABLE_USER];
