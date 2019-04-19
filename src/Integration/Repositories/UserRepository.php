@@ -161,7 +161,7 @@ class UserRepository implements UserRepositoryInterface
     {
         $searchFields = [];
 
-        if (isset($args["filter"]["ids"])) {
+        if (!empty($args["filter"]["ids"])) {
             return $this->userService->findUserIdListByIdList($args["filter"]["ids"]);
         }
 
@@ -200,22 +200,31 @@ class UserRepository implements UserRepositoryInterface
 
     public function countAll(array $args)
     {
-        if (isset($args["filter"]["ids"])) {
+        if (!empty($args["filter"]["ids"])) {
             $existingUserIds = $this->userService->findUserIdListByIdList($args["filter"]["ids"]);
 
             return count($existingUserIds);
         }
 
-        if (isset($args["email"]) && !empty($args["email"])) {
-            return $this->userService->isExistEmail($args["email"]) ? 1 : 0;
+        if (!empty($args["filter"]["search"])) {
+            $displayNameField = OW::getConfig()->getValue("base", "display_name_question");
+            $searchFields[$displayNameField] = $args["filter"]["search"];
+        }
+
+        if (!empty($args["filter"]["email"])) {
+            $searchFields["email"] = $args["filter"]["email"];
+        }
+
+        if (!empty($searchFields)) {
+            return $this->userService->countUsersByQuestionValues($searchFields, $args["offset"], $args["count"]);
         }
 
         // TODO: Refactor the method to use ListType enum ("online", "featured", etc...) instead of separate flags
-        if (isset($args["featured"]) && $args["featured"]) {
+        if (!empty($args["filter"]["featured"])) {
             return $this->userService->countFeatured();
         }
 
-        if (isset($args["online"]) && $args["online"]) {
+        if (!empty($args["filter"]["online"])) {
             return $this->userService->countOnline();
         }
 
