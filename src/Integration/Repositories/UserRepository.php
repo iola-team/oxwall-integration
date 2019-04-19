@@ -44,11 +44,11 @@ class UserRepository implements UserRepositoryInterface
 
     public function create($args)
     {
-        $displayNameValue = $this->convertDisplayName($args["name"]);
+        $username = $this->convertDisplayName($args["name"]);
         $displayNameField = OW::getConfig()->getValue("base", "display_name_question");
-        $questionsData = [$displayNameField => $displayNameValue];
+        $questionsData = [$displayNameField => $args["name"]];
 
-        $userDto = $this->userService->createUser($displayNameValue, $args["password"], $args["email"]);
+        $userDto = $this->userService->createUser($username, $args["password"], $args["email"]);
         \BOL_QuestionService::getInstance()->saveQuestionsData($questionsData, $userDto->id);
 
         $user = new User();
@@ -202,16 +202,16 @@ class UserRepository implements UserRepositoryInterface
             return count($existingUserIds);
         }
 
-        if (isset($args["email"]) && !empty($args["email"])) {
-            return $this->userService->isExistEmail($args["email"]) ? 1 : 0;
+        if (!empty($args["filter"]["email"])) {
+            return $this->userService->isExistEmail($args["filter"]["email"]) ? 1 : 0;
         }
 
         // TODO: Refactor the method to use ListType enum ("online", "featured", etc...) instead of separate flags
-        if (isset($args["featured"]) && $args["featured"]) {
+        if (!empty($args["filter"]["featured"])) {
             return $this->userService->countFeatured();
         }
 
-        if (isset($args["online"]) && $args["online"]) {
+        if (!empty($args["filter"]["online"])) {
             return $this->userService->countOnline();
         }
 
