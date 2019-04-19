@@ -76,8 +76,8 @@ type Mutation {
 
 input UsersFilterInput {
     ids: [ID!] = []
-    search: String
-    email: String
+    search: String = null
+    email: String = null
     featured: Boolean = false
     online: Boolean = false
 }
