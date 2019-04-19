@@ -200,6 +200,8 @@ class UserRepository implements UserRepositoryInterface
 
     public function countAll(array $args)
     {
+        $searchFields = [];
+
         if (!empty($args["filter"]["ids"])) {
             $existingUserIds = $this->userService->findUserIdListByIdList($args["filter"]["ids"]);
 
@@ -216,7 +218,7 @@ class UserRepository implements UserRepositoryInterface
         }
 
         if (!empty($searchFields)) {
-            return $this->userService->countUsersByQuestionValues($searchFields, $args["offset"], $args["count"]);
+            return $this->userService->countUsersByQuestionValues($searchFields);
         }
 
         // TODO: Refactor the method to use ListType enum ("online", "featured", etc...) instead of separate flags
@@ -228,7 +230,7 @@ class UserRepository implements UserRepositoryInterface
             return $this->userService->countOnline();
         }
 
-        return $this->userService->count(true);
+        return $this->userService->count();
     }
 
     public function getIsApprovedByIds($ids, array $args) {
