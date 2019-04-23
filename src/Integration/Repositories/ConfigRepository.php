@@ -21,8 +21,8 @@ class ConfigRepository implements ConfigRepositoryInterface
     public function getAll($args)
     {
         return [
-            "emailConfirmIsRequired" => $this->owConfig->getValue("base", "confirm_email"),
-            "userApproveIsRequired" => $this->owConfig->getValue("base", "mandatory_user_approve")
+            "emailConfirmIsRequired" => (boolean) $this->owConfig->getValue("base", "confirm_email"),
+            "userApproveIsRequired" => (boolean) $this->owConfig->getValue("base", "mandatory_user_approve")
         ];
     }
 }
