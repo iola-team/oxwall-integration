@@ -39,6 +39,10 @@ class ProfileFieldValueResolver extends EntityResolver
         });
 
         $this->addFieldResolver("data", function(ProfileFieldValue $value) {
+            if (!$value || $value->value === null) {
+                return null;
+            }
+
             return $this->fieldLoader->load($value->fieldId)->then(function(ProfileField $field) use ($value) {
                 return [
                     "presentation" => $field->presentation,
