@@ -91,18 +91,18 @@ class UserRepository implements UserRepositoryInterface
         } catch (\LogicException $error) {
             switch ($error->getMessage()) {
                 case $language->text("base", "forgot_password_no_user_error_message"):
-                    $errorCode = "ERROR_NOT_FOUND";
+                    $errorCode = "NOT_FOUND";
                     break;
                 case $language->text("base", "forgot_password_request_exists_error_message"):
-                    $errorCode = "ERROR_DUPLICATE";
+                    $errorCode = "DUPLICATE";
                     break;
                 default:
-                    $errorCode = "ERROR_COMMON";
+                    $errorCode = "COMMON";
                     break;
             }
         } catch (\Exception $error) {
             // Possible mail send error
-            $errorCode = "ERROR_COMMON";
+            $errorCode = "COMMON";
         }
 
         return $errorCode;
@@ -123,11 +123,11 @@ class UserRepository implements UserRepositoryInterface
                     \BOL_EmailVerifyService::getInstance()->sendUserVerificationMail($userDto);
                 }
             } else {
-                $errorCode = "ERROR_NOT_FOUND";
+                $errorCode = "NOT_FOUND";
             }
         } catch (\Exception $error) {
             // Possible mail send error
-            $errorCode = "ERROR_COMMON";
+            $errorCode = "COMMON";
         }
 
         return $errorCode;
