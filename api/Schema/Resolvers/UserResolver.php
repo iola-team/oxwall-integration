@@ -91,6 +91,10 @@ class UserResolver extends EntityResolver
 
         $this->connectionFactory = $connectionFactory;
 
+        $this->isOnlineLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
+            return $userRepository->getIsOnlineByIds($ids, $args);
+        });
+
         $this->isApprovedLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
             return $userRepository->getIsApprovedByIds($ids, $args);
         });
@@ -132,6 +136,9 @@ class UserResolver extends EntityResolver
     protected function resolveField($user, $fieldName, $args, ContextInterface $context, ResolveInfo $info)
     {
         switch ($fieldName) {
+            case "isOnline":
+                return $this->isOnlineLoader->load($user->id, $args);
+
             case "isApproved":
                 return $this->isApprovedLoader->load($user->id, $args);
 

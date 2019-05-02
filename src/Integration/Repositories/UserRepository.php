@@ -233,6 +233,10 @@ class UserRepository implements UserRepositoryInterface
         return $this->userService->count();
     }
 
+    public function getIsOnlineByIds($ids, array $args = []) {
+        return $this->userService->findOnlineStatusForUserList($ids);
+    }
+
     public function getIsApprovedByIds($ids, array $args) {
         $out = [];
         $userApproveDao = \BOL_UserApproveDao::getInstance();
