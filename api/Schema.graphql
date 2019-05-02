@@ -543,6 +543,7 @@ type Friendship implements Node {
 input UserFriendsFilterInput {
     friendIdIn: [ID!] = []
     friendshipPhaseIn: [FriendshipPhase!] = [ACTIVE]
+    online: Boolean = null
 }
 
 input AddFriendInput {
