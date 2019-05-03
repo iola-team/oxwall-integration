@@ -29,6 +29,11 @@ class User extends AbstractEntity
     /**
      * @var boolean
      */
+    public $isOnline;
+
+    /**
+     * @var boolean
+     */
     public $isApproved;
 
     /**

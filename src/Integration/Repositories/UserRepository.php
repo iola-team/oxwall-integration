@@ -233,7 +233,11 @@ class UserRepository implements UserRepositoryInterface
         return $this->userService->count();
     }
 
-    public function getIsApprovedByIds($ids, array $args) {
+    public function getIsOnlineByIds($ids) {
+        return $this->userService->findOnlineStatusForUserList($ids);
+    }
+
+    public function getIsApprovedByIds($ids) {
         $out = [];
         $userApproveDao = \BOL_UserApproveDao::getInstance();
         $unapprovedUserIds = $userApproveDao->findUnapproveStatusForUserList($ids);
@@ -245,7 +249,7 @@ class UserRepository implements UserRepositoryInterface
         return $out;
     }
 
-    public function getIsEmailVerifiedByIds($ids, array $args = []) {
+    public function getIsEmailVerifiedByIds($ids) {
         $out = [];
 
         // FYI: $example is used to bypass the Oxwall cache (userService->findUserListByIdList)

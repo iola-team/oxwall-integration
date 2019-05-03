@@ -35,6 +35,24 @@ interface UserRepositoryInterface extends AuthRepositoryInterface
     public function countAll(array $args);
 
     /**
+     * @param array $ids
+     * @return array
+     */
+    public function getIsOnlineByIds($ids);
+
+    /**
+     * @param array $ids
+     * @return array
+     */
+    public function getIsApprovedByIds($ids);
+
+    /**
+     * @param array $ids
+     * @return array
+     */
+    public function getIsEmailVerifiedByIds($ids);
+
+    /**
      * @param $ids
      * @param $args
      * @return mixed
