@@ -63,16 +63,27 @@ class FriendshipRepository implements FriendshipRepositoryInterface
     /**
      * TODO: Do not use magic strings for friendship phase - find a way to use constants
      *
-     * @param [type] $select
-     * @param array $phaseIn
-     * @param array $friendIdIn
-     * @return void
+     * @param string $select
+     * @param array $filter
+     * @return array
      */
-    protected function buildSubQueries($select, array $phaseIn, array $friendIdIn)
+    protected function buildSubQueries($select, array $filter)
     {
+        $friendIdIn = $filter["friendIdIn"];
+        $phaseIn = $filter["friendshipPhaseIn"];
+        $online = $filter["online"];
+
         $userQueryParts = \BOL_UserDao::getInstance()->getUserQueryFilter("fr", "friendId");
         $friendQueryParts = \BOL_UserDao::getInstance()->getUserQueryFilter("fr", "userId");
         $tableName = $this->friendshipDao->getTableName();
+
+        if ($online === true) {
+            $onlineTableName = \BOL_UserOnlineDao::getInstance()->getTableName();
+            $onlineJoin = " INNER JOIN `$onlineTableName` AS `online` ON `fr`.`%s` = `online`.`userId` ";
+
+            $userQueryParts["join"] .= sprintf($onlineJoin, "friendId");
+            $friendQueryParts["join"] .= sprintf($onlineJoin, "userId");
+        }
 
         $friendIdInSql = empty($friendIdIn) ? null : $this->dbo->mergeInClause($friendIdIn);
         $pahseToStatus = [
@@ -115,15 +126,14 @@ class FriendshipRepository implements FriendshipRepositoryInterface
      * TODO: Try to find a way to reuse existing methods instead of writing low-level queries
      *
      * @param int $userId
-     * @param string[] $phaseIn
-     * @param string[] $friendIdIn
+     * @param array $filter
      * @param int $offset
      * @param int $count
      * @return \FRIENDS_BOL_Friendship[]
      */
-    protected function findUserFriendshipDtos($userId, array $phaseIn, array $friendIdIn, $offset, $count)
+    protected function findUserFriendshipDtos($userId, array $filter = [], $offset, $count)
     {
-        $queries = $this->buildSubQueries("`fr`.*", $phaseIn, $friendIdIn);
+        $queries = $this->buildSubQueries("`fr`.*", $filter);
         $statusesOrder = $this->dbo->mergeInClause(array_keys($this->statuses));
 
         $fullQuery = 
@@ -155,13 +165,12 @@ class FriendshipRepository implements FriendshipRepositoryInterface
      * TODO: Try to find a way to reuse existing methods instead of writing low-level queries
      *
      * @param int $userId
-     * @param string[] $phaseIn
-     * @param string[] $friendIdIn
+     * @param array $filter
      * @return int
      */
-    protected function countUserFriendship($userId, array $phaseIn, array $friendIdIn)
+    protected function countUserFriendship($userId, array $filter = [])
     {
-        $queries = $this->buildSubQueries("COUNT(`fr`.id) as `count`", $phaseIn, $friendIdIn);
+        $queries = $this->buildSubQueries("COUNT(`fr`.id) as `count`", $filter);
         $fullQuery = "SELECT SUM(`count`) FROM ((" . implode(") UNION ALL (", $queries) . ")) AS unionQuery";
 
         return $this->dbo->queryForColumn(
@@ -178,8 +187,7 @@ class FriendshipRepository implements FriendshipRepositoryInterface
         foreach ($userIds as $userId) {
             $out[$userId] = $this->findUserFriendshipDtos(
                 $userId,
-                $args["filter"]["friendshipPhaseIn"],
-                $args["filter"]["friendIdIn"],
+                $args["filter"],
                 $args["offset"], 
                 $args["count"]
             );
@@ -195,8 +203,7 @@ class FriendshipRepository implements FriendshipRepositoryInterface
         foreach ($userIds as $userId) {
             $out[$userId] = $this->countUserFriendship(
                 $userId, 
-                $args["filter"]["friendshipPhaseIn"],
-                $args["filter"]["friendIdIn"]
+                $args["filter"]
             );
         }
 
