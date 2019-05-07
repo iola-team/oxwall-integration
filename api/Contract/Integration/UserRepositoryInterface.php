@@ -17,6 +17,12 @@ interface UserRepositoryInterface extends AuthRepositoryInterface
     public function create($args);
 
     /**
+     * @param string $userId
+     * @return void
+     */
+    public function trackUserActivity($userId);
+
+    /**
      * @param array $ids
      * @return array<User>
      */

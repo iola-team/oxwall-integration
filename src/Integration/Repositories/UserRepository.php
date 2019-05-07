@@ -4,7 +4,6 @@ namespace Everywhere\Oxwall\Integration\Repositories;
 
 use Everywhere\Api\Contract\Integration\UserRepositoryInterface;
 use Everywhere\Api\Entities\Avatar;
-use Everywhere\Api\Entities\Photo;
 use Everywhere\Api\Entities\User;
 use OW;
 
@@ -66,6 +65,11 @@ class UserRepository implements UserRepositoryInterface
         OW::getEventManager()->trigger($event);
 
         return $user;
+    }
+
+    public function trackUserActivity($userId)
+    {
+        $this->userService->updateActivityStamp($userId, \BOL_UserService::USER_CONTEXT_MOBILE);
     }
 
     public function authenticate($identity, $password)
