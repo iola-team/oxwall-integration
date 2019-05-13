@@ -90,6 +90,7 @@ use Everywhere\Api\Schema\Resolvers\ChatMessagesConnectionResolver;
 use Everywhere\Api\Schema\Resolvers\ChatEdgeResolver;
 use GraphQL\Validator\DocumentValidator;
 use GraphQL\Validator\Rules\NoUnusedVariables;
+use Everywhere\Api\Middleware\SessionMiddleware;
 
 return [
     PromiseAdapter::class => function() {
@@ -300,6 +301,13 @@ return [
     EventSourceInterface::class => function(ContainerInterface $container) {
         return new EventSource(
             $container->getIntegration()->getSubscriptionEventsRepository()
+        );
+    },
+
+    SessionMiddleware::class => function(ContainerInterface $container) {
+        return new SessionMiddleware(
+            $container[AuthenticationServiceInterface::class],
+            $container->getIntegration()->getUserRepository()
         );
     },
 
