@@ -376,10 +376,15 @@ type AvatarCreatePayload implements CreatePayload {
 }
 
 
+enum PhotoSize {
+    SMALL
+    MEDIUM
+    BIG
+}
 
 type Photo implements Node {
     id: ID!
-    url: String!
+    url(size: PhotoSize = MEDIUM): String!
     caption: String
     createdAt: Date!
 

@@ -31,6 +31,12 @@ class PhotoRepository implements PhotoRepositoryInterface
      */
     protected $eventManager;
 
+    protected $photoSizes = [
+        "SMALL" => \PHOTO_BOL_PhotoService::TYPE_PREVIEW,
+        "MEDIUM" => \PHOTO_BOL_PhotoService::TYPE_MAIN,
+        "BIG" => \PHOTO_BOL_PhotoService::TYPE_ORIGINAL
+    ];
+
     public function __construct()
     {
         $this->photoService = \PHOTO_BOL_PhotoService::getInstance();
@@ -75,14 +81,27 @@ class PhotoRepository implements PhotoRepositoryInterface
         $out = [];
 
         foreach ($items as $item) {
+            $createdAt = $item["addDatetime"];
+
             $photo = new Photo($item["id"]);
-            $photo->url = $item["url"];
             $photo->caption = $item["description"];
             $photo->userId = $item["userId"];
-            $createdAt = $item["addDatetime"];
             $photo->createdAt = new \DateTime("@$createdAt");
 
             $out[$photo->id] = $photo;
+        }
+
+        return $out;
+    }
+
+    public function getUrls($photoIds, array $args)
+    {
+        $size = $args["size"];
+        $out = [];
+        foreach ($photoIds as $photoId) {
+            $out[$photoId] = $this->photoService->getPhotoUrlByType(
+                $photoId, $this->photoSizes[$size]
+            );
         }
 
         return $out;
