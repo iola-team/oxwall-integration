@@ -21,6 +21,13 @@ interface PhotoRepositoryInterface
 
     /**
      * @param $ids
+     * @param array $args
+     * @return string[]
+     */
+    public function getUrls($ids, array $args);
+
+    /**
+     * @param $ids
      * @return void
      */
     public function deleteByIds($ids);
@@ -42,7 +49,7 @@ interface PhotoRepositoryInterface
     /**
      * @param $ids
      * @param array $args
-     * @return mixed
+     * @return int[]
      */
     public function countComments($ids, array $args);
 

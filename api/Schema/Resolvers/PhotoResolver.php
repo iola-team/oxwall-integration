@@ -28,63 +28,56 @@ class PhotoResolver extends EntityResolver
      */
     protected $commentsCountsLoader;
 
+    /**
+     * @var DataLoaderInterface
+     */
+    protected $urlLoader;
+
     public function __construct(
         PhotoRepositoryInterface $photoRepository,
         DataLoaderFactoryInterface $loaderFactory,
         ConnectionFactoryInterface $connectionFactory
     ) {
         parent::__construct(
-            $loaderFactory->create(function($ids, $args, $context) use($photoRepository) {
+            $loaderFactory->create(function($ids) use($photoRepository) {
                 return $photoRepository->findByIds($ids);
             })
         );
 
         $this->connectionFactory = $connectionFactory;
-
-        $this->commentsLoader = $loaderFactory->create(function($ids, $args, $context) use($photoRepository) {
+        $this->commentsLoader = $loaderFactory->create(function($ids, $args) use($photoRepository) {
             return $photoRepository->findComments($ids, $args);
         });
 
-        $this->commentsCountsLoader = $loaderFactory->create(function($ids, $args, $context) use($photoRepository) {
+        $this->commentsCountsLoader = $loaderFactory->create(function($ids, $args) use($photoRepository) {
             return $photoRepository->countComments($ids, $args);
         });
+
+        $this->urlLoader = $loaderFactory->create(function($ids, $args) use($photoRepository) {
+            return $photoRepository->getUrls($ids, $args);
+        });
+
+        // Resolvers
 
         $this->addFieldResolver("user", function(Photo $photo) {
             return $photo->userId;
         });
-    }
 
-    /**
-     * @param Photo $photo
-     * @param $fieldName
-     * @param $args
-     * @param ContextInterface $context
-     * @param $info
-     *
-     * @return mixed
-     */
-    protected function resolveField(
-      $photo,
-      $fieldName,
-      $args,
-      ContextInterface $context,
-      ResolveInfo $info
-    ) {
-        switch ($fieldName) {
-            case "comments":
-                return $this->connectionFactory->create(
-                    $photo,
-                    $args,
-                    function($args) use($photo) {
-                        return $this->commentsLoader->load($photo->id, $args);
-                    },
-                    function($args) use($photo) {
-                        return $this->commentsCountsLoader->load($photo->id, $args);
-                    }
-                );
+        $this->addFieldResolver("url", function(Photo $photo, array $args) {
+            return $this->urlLoader->load($photo->id, $args);
+        });
 
-            default:
-                return parent::resolveField($photo, $fieldName, $args, $context, $info);
-        }
+        $this->addFieldResolver("comments", function(Photo $photo, array $args) {
+            return $this->connectionFactory->create(
+                $photo,
+                $args,
+                function($args) use($photo) {
+                    return $this->commentsLoader->load($photo->id, $args);
+                },
+                function($args) use($photo) {
+                    return $this->commentsCountsLoader->load($photo->id, $args);
+                }
+            );
+        });
     }
 }
