@@ -4,40 +4,39 @@ namespace Everywhere\Api\Subscription;
 
 use Everywhere\Api\Contract\App\EventManagerInterface;
 use Everywhere\Api\Contract\Integration\Events\SubscriptionEventInterface;
-use Everywhere\Api\Contract\Schema\ContextInterface;
 use Everywhere\Api\Contract\Subscription\SubscriptionManagerInterface;
-use GraphQL\Deferred;
 use GraphQL\Error\InvariantViolation;
 use GraphQL\Executor\ExecutionResult;
-use GraphQL\Executor\Promise\Adapter\SyncPromise;
-use GraphQL\Executor\Promise\Adapter\SyncPromiseAdapter;
 use GraphQL\Executor\Promise\Promise;
-use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\GraphQL;
 use GraphQL\Type\Schema;
-use Overblog\DataLoader\DataLoader;
+use GraphQL\Server\ServerConfig;
 
 class SubscriptionManager implements SubscriptionManagerInterface
 {
-    protected $eventManager;
+    /**
+     * @var Schema
+     */
     protected $schema;
-    protected $context;
-    protected $promiseAdapter;
+
+    /**
+     * @var EventManagerInterface
+     */
+    protected $eventManager;
+
+    /**
+     * @var ServerConfig
+     */
+    protected $serverConfig;
 
     protected $promises;
     protected $resultQueue;
 
-    public function __construct(
-        EventManagerInterface $eventManager,
-        Schema $schema,
-        ContextInterface $context,
-        SyncPromiseAdapter $promiseAdapter
-    )
+    public function __construct(EventManagerInterface $eventManager, ServerConfig $serverConfig)
     {
-        $this->schema = $schema;
-        $this->context = $context;
         $this->eventManager = $eventManager;
-        $this->promiseAdapter = $promiseAdapter;
+        $this->serverConfig = $serverConfig;
+        $this->promiseAdapter = $serverConfig->getPromiseAdapter();
 
         $this->promises = new \SplObjectStorage();
         $this->resultQueue = new \SplQueue();
@@ -68,11 +67,14 @@ class SubscriptionManager implements SubscriptionManagerInterface
     {
         $subscriptionPromise = GraphQL::promiseToExecute(
             $this->promiseAdapter,
-            $this->schema,
+            $this->serverConfig->getSchema(),
             $query,
             null,
-            $this->context,
-            $variables
+            $this->serverConfig->getContext(),
+            $variables,
+            null,
+            $this->serverConfig->getFieldResolver(),
+            $this->serverConfig->getValidationRules()
         )->adoptedPromise;
 
         $promise = new Promise($subscriptionPromise, $this->promiseAdapter);

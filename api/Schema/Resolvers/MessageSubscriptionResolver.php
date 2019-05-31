@@ -6,7 +6,6 @@ use Everywhere\Api\Contract\Integration\ChatRepositoryInterface;
 use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
 use Everywhere\Api\Contract\Schema\DataLoaderInterface;
 use Everywhere\Api\Contract\Schema\SubscriptionFactoryInterface;
-use Everywhere\Api\Contract\Schema\SubscriptionInterface;
 use Everywhere\Api\Entities\Message;
 use Everywhere\Api\Integration\Events\MessageAddedEvent;
 use Everywhere\Api\Integration\Events\MessageUpdatedEvent;
