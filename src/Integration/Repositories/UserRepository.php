@@ -74,9 +74,15 @@ class UserRepository implements UserRepositoryInterface
 
     public function authenticate($identity, $password)
     {
-        OW::getUser()->authenticate(new \BASE_CLASS_StandardAuth($identity, $password));
+        $result = \OW_Auth::getInstance()->authenticate(
+            new \BASE_CLASS_StandardAuth($identity, $password)
+        );
 
-        return OW::getUser()->getId();
+        if (!$result->isValid()) {
+            return null;
+        }
+
+        return $result->getUserId();
     }
 
     public function sendResetPasswordInstructions($input)
