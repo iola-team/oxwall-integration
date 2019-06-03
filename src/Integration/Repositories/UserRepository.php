@@ -69,20 +69,20 @@ class UserRepository implements UserRepositoryInterface
 
     public function trackUserActivity($userId)
     {
+        /**
+         * TODO: find a way to not login user on every requestss
+         * It will be better to use a special auth provider wich will take information from `Viewer` object
+         */
+        OW::getUser()->login($userId);
+
         $this->userService->updateActivityStamp($userId, \BOL_UserService::USER_CONTEXT_MOBILE);
     }
 
     public function authenticate($identity, $password)
     {
-        $result = \OW_Auth::getInstance()->authenticate(
-            new \BASE_CLASS_StandardAuth($identity, $password)
-        );
+        OW::getUser()->authenticate(new \BASE_CLASS_StandardAuth($identity, $password));
 
-        if (!$result->isValid()) {
-            return null;
-        }
-
-        return $result->getUserId();
+        return OW::getUser()->getId();
     }
 
     public function sendResetPasswordInstructions($input)

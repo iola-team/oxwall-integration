@@ -34,6 +34,12 @@ class FriendMutationResolver extends CompositeResolver
 
                 $status = empty($input["status"]) ? $autoStatus : $input["status"];
 
+                if (!$friendship && $status === Friendship::STATUS_IGNORED) {
+                    throw new \InvalidArgumentException(
+                        "New friendship can not be created with status `$status`"
+                    );
+                }
+
                 $friendshipId = $friendship
                     ? $friendshipRepository->updateFriendship($friendship->id, $status)
                     : $friendshipRepository->createFriendship($userId, $friendId, $status);

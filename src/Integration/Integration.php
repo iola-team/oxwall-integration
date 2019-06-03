@@ -149,7 +149,6 @@ class Integration implements IntegrationInterface
         );
     }
 
-
     public static function getTmpDir() {
         return OW::getPluginManager()->getPlugin('esapi')->getPluginFilesDir();
     }
