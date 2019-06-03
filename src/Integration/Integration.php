@@ -32,6 +32,9 @@ use OW;
 use OW_Event;
 use Everywhere\Api\Integration\Events\FriendshipAddedEvent;
 use Everywhere\Api\Integration\Events\FriendshipDeletedEvent;
+use Everywhere\Api\App\Events\BeforeRequestEvent;
+use Everywhere\Oxwall\Authenticator;
+use Everywhere\Oxwall\AuthAdapter;
 
 class Integration implements IntegrationInterface
 {
@@ -42,7 +45,7 @@ class Integration implements IntegrationInterface
         $this->eventManager = OW::getEventManager();
     }
 
-    public function init(EventManagerInterface $events, ViewerInterface $viewer)
+    public function init(EventManagerInterface $events)
     {
         $this->eventManager->bind("base.on_user_approve", function(OW_Event $event) use($events) {
             $params = $event->getParams();
@@ -126,6 +129,29 @@ class Integration implements IntegrationInterface
                 )
             );
         }, 100);
+        
+        /**
+         * API event handlers
+         */
+         $events->addListener(BeforeRequestEvent::EVENT_NAME, function(BeforeRequestEvent $event) {
+             $this->onBeforeRequest($event->getViewer());
+         });
+    }
+
+    public function onBeforeRequest(ViewerInterface $viewer)
+    {
+        /**
+         * Override built in authenticator
+         */
+        \OW_Auth::getInstance()->setAuthenticator(new Authenticator($viewer));
+
+        /**
+         * Trigger user authentication process with always failing auth adapter.
+         * It will reset OW_User internal cahce and read data from our Authenticator
+         * 
+         * TODO: Remove when possible
+         */
+        OW::getUser()->authenticate(new AuthAdapter());
 
         /**
          * Add SQL WHERE condition to all user queries to hide currently logged user.

@@ -92,6 +92,7 @@ use GraphQL\Validator\DocumentValidator;
 use GraphQL\Validator\Rules\NoUnusedVariables;
 use Everywhere\Api\Middleware\SessionMiddleware;
 use Everywhere\Api\Schema\Resolvers\FriendshipSubscriptionResolver;
+use Everywhere\Api\Middleware\RequestTrackingMiddleware;
 
 return [
     PromiseAdapter::class => function() {
@@ -305,6 +306,13 @@ return [
         return new SessionMiddleware(
             $container[AuthenticationServiceInterface::class],
             $container->getIntegration()->getUserRepository()
+        );
+    },
+
+    RequestTrackingMiddleware::class => function(ContainerInterface $container) {
+        return new RequestTrackingMiddleware(
+            $container[ContextInterface::class],
+            $container[EventManagerInterface::class]
         );
     },
 

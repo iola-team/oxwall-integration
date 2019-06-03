@@ -8,7 +8,6 @@ namespace Everywhere\Api;
 use Everywhere\Api\Contract\App\EventManagerInterface;
 use Everywhere\Api\Contract\Integration\EventSourceInterface;
 use Everywhere\Api\Contract\Integration\IntegrationInterface;
-use Everywhere\Api\Contract\Schema\ViewerInterface;
 
 $app;
 
@@ -30,14 +29,7 @@ $eventManager = $container[EventManagerInterface::class];
 $eventManager->useListenerProvider($container[EventSourceInterface::class]);
 
 /**
- * @var $viewer ViewerInterface
- */
-$viewer = $container[ViewerInterface::class];
-
-/**
  * Init integration
- * 
- * TODO: `$viewer->getUserId()` will always return `null` if called directly in `$integration->init`. Think of how it can be fixed.
  */
-$integration->init($eventManager, $viewer);
+$integration->init($eventManager);
 
