@@ -91,6 +91,8 @@ use Everywhere\Api\Schema\Resolvers\ChatEdgeResolver;
 use GraphQL\Validator\DocumentValidator;
 use GraphQL\Validator\Rules\NoUnusedVariables;
 use Everywhere\Api\Middleware\SessionMiddleware;
+use Everywhere\Api\Schema\Resolvers\FriendshipSubscriptionResolver;
+use Everywhere\Api\Middleware\RequestTrackingMiddleware;
 
 return [
     PromiseAdapter::class => function() {
@@ -142,11 +144,7 @@ return [
     },
 
     SubscriptionManagerFactoryInterface::class => function(ContainerInterface $container) {
-        return new SubscriptionManagerFactory(
-            $container[Schema::class],
-            $container[ContextInterface::class],
-            $container[PromiseAdapter::class]
-        );
+        return new SubscriptionManagerFactory($container[ServerConfig::class]);
     },
 
     GraphqlController::class => function(ContainerInterface $container) {
@@ -308,6 +306,13 @@ return [
         return new SessionMiddleware(
             $container[AuthenticationServiceInterface::class],
             $container->getIntegration()->getUserRepository()
+        );
+    },
+
+    RequestTrackingMiddleware::class => function(ContainerInterface $container) {
+        return new RequestTrackingMiddleware(
+            $container[ContextInterface::class],
+            $container[EventManagerInterface::class]
         );
     },
 
@@ -504,6 +509,14 @@ return [
         return new FriendshipResolver(
             $container->getIntegration()->getFriendshipRepository(),
             $container[DataLoaderFactory::class]
+        );
+    },
+
+    FriendshipSubscriptionResolver::class => function(ContainerInterface $container) {
+        return new FriendshipSubscriptionResolver(
+            $container->getIntegration()->getFriendshipRepository(),
+            $container[SubscriptionFactoryInterface::class],
+            $container[Relay\EdgeFactory::class]
         );
     },
 

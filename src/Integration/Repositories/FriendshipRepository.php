@@ -15,9 +15,21 @@ class FriendshipRepository implements FriendshipRepositoryInterface
 
     /**
      *
+     * @var \FRIENDS_BOL_Service
+     */
+    protected $friendsService;
+
+    /**
+     *
      * @var \OW_Database
      */
     protected $dbo;
+
+    /**
+     *
+     * @var \OW_EventManager
+     */
+    protected $eventManager;
 
     protected $statuses = [
         \FRIENDS_BOL_FriendshipDao::VAL_STATUS_PENDING => Friendship::STATUS_PENDING,
@@ -27,8 +39,10 @@ class FriendshipRepository implements FriendshipRepositoryInterface
 
     public function __construct()
     {
+        $this->friendsService = \FRIENDS_BOL_Service::getInstance();
         $this->friendshipDao = \FRIENDS_BOL_FriendshipDao::getInstance();
         $this->dbo = \OW::getDbo();
+        $this->eventManager = \OW::getEventManager();
     }
 
     protected function buildFriendship(\FRIENDS_BOL_Friendship $friendshipDto)
@@ -57,6 +71,17 @@ class FriendshipRepository implements FriendshipRepositoryInterface
 
     public function deleteByIds($ids)
     {
+        $dtoList = $this->friendshipDao->findByIdList($ids);
+
+        foreach ($dtoList as $friendshipDto) {
+            $event = new \OW_Event("friends.cancelled", [
+                "senderId" => $friendshipDto->userId,
+                "recipientId" => $friendshipDto->friendId
+            ]);
+    
+            $this->eventManager->trigger($event);
+        }
+
         $this->friendshipDao->deleteByIdList($ids);
     }
 
@@ -222,22 +247,40 @@ class FriendshipRepository implements FriendshipRepositoryInterface
 
         $this->friendshipDao->save($friendshipDto);
 
+        if ($status === Friendship::STATUS_PENDING) {
+            $this->friendsService->onRequest($userId, $friendId);
+        }
+        
+        if ($status === Friendship::STATUS_ACTIVE) {
+            $this->friendsService->onAccept($userId, $friendId, $friendshipDto);
+        }
+        
         return $friendshipDto->id;
     }
 
     public function updateFriendship($friendshipId, $status)
     {
         $statuses = array_flip($this->statuses);
-
         $friendshipDto = $this->friendshipDao->findById($friendshipId);
-        $friendshipDto->status = $statuses[$status];
 
+        $friendshipDto->status = $statuses[$status];
         $this->friendshipDao->save($friendshipDto);
+
+        if ($status === Friendship::STATUS_ACTIVE) {
+            $this->friendsService->onAccept(
+                $friendshipDto->friendId, $friendshipDto->userId, $friendshipDto
+            );
+        }
 
         return $friendshipDto->id;
     }
 
-    public function findFriendship($userId, $friendId)
+    /**
+     * @param int $userId
+     * @param int $friendId
+     * @return \FRIENDS_BOL_Friendship
+     */
+    protected function findFriendshipDto($userId, $friendId)
     {
         $query = 
             "SELECT * FROM " . $this->friendshipDao->getTableName() . " WHERE 
@@ -245,10 +288,15 @@ class FriendshipRepository implements FriendshipRepositoryInterface
                     OR 
                 (userId=:friendId AND friendId=:userId)";
 
-        $friendshipDto = $this->dbo->queryForObject($query, $this->friendshipDao->getDtoClassName(), [
+        return $this->dbo->queryForObject($query, $this->friendshipDao->getDtoClassName(), [
             "userId" => $userId,
             "friendId" => $friendId
         ]);
+    }
+
+    public function findFriendship($userId, $friendId)
+    {
+        $friendshipDto = $this->findFriendshipDto($userId, $friendId);
 
         return $friendshipDto ? $this->buildFriendship($friendshipDto) : null;
     }

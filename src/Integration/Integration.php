@@ -9,13 +9,15 @@
 namespace Everywhere\Oxwall\Integration;
 
 use Everywhere\Api\Contract\App\EventManagerInterface;
-use Everywhere\Api\Contract\Integration\SubscriptionRepositoryInterface;
 use Everywhere\Api\Contract\Integration\IntegrationInterface;
+use Everywhere\Api\Contract\Schema\ViewerInterface;
+
 use Everywhere\Api\Integration\Events\UserUpdateEvent;
 use Everywhere\Api\Integration\Events\MessageAddedEvent;
 use Everywhere\Api\Integration\Events\MessageUpdatedEvent;
 use Everywhere\Api\Integration\Events\CommentAddedEvent;
-use Everywhere\Api\Integration\Events\SubscriptionEvent;
+use Everywhere\Api\Integration\Events\FriendshipUpdatedEvent;
+
 use Everywhere\Oxwall\Integration\Repositories\ConfigRepository;
 use Everywhere\Oxwall\Integration\Repositories\AvatarRepository;
 use Everywhere\Oxwall\Integration\Repositories\ChatRepository;
@@ -25,9 +27,14 @@ use Everywhere\Oxwall\Integration\Repositories\UserRepository;
 use Everywhere\Oxwall\Integration\Repositories\PhotoRepository;
 use Everywhere\Oxwall\Integration\Repositories\CommentRepository;
 use Everywhere\Oxwall\Integration\Repositories\FriendshipRepository;
+
 use OW;
 use OW_Event;
-use Everywhere\Api\Contract\Schema\ViewerInterface;
+use Everywhere\Api\Integration\Events\FriendshipAddedEvent;
+use Everywhere\Api\Integration\Events\FriendshipDeletedEvent;
+use Everywhere\Api\App\Events\BeforeRequestEvent;
+use Everywhere\Oxwall\Authenticator;
+use Everywhere\Oxwall\AuthAdapter;
 
 class Integration implements IntegrationInterface
 {
@@ -38,7 +45,7 @@ class Integration implements IntegrationInterface
         $this->eventManager = OW::getEventManager();
     }
 
-    public function init(EventManagerInterface $events, ViewerInterface $viewer)
+    public function init(EventManagerInterface $events)
     {
         $this->eventManager->bind("base.on_user_approve", function(OW_Event $event) use($events) {
             $params = $event->getParams();
@@ -88,6 +95,64 @@ class Integration implements IntegrationInterface
             );
         });
 
+        $this->eventManager->bind("friends.request-sent", function(OW_Event $event) use($events) {
+            $params = $event->getParams();
+
+            $events->emit(
+                new FriendshipAddedEvent($params["senderId"], $params["recipientId"])
+            );
+        });
+
+        $this->eventManager->bind("friends.request-accepted", function(OW_Event $event) use($events) {
+            $params = $event->getParams();
+
+            $events->emit(
+                new FriendshipUpdatedEvent($params["senderId"], $params["recipientId"])
+            );
+        });
+
+        $this->eventManager->bind("friends.cancelled", function(OW_Event $event) use($events) {
+            $params = $event->getParams();
+            $friendshipDto = \FRIENDS_BOL_Service::getInstance()->findByRequesterIdAndUserId(
+                $params["senderId"], $params["recipientId"]
+            );
+
+            $events->emit(
+                new FriendshipDeletedEvent(
+                    $params["senderId"],
+                    $params["recipientId"],
+
+                    /**
+                     * TODO: try to get rid of this param to be consistent with other events
+                     */
+                    $friendshipDto->id
+                )
+            );
+        }, 100);
+        
+        /**
+         * API event handlers
+         */
+         $events->addListener(BeforeRequestEvent::EVENT_NAME, function(BeforeRequestEvent $event) {
+             $this->onBeforeRequest($event->getViewer());
+         });
+    }
+
+    public function onBeforeRequest(ViewerInterface $viewer)
+    {
+        /**
+         * Override built in authenticator
+         */
+        \OW_Auth::getInstance()->setAuthenticator(new Authenticator($viewer));
+
+        /**
+         * Trigger user authentication process with always failing auth adapter.
+         * It will reset OW_User internal cahce and read data from our Authenticator
+         * 
+         * TODO: Remove when possible
+         */
+        OW::getUser()->authenticate(new AuthAdapter());
+
         /**
          * Add SQL WHERE condition to all user queries to hide currently logged user.
          * 
@@ -109,7 +174,6 @@ class Integration implements IntegrationInterface
             }
         );
     }
-
 
     public static function getTmpDir() {
         return OW::getPluginManager()->getPlugin('esapi')->getPluginFilesDir();

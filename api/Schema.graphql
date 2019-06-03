@@ -16,6 +16,10 @@ type Subscription {
     onMessageAdd(chatId: ID, userId: ID): MessageCreatePayload!
     onMessageUpdate(chatId: ID, userId: ID): MessageUpdatePayload!
     onPhotoCommentAdd(photoId: ID!): PhotoCommentCreatePayload!
+
+    onFriendshipAdd(userId: ID!): AddFriendPayload!
+    onFriendshipUpdate(userId: ID!): UpdateFirnedshipPayload!
+    onFriendshipDelete(userId: ID!): DeleteFriendPayload!
 }
 
 type Query {
@@ -574,4 +578,10 @@ type DeleteFriendPayload implements DeletePayload {
     deletedId: ID! @type(name: "Friendship")
     user: User!
     friend: User!
+}
+
+type UpdateFirnedshipPayload {
+    user: User!
+    friend: User!
+    friendship: Friendship!
 }

@@ -2,6 +2,7 @@
 
 namespace Everywhere\Api;
 
+use Slim\App;
 use Everywhere\Api\App\Container;
 use Everywhere\Api\Contract\App\EventManagerInterface;
 use Everywhere\Api\Controllers\GraphqlController;
@@ -13,8 +14,8 @@ use Everywhere\Api\Middleware\SubscriptionMiddleware;
 use Everywhere\Api\Middleware\UploadMiddleware;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Slim\App;
 use Everywhere\Api\Middleware\SessionMiddleware;
+use Everywhere\Api\Middleware\RequestTrackingMiddleware;
 
 /**
  * @var $app App
@@ -81,5 +82,6 @@ $app->get("/health", function ($request, $response, $args) {
  */
 
 $app->add($container[SessionMiddleware::class]);
+$app->add($container[RequestTrackingMiddleware::class]);
 $app->add($container[AuthenticationMiddleware::class]);
 $app->add($container[CorsMiddleware::class]);
