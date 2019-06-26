@@ -77,6 +77,8 @@ class ChatRepository implements ChatRepositoryInterface
 
     public function findMessagesByIds($ids)
     {
+        $userService = \BOL_UserService::getInstance();
+
         /**
          * @var $attachmentsByMessagesIds \MAILBOX_BOL_Attachment[]
          */
@@ -98,9 +100,14 @@ class ChatRepository implements ChatRepositoryInterface
                 $image = $this->conversationService->getAttachmentUrl() . $fileName;
             }
 
+            /**
+             * TODO: Optimze to use batch query of senders
+             */
+            $sender = $userService->findUserById($messageDto->senderId);
+
             $message = new Message($messageDto->id);
             $message->status = $messageDto->recipientRead ? Message::STATUS_READ : Message::STATUS_DELIVERED;
-            $message->userId = $messageDto->senderId;
+            $message->userId = $sender ? $sender->id : null;
             $message->chatId = $messageDto->conversationId;
             $message->createdAt = new \DateTime("@" . $messageDto->timeStamp);
             $message->content = [
@@ -117,11 +124,22 @@ class ChatRepository implements ChatRepositoryInterface
 
     public function findChatsParticipantIds($chatIds)
     {
+        $userService = \BOL_UserService::getInstance();
+
         $out = [];
         foreach ($chatIds as $id) {
             $conversationDto = $this->conversationService->getConversation($id);
 
-            $out[$id] = [$conversationDto->initiatorId, $conversationDto->interlocutorId];
+            /**
+             * TODO: Optimze to use batch query of participantss
+             */
+            $initiator = $userService->findUserById($conversationDto->initiatorId);
+            $interlocutor = $userService->findUserById($conversationDto->interlocutorId);
+
+            $out[$id] = array_unique([
+                $initiator ? $initiator->id : null,
+                $interlocutor ? $interlocutor->id : null
+            ]);
         }
 
         return $out;
