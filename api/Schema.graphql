@@ -461,7 +461,7 @@ input ChatMessagesFilterInput {
 type Chat implements Node {
     id: ID!
     user: User!
-    participants: [User!]!
+    participants: [User]!
     messages(filter: ChatMessagesFilterInput, first: Int, after: Cursor, last: Int, before: Cursor): ChatMessagesConnection!
 }
 
@@ -485,7 +485,7 @@ type MessageContent {
 
 type Message implements Node {
     id: ID!
-    user: User!
+    user: User
     chat: Chat!
     status: MessageStatus
     content: MessageContent!
