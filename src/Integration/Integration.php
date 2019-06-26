@@ -152,27 +152,6 @@ class Integration implements IntegrationInterface
          * TODO: Remove when possible
          */
         OW::getUser()->authenticate(new AuthAdapter());
-
-        /**
-         * Add SQL WHERE condition to all user queries to hide currently logged user.
-         * 
-         * TODO: Find a way to somehow move this logic to UserRepository
-         */
-        $this->eventManager->bind(
-            \BOL_UserService::EVENT_USER_QUERY_FILTER,
-            function(\BASE_CLASS_QueryBuilderEvent $event) use($viewer) {
-                if (!$viewer->isAuthenticated()) {
-                    return;
-                }
-
-                $params = $event->getParams();
-                $userId = $viewer->getUserId();
-                $userTable = $params["tables"][\BASE_CLASS_QueryBuilderEvent::TABLE_USER];
-                $userField = $params["fields"][\BASE_CLASS_QueryBuilderEvent::FIELD_USER_ID];
-
-                $event->addWhere("{$userTable}.{$userField} <> $userId");
-            }
-        );
     }
 
     public static function getTmpDir() {
