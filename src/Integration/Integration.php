@@ -27,6 +27,7 @@ use Everywhere\Oxwall\Integration\Repositories\UserRepository;
 use Everywhere\Oxwall\Integration\Repositories\PhotoRepository;
 use Everywhere\Oxwall\Integration\Repositories\CommentRepository;
 use Everywhere\Oxwall\Integration\Repositories\FriendshipRepository;
+use Everywhere\Oxwall\Integration\Repositories\ReportRepository;
 
 use OW;
 use OW_Event;
@@ -201,5 +202,10 @@ class Integration implements IntegrationInterface
     public function getFriendshipRepository()
     {
         return new FriendshipRepository();
+    }
+
+    public function getReportRepository()
+    {
+        return new ReportRepository();
     }
 }

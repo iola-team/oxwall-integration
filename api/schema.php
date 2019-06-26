@@ -36,6 +36,7 @@ use Everywhere\Api\Schema\Resolvers\UserChatsConnectionResolver;
 use Everywhere\Api\Schema\Resolvers\ChatMessagesConnectionResolver;
 use Everywhere\Api\Schema\Resolvers\ChatEdgeResolver;
 use Everywhere\Api\Schema\Resolvers\FriendshipSubscriptionResolver;
+use Everywhere\Api\Schema\Resolvers\ReportMutationResolver;
 
 return [
     "path" => __DIR__ . "/Schema.graphql",
@@ -87,7 +88,8 @@ return [
             PhotoMutationResolver::class,
             ProfileMutationResolver::class,
             MessageMutationResolver::class,
-            FriendMutationResolver::class
+            FriendMutationResolver::class,
+            ReportMutationResolver::class,
         ],
 
         "Subscription" => [

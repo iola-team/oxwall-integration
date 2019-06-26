@@ -93,6 +93,7 @@ use GraphQL\Validator\Rules\NoUnusedVariables;
 use Everywhere\Api\Middleware\SessionMiddleware;
 use Everywhere\Api\Schema\Resolvers\FriendshipSubscriptionResolver;
 use Everywhere\Api\Middleware\RequestTrackingMiddleware;
+use Everywhere\Api\Schema\Resolvers\ReportMutationResolver;
 
 return [
     PromiseAdapter::class => function() {
@@ -554,6 +555,12 @@ return [
     ChatEdgeResolver::class => function(ContainerInterface $container) {
         return new ChatEdgeResolver(
             $container[ConnectionFactoryInterface::class]
+        );
+    },
+
+    ReportMutationResolver::class => function(ContainerInterface $container) {
+        return new ReportMutationResolver(
+            $container->getIntegration()->getReportRepository()
         );
     }
 ];

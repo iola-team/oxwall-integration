@@ -55,4 +55,9 @@ interface IntegrationInterface
      * @return SubscriptionRepositoryInterface
      */
     public function getSubscriptionEventsRepository();
+
+    /**
+     * @return ReportRepositoryInterface
+     */
+    public function getReportRepository();
 }

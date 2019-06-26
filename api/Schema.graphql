@@ -76,6 +76,20 @@ type Mutation {
 
     addFriend(input: AddFriendInput!): AddFriendPayload!
     deleteFriend(input: DeleteFriendInput!): DeleteFriendPayload!
+
+    addReport(input: ReportInput!): Boolean
+}
+
+enum ReportReason {
+    SPAM
+    OFFENCE
+    ILLEGAL
+}
+
+input ReportInput {
+    userId: ID!
+    contentId: ID!
+    reason: ReportReason!
 }
 
 input UsersFilterInput {
