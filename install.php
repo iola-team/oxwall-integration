@@ -23,14 +23,10 @@ $sql = [
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8;"
 ];
 
-foreach ( $sql as $query )
-{
-    try
-    {
+foreach ( $sql as $query ) {
+    try {
         OW::getDbo()->query($query);
-    }
-    catch ( Exception $e )
-    {
+    } catch ( Exception $e ) {
         // Skip...
     }
 }
@@ -61,6 +57,11 @@ OW::getDbo()->update(
         "fromId" => $esapiPlugin->getDto()->getId()
     ]
 );
+
+/**
+ * Apply install patches
+ */
+require_once __DIR__ . "/patches/install.php";
 
 
 

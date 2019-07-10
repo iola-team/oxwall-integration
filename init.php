@@ -1,48 +1,72 @@
 <?php
 
 namespace Everywhere\Oxwall;
+use OW;
+use OW_EventManager;
 
 /**
- * Apply patches to Oxwall classes
+ * Apply init patches
  */
-require_once __DIR__ . "/patches/patch.php";
-require_once __DIR__ . "/vendor/autoload.php";
+require_once __DIR__ . "/patches/init.php";
 
-/**
- * Oxwall classes extension
- */
-$extensionManager = new ExtensionManager([]);
-$extensionManager->init();
-
-/**
- * Redirect exceptions
- */
-$exceptionsKeys = [
-    "base.members_only",
-    "base.splash_screen",
-    "base.password_protected",
-    "base.maintenance_mode",
-    "base.wait_for_approval",
-    "base.suspended_user",
-    "base.email_verify",
-    "base.complete_profile",
-    "base.complete_profile.account_type"
+$requiredPlugins = [
+    "mailbox", "friends"
 ];
 
-foreach ($exceptionsKeys as $exceptionKey) {
-    \OW::getRequestHandler()->addCatchAllRequestsExclude($exceptionKey, RootController::class);
+$isReady = true;
+foreach ($requiredPlugins as $pluginKey) {
+    if (!OW::getPluginManager()->isPluginActive($pluginKey)) {
+        $isReady = false;
+
+        continue;
+    }
 }
 
 /**
- * Routes
+ * Init the plugin if all the requirements are met
  */
-$rootRoute = new RootRoute("everywhere-api", "everywhere/api");
-\OW::getRouter()->addRoute($rootRoute);
+if ($isReady) {
+    require_once __DIR__ . "/vendor/autoload.php";
 
-/**
- * Init Application
- */
-\OW::getEventManager()->bind(\OW_EventManager::ON_PLUGINS_INIT, function() {
-    App::getInstance()->init();
-});
+    /**
+     * Oxwall classes extension
+     */
+    $extensionManager = new ExtensionManager([]);
+    $extensionManager->init();
 
+    /**
+     * Redirect exceptions
+     */
+    $exceptionsKeys = [
+        "base.members_only",
+        "base.splash_screen",
+        "base.password_protected",
+        "base.maintenance_mode",
+        "base.wait_for_approval",
+        "base.suspended_user",
+        "base.email_verify",
+        "base.complete_profile",
+        "base.complete_profile.account_type"
+    ];
+
+    foreach ($exceptionsKeys as $exceptionKey) {
+        OW::getRequestHandler()->addCatchAllRequestsExclude($exceptionKey, RootController::class);
+    }
+
+    /**
+     * Routes
+     */
+    $rootRoute = new RootRoute("everywhere-api", "everywhere/api");
+    OW::getRouter()->addRoute($rootRoute);
+
+    /**
+     * Init Application
+     */
+    OW::getEventManager()->bind(OW_EventManager::ON_PLUGINS_INIT, function() {
+
+        /**
+         * Init iola integration
+         */
+        App::getInstance()->init();
+    });
+}
