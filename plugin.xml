@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <plugin>
-    <name>Everywhere Solutions API</name>
+    <name>iola Backend</name>
     <key>esapi</key>
-    <description>Everywhere Solutions API server</description>
+    <description>Backend for iola application</description>
     <author>Sergey Kambalin</author>
-    <authorEmail>greyexpert@gmail.com</authorEmail>
+    <authorEmail>hello@iola.app</authorEmail>
     <developerKey>4de7d12343ccb157ece55b3ec3feadf5</developerKey>
     <build>1</build>
-    <copyright>(C) 2017 Sergey Kambalin. All rights reserved.</copyright>
-    <license>The BSD License</license>
-    <licenseUrl>http://www.opensource.org/licenses/bsd-license.php</licenseUrl>
+    <copyright>(C) 2019 iola team. All rights reserved.</copyright>
+    <license>OSCL</license>
+    <licenseUrl>https://developers.oxwall.com/store/oscl</licenseUrl>
 </plugin>

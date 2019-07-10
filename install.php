@@ -23,14 +23,20 @@ $sql = [
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8;"
 ];
 
-foreach ( $sql as $query )
-{
-    try
-    {
+/**
+ * Mailbox plugin tweaks
+ */
+if (OW::getPluginManager()->isPluginActive("mailbox")) {
+    /**
+     * Set UTF8 charset to messages content column
+     */
+    $sql[] = "ALTER TABLE `{$dbPrefix}mailbox_message` MODIFY `text` mediumtext CHARACTER SET utf8mb4 NOT NULL;";
+}
+
+foreach ( $sql as $query ) {
+    try {
         OW::getDbo()->query($query);
-    }
-    catch ( Exception $e )
-    {
+    } catch ( Exception $e ) {
         // Skip...
     }
 }
