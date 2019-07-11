@@ -156,7 +156,7 @@ class Integration implements IntegrationInterface
     }
 
     public static function getTmpDir() {
-        return OW::getPluginManager()->getPlugin('esapi')->getPluginFilesDir();
+        return OW::getPluginManager()->getPlugin('iola')->getPluginFilesDir();
     }
 
     public function getConfigRepository()

@@ -25,6 +25,13 @@ foreach ($requiredPlugins as $pluginKey) {
 }
 
 /**
+ * Admin routes
+ */
+OW::getRouter()->addRoute(
+    new OW_Route("iola.admin-settings", "admin/plugins/iola", "IOLA_CTRL_Admin", "index")
+);
+
+/**
  * Init the plugin if all the requirements are met
  */
 if ($isReady) {
@@ -48,7 +55,7 @@ if ($isReady) {
     }
 
     /**
-     * Routes
+     * API route
      */
     OW::getRouter()->addRoute(new ServerRoute("everywhere/api"));
 

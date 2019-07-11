@@ -19,8 +19,8 @@ class SubscriptionRepository implements SubscriptionRepositoryInterface
 
     public function __construct()
     {
-        $this->eventsTable = OW_DB_PREFIX . "esapi_subscription_event";
-        $this->subscriptionsTable = OW_DB_PREFIX . "esapi_subscription";
+        $this->eventsTable = OW_DB_PREFIX . "iola_subscription_event";
+        $this->subscriptionsTable = OW_DB_PREFIX . "iola_subscription";
 
         $this->dbo = \OW::getDbo();
     }
