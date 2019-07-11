@@ -8,8 +8,8 @@ class IOLA_CTRL_Admin extends OW_ActionController
         $build = $plugin->getDto()->build;
         $staticUrl = $plugin->getStaticUrl();
 
-        OW::getDocument()->addScript($staticUrl . "script.js?" . $build);
-        OW::getDocument()->addStyleSheet($staticUrl . "style.css?" . $build);
+        OW::getDocument()->addScript($staticUrl . "iola.js?" . $build);
+        OW::getDocument()->addStyleSheet($staticUrl . "iola.css?" . $build);
     }
 
     public function index()
