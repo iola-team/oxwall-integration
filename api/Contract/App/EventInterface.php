@@ -1,6 +1,6 @@
 <?php
 
-namespace Everywhere\Api\Contract\App;
+namespace Iola\Api\Contract\App;
 
 use League\Event\EventInterface as LeagueEventInterface;
 

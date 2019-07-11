@@ -1,14 +1,12 @@
 <?php
 
-namespace Everywhere\Api\Schema;
+namespace Iola\Api\Schema;
 
-use Everywhere\Api\Contract\App\EventManagerInterface;
-use Everywhere\Api\Contract\Integration\Events\SubscriptionEventInterface;
-use Everywhere\Api\Contract\Schema\SubscriptionInterface;
+use Iola\Api\Contract\App\EventManagerInterface;
+use Iola\Api\Contract\Integration\Events\SubscriptionEventInterface;
+use Iola\Api\Contract\Schema\SubscriptionInterface;
 use GraphQL\Executor\Promise\Adapter\SyncPromise;
 use GraphQL\Executor\Promise\PromiseAdapter;
-use League\Event\ListenerAcceptorInterface;
-use League\Event\ListenerInterface;
 
 class Subscription extends SyncPromise implements SubscriptionInterface
 {

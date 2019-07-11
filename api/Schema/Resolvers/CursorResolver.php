@@ -1,8 +1,8 @@
 <?php
 
-namespace Everywhere\Api\Schema\Resolvers;
+namespace Iola\Api\Schema\Resolvers;
 
-use Everywhere\Api\Contract\Schema\ScalarTypeResolverInterface;
+use Iola\Api\Contract\Schema\ScalarTypeResolverInterface;
 use GraphQL\Error\InvariantViolation;
 use GraphQL\Language\AST\StringValueNode;
 

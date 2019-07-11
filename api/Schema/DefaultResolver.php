@@ -1,14 +1,14 @@
 <?php
 
-namespace Everywhere\Api\Schema;
+namespace Iola\Api\Schema;
 
-use Everywhere\Api\Contract\Schema\ContextInterface;
+use Iola\Api\Contract\Schema\ContextInterface;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Executor\Executor;
-use Everywhere\Api\Contract\Schema\IDFactoryInterface;
+use Iola\Api\Contract\Schema\IDFactoryInterface;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\IDType;
-use Everywhere\Api\Contract\Schema\IDObjectInterface;
+use Iola\Api\Contract\Schema\IDObjectInterface;
 use GraphQL\Executor\Values;
 
 class DefaultResolver extends AbstractResolver

@@ -1,8 +1,8 @@
 <?php
 
-namespace Everywhere\Api\Contract\Subscription;
+namespace Iola\Api\Contract\Subscription;
 
-use Everywhere\Api\Contract\App\EventManagerInterface;
+use Iola\Api\Contract\App\EventManagerInterface;
 
 interface SubscriptionManagerFactoryInterface
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Everywhere\Api\Contract\App;
+namespace Iola\Api\Contract\App;
 
 use Psr\Container\ContainerInterface as PsrContainerInterface;
-use Everywhere\Api\Contract\Integration\IntegrationInterface;
+use Iola\Api\Contract\Integration\IntegrationInterface;
 use Slim\Collection;
 
 interface ContainerInterface extends PsrContainerInterface

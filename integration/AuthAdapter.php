@@ -1,6 +1,9 @@
 <?php
 
-namespace Everywhere\Oxwall;
+namespace Iola\Oxwall;
+
+use OW_AuthResult;
+use OW_AuthAdapter;
 
 /**
  * Oxwall auth adapter wich always return failure result.
@@ -8,10 +11,10 @@ namespace Everywhere\Oxwall;
  * 
  * TODO: remove it when possible
  */
-class AuthAdapter extends \OW_AuthAdapter
+class AuthAdapter extends OW_AuthAdapter
 {
    public function authenticate()
    {
-       return new \OW_AuthResult(\OW_AuthResult::FAILURE);
+       return new OW_AuthResult(OW_AuthResult::FAILURE);
    }
 }

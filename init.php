@@ -1,8 +1,10 @@
 <?php
 
-namespace Everywhere\Oxwall;
-use OW;
-use OW_EventManager;
+use Iola\Oxwall\ServerController;
+use Iola\Oxwall\ServerRoute;
+use Iola\Oxwall\Server;
+
+require_once __DIR__ . "/vendor/autoload.php";
 
 /**
  * Apply init patches
@@ -26,14 +28,6 @@ foreach ($requiredPlugins as $pluginKey) {
  * Init the plugin if all the requirements are met
  */
 if ($isReady) {
-    require_once __DIR__ . "/vendor/autoload.php";
-
-    /**
-     * Oxwall classes extension
-     */
-    $extensionManager = new ExtensionManager([]);
-    $extensionManager->init();
-
     /**
      * Redirect exceptions
      */
@@ -50,14 +44,13 @@ if ($isReady) {
     ];
 
     foreach ($exceptionsKeys as $exceptionKey) {
-        OW::getRequestHandler()->addCatchAllRequestsExclude($exceptionKey, RootController::class);
+        OW::getRequestHandler()->addCatchAllRequestsExclude($exceptionKey, ServerController::class);
     }
 
     /**
      * Routes
      */
-    $rootRoute = new RootRoute("everywhere-api", "everywhere/api");
-    OW::getRouter()->addRoute($rootRoute);
+    OW::getRouter()->addRoute(new ServerRoute("everywhere/api"));
 
     /**
      * Init Application
@@ -67,6 +60,6 @@ if ($isReady) {
         /**
          * Init iola integration
          */
-        App::getInstance()->init();
+        Server::getInstance()->init();
     });
 }

@@ -1,14 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: skambalin
- * Date: 20.10.17
- * Time: 17.31
- */
 
-namespace Everywhere\Api\Entities;
+namespace Iola\Api\Entities;
 
-use Everywhere\Api\Contract\Entities\EntityInterface;
+use Iola\Api\Contract\Entities\EntityInterface;
 
 class AbstractEntity implements EntityInterface
 {

@@ -1,14 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: skambalin
- * Date: 21.10.17
- * Time: 12.57
- */
 
-namespace Everywhere\Api\Schema;
+namespace Iola\Api\Schema;
 
-use Everywhere\Api\Contract\Schema\DataLoaderInterface;
+use Iola\Api\Contract\Schema\DataLoaderInterface;
 use Overblog\DataLoader\DataLoader as OverblogDataLoader;
 
 class DataLoaderDecorator implements DataLoaderInterface

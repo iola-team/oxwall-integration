@@ -1,8 +1,8 @@
 <?php
 
-namespace Everywhere\Api\Schema\Relay;
+namespace Iola\Api\Schema\Relay;
 
-use Everywhere\Api\Contract\Schema\Relay\EdgeFactoryInterface;
+use Iola\Api\Contract\Schema\Relay\EdgeFactoryInterface;
 use GraphQL\Error\InvariantViolation;
 use GraphQL\Executor\Promise\PromiseAdapter;
 

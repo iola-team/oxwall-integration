@@ -1,9 +1,10 @@
 <?php
-namespace Everywhere\Api\Schema\Resolvers;
 
-use Everywhere\Api\Schema\CompositeResolver;
-use Everywhere\Api\Contract\Schema\ConnectionFactoryInterface;
-use Everywhere\Api\Contract\Schema\Relay\EdgeObjectInterface;
+namespace Iola\Api\Schema\Resolvers;
+
+use Iola\Api\Schema\CompositeResolver;
+use Iola\Api\Contract\Schema\ConnectionFactoryInterface;
+use Iola\Api\Contract\Schema\Relay\EdgeObjectInterface;
 
 class ChatEdgeResolver extends CompositeResolver
 {

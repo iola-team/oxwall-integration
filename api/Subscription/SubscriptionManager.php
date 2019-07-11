@@ -1,10 +1,10 @@
 <?php
 
-namespace Everywhere\Api\Subscription;
+namespace Iola\Api\Subscription;
 
-use Everywhere\Api\Contract\App\EventManagerInterface;
-use Everywhere\Api\Contract\Integration\Events\SubscriptionEventInterface;
-use Everywhere\Api\Contract\Subscription\SubscriptionManagerInterface;
+use Iola\Api\Contract\App\EventManagerInterface;
+use Iola\Api\Contract\Integration\Events\SubscriptionEventInterface;
+use Iola\Api\Contract\Subscription\SubscriptionManagerInterface;
 use GraphQL\Error\InvariantViolation;
 use GraphQL\Executor\ExecutionResult;
 use GraphQL\Executor\Promise\Promise;

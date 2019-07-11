@@ -1,9 +1,9 @@
 <?php
 
-namespace Everywhere\Api\Schema\TypeConfigDecorators;
+namespace Iola\Api\Schema\TypeConfigDecorators;
 
-use Everywhere\Api\Contract\Schema\TypeConfigDecoratorInterface;
-use Everywhere\Api\Schema\AbstractTypeConfigDecorator as TypeConfigDecorator;
+use Iola\Api\Contract\Schema\TypeConfigDecoratorInterface;
+use Iola\Api\Schema\AbstractTypeConfigDecorator as TypeConfigDecorator;
 
 class AggregateTypeConfigDecorator extends TypeConfigDecorator
 {

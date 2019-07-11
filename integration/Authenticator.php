@@ -1,12 +1,14 @@
 <?php
 
-namespace Everywhere\Oxwall;
+namespace Iola\Oxwall;
 
-use Everywhere\Api\Contract\Schema\ViewerInterface;
+use Iola\Api\Contract\Schema\ViewerInterface;
+use OW_IAuthenticator;
+use OW_Singleton;
 
-class Authenticator implements \OW_IAuthenticator
+class Authenticator implements OW_IAuthenticator
 {
-    use \OW_Singleton;
+    use OW_Singleton;
 
     /**
      * @var ViewerInterface

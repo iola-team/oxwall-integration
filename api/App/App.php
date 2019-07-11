@@ -1,14 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: skambalin
- * Date: 19.10.17
- * Time: 18.21
- */
 
-namespace Everywhere\Api\App;
+namespace Iola\Api\App;
 
-use Everywhere\Api\Contract\Integration\IntegrationInterface;
+use Iola\Api\Contract\Integration\IntegrationInterface;
 
 class App extends \Slim\App
 {

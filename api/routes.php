@@ -1,21 +1,21 @@
 <?php
 
-namespace Everywhere\Api;
+namespace Iola\Api;
 
 use Slim\App;
-use Everywhere\Api\App\Container;
-use Everywhere\Api\Contract\App\EventManagerInterface;
-use Everywhere\Api\Controllers\GraphqlController;
-use Everywhere\Api\Controllers\SubscriptionController;
-use Everywhere\Api\Integration\Events\MessageUpdatedEvent;
-use Everywhere\Api\Middleware\AuthenticationMiddleware;
-use Everywhere\Api\Middleware\CorsMiddleware;
-use Everywhere\Api\Middleware\SubscriptionMiddleware;
-use Everywhere\Api\Middleware\UploadMiddleware;
+use Iola\Api\App\Container;
+use Iola\Api\Contract\App\EventManagerInterface;
+use Iola\Api\Controllers\GraphqlController;
+use Iola\Api\Controllers\SubscriptionController;
+use Iola\Api\Integration\Events\MessageUpdatedEvent;
+use Iola\Api\Middleware\AuthenticationMiddleware;
+use Iola\Api\Middleware\CorsMiddleware;
+use Iola\Api\Middleware\SubscriptionMiddleware;
+use Iola\Api\Middleware\UploadMiddleware;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Everywhere\Api\Middleware\SessionMiddleware;
-use Everywhere\Api\Middleware\RequestTrackingMiddleware;
+use Iola\Api\Middleware\SessionMiddleware;
+use Iola\Api\Middleware\RequestTrackingMiddleware;
 
 /**
  * @var $app App

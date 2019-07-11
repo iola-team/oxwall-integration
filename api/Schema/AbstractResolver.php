@@ -1,8 +1,8 @@
 <?php
 
-namespace Everywhere\Api\Schema;
+namespace Iola\Api\Schema;
 
-use Everywhere\Api\Contract\Schema\ObjectTypeResolverInterface;
+use Iola\Api\Contract\Schema\ObjectTypeResolverInterface;
 use GraphQL\Utils\Utils;
 
 abstract class AbstractResolver implements ObjectTypeResolverInterface

@@ -1,16 +1,16 @@
 <?php
 
-namespace Everywhere\Api\Schema\Resolvers;
+namespace Iola\Api\Schema\Resolvers;
 
-use Everywhere\Api\Contract\Integration\PhotoRepositoryInterface;
-use Everywhere\Api\Contract\Integration\CommentRepositoryInterface;
-use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
-use Everywhere\Api\Contract\Schema\DataLoaderInterface;
-use Everywhere\Api\Contract\Schema\SubscriptionFactoryInterface;
-use Everywhere\Api\Entities\Comment;
-use Everywhere\Api\Integration\Events\CommentAddedEvent;
-use Everywhere\Api\Schema\IDObject;
-use Everywhere\Api\Schema\SubscriptionResolver;
+use Iola\Api\Contract\Integration\PhotoRepositoryInterface;
+use Iola\Api\Contract\Integration\CommentRepositoryInterface;
+use Iola\Api\Contract\Schema\DataLoaderFactoryInterface;
+use Iola\Api\Contract\Schema\DataLoaderInterface;
+use Iola\Api\Contract\Schema\SubscriptionFactoryInterface;
+use Iola\Api\Entities\Comment;
+use Iola\Api\Integration\Events\CommentAddedEvent;
+use Iola\Api\Schema\IDObject;
+use Iola\Api\Schema\SubscriptionResolver;
 
 class PhotoCommentSubscriptionResolver extends SubscriptionResolver
 {

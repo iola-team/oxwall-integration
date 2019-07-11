@@ -1,9 +1,9 @@
 <?php
 
-namespace Everywhere\Oxwall\Integration\Repositories;
+namespace Iola\Oxwall\Repositories;
 
-use Everywhere\Api\Contract\Integration\AvatarRepositoryInterface;
-use Everywhere\Api\Entities\Avatar;
+use Iola\Api\Contract\Integration\AvatarRepositoryInterface;
+use Iola\Api\Entities\Avatar;
 use Psr\Http\Message\UploadedFileInterface;
 
 class AvatarRepository implements AvatarRepositoryInterface

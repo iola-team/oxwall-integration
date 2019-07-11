@@ -1,6 +1,6 @@
 <?php
 
-namespace Everywhere\Api\Contract;
+namespace Iola\Api\Contract;
 
 interface ServerInterface
 {

@@ -1,26 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: skambalin
- * Date: 19.10.17
- * Time: 15.16
- */
 
-namespace Everywhere\Api\Schema\Resolvers;
+namespace Iola\Api\Schema\Resolvers;
 
-use Everywhere\Api\Contract\Integration\UserRepositoryInterface;
-use Everywhere\Api\Contract\Schema\ConnectionFactoryInterface;
-use Everywhere\Api\Contract\Schema\ContextInterface;
-use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
-use Everywhere\Api\Contract\Schema\DataLoaderInterface;
-use Everywhere\Api\Entities\User;
-use Everywhere\Api\Schema\EntityResolver;
-use Everywhere\Api\Schema\IDObject;
-use GraphQL\Executor\Promise\Promise;
+use Iola\Api\Contract\Integration\UserRepositoryInterface;
+use Iola\Api\Contract\Schema\ConnectionFactoryInterface;
+use Iola\Api\Contract\Schema\ContextInterface;
+use Iola\Api\Contract\Schema\DataLoaderFactoryInterface;
+use Iola\Api\Contract\Schema\DataLoaderInterface;
+use Iola\Api\Entities\User;
+use Iola\Api\Schema\EntityResolver;
 use GraphQL\Type\Definition\ResolveInfo;
-use Everywhere\Api\Contract\Integration\FriendshipRepositoryInterface;
-use Everywhere\Api\Entities\Friendship;
-use Everywhere\Api\Contract\Schema\IDObjectInterface;
+use Iola\Api\Contract\Integration\FriendshipRepositoryInterface;
 
 class UserResolver extends EntityResolver
 {

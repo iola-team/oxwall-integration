@@ -1,11 +1,11 @@
 <?php
 
-namespace Everywhere\Api\Controllers;
+namespace Iola\Api\Controllers;
 
-use Everywhere\Api\Contract\Integration\EventSourceInterface;
-use Everywhere\Api\Contract\Integration\SubscriptionRepositoryInterface;
-use Everywhere\Api\Contract\Subscription\SubscriptionManagerFactoryInterface;
-use Everywhere\Api\Middleware\ServerEvents\Stream;
+use Iola\Api\Contract\Integration\EventSourceInterface;
+use Iola\Api\Contract\Integration\SubscriptionRepositoryInterface;
+use Iola\Api\Contract\Subscription\SubscriptionManagerFactoryInterface;
+use Iola\Api\Middleware\ServerEvents\Stream;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 

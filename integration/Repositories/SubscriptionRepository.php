@@ -1,11 +1,11 @@
 <?php
 
-namespace Everywhere\Oxwall\Integration\Repositories;
+namespace Iola\Oxwall\Repositories;
 
-use Everywhere\Api\Contract\Integration\Events\SubscriptionEventInterface;
-use Everywhere\Api\Contract\Integration\SubscriptionRepositoryInterface;
-use Everywhere\Api\Entities\Subscription;
-use Everywhere\Api\Entities\SubscriptionEvent;
+use Iola\Api\Contract\Integration\Events\SubscriptionEventInterface;
+use Iola\Api\Contract\Integration\SubscriptionRepositoryInterface;
+use Iola\Api\Entities\Subscription;
+use Iola\Api\Entities\SubscriptionEvent;
 
 class SubscriptionRepository implements SubscriptionRepositoryInterface
 {

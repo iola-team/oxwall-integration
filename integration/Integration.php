@@ -6,36 +6,36 @@
  * Time: 17.37
  */
 
-namespace Everywhere\Oxwall\Integration;
+namespace Iola\Oxwall;
 
-use Everywhere\Api\Contract\App\EventManagerInterface;
-use Everywhere\Api\Contract\Integration\IntegrationInterface;
-use Everywhere\Api\Contract\Schema\ViewerInterface;
+use Iola\Api\Contract\App\EventManagerInterface;
+use Iola\Api\Contract\Integration\IntegrationInterface;
+use Iola\Api\Contract\Schema\ViewerInterface;
 
-use Everywhere\Api\Integration\Events\UserUpdateEvent;
-use Everywhere\Api\Integration\Events\MessageAddedEvent;
-use Everywhere\Api\Integration\Events\MessageUpdatedEvent;
-use Everywhere\Api\Integration\Events\CommentAddedEvent;
-use Everywhere\Api\Integration\Events\FriendshipUpdatedEvent;
+use Iola\Api\Integration\Events\UserUpdateEvent;
+use Iola\Api\Integration\Events\MessageAddedEvent;
+use Iola\Api\Integration\Events\MessageUpdatedEvent;
+use Iola\Api\Integration\Events\CommentAddedEvent;
+use Iola\Api\Integration\Events\FriendshipUpdatedEvent;
 
-use Everywhere\Oxwall\Integration\Repositories\ConfigRepository;
-use Everywhere\Oxwall\Integration\Repositories\AvatarRepository;
-use Everywhere\Oxwall\Integration\Repositories\ChatRepository;
-use Everywhere\Oxwall\Integration\Repositories\ProfileRepository;
-use Everywhere\Oxwall\Integration\Repositories\SubscriptionRepository;
-use Everywhere\Oxwall\Integration\Repositories\UserRepository;
-use Everywhere\Oxwall\Integration\Repositories\PhotoRepository;
-use Everywhere\Oxwall\Integration\Repositories\CommentRepository;
-use Everywhere\Oxwall\Integration\Repositories\FriendshipRepository;
-use Everywhere\Oxwall\Integration\Repositories\ReportRepository;
+use Iola\Oxwall\Repositories\ConfigRepository;
+use Iola\Oxwall\Repositories\AvatarRepository;
+use Iola\Oxwall\Repositories\ChatRepository;
+use Iola\Oxwall\Repositories\ProfileRepository;
+use Iola\Oxwall\Repositories\SubscriptionRepository;
+use Iola\Oxwall\Repositories\UserRepository;
+use Iola\Oxwall\Repositories\PhotoRepository;
+use Iola\Oxwall\Repositories\CommentRepository;
+use Iola\Oxwall\Repositories\FriendshipRepository;
+use Iola\Oxwall\Repositories\ReportRepository;
 
 use OW;
 use OW_Event;
-use Everywhere\Api\Integration\Events\FriendshipAddedEvent;
-use Everywhere\Api\Integration\Events\FriendshipDeletedEvent;
-use Everywhere\Api\App\Events\BeforeRequestEvent;
-use Everywhere\Oxwall\Authenticator;
-use Everywhere\Oxwall\AuthAdapter;
+use Iola\Api\Integration\Events\FriendshipAddedEvent;
+use Iola\Api\Integration\Events\FriendshipDeletedEvent;
+use Iola\Api\App\Events\BeforeRequestEvent;
+use Iola\Oxwall\Authenticator;
+use Iola\Oxwall\AuthAdapter;
 
 class Integration implements IntegrationInterface
 {

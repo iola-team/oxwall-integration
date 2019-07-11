@@ -1,9 +1,9 @@
 <?php
 
-namespace Everywhere\Api\App\Events;
+namespace Iola\Api\App\Events;
 
-use Everywhere\Api\App\Event;
-use Everywhere\Api\Contract\Schema\ViewerInterface;
+use Iola\Api\App\Event;
+use Iola\Api\Contract\Schema\ViewerInterface;
 
 abstract class AbstractRequestEvent extends Event
 {

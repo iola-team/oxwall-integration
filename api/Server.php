@@ -1,11 +1,10 @@
 <?php
 
-namespace Everywhere\Api;
+namespace Iola\Api;
 
-use Everywhere\Api\App\App;
-use Everywhere\Api\Contract\App\EventManagerInterface;
-use Everywhere\Api\Contract\Integration\IntegrationInterface;
-use Everywhere\Api\Contract\ServerInterface;
+use Iola\Api\App\App;
+use Iola\Api\Contract\Integration\IntegrationInterface;
+use Iola\Api\Contract\ServerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;

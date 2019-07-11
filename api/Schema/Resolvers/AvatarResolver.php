@@ -1,11 +1,11 @@
 <?php
 
-namespace Everywhere\Api\Schema\Resolvers;
+namespace Iola\Api\Schema\Resolvers;
 
-use Everywhere\Api\Contract\Integration\AvatarRepositoryInterface;
-use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
-use Everywhere\Api\Entities\Avatar;
-use Everywhere\Api\Schema\EntityResolver;
+use Iola\Api\Contract\Integration\AvatarRepositoryInterface;
+use Iola\Api\Contract\Schema\DataLoaderFactoryInterface;
+use Iola\Api\Entities\Avatar;
+use Iola\Api\Schema\EntityResolver;
 
 class AvatarResolver extends EntityResolver
 {

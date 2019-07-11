@@ -1,8 +1,8 @@
 <?php
 
-namespace Everywhere\Api\Schema;
+namespace Iola\Api\Schema;
 
-use Everywhere\Api\Contract\Schema\IDFactoryInterface;
+use Iola\Api\Contract\Schema\IDFactoryInterface;
 
 class IDFactory implements IDFactoryInterface
 {

@@ -1,13 +1,13 @@
 <?php
 
-namespace Everywhere\Api;
+namespace Iola\Api;
 
 /**
  * @var $app App
  */
-use Everywhere\Api\Contract\App\EventManagerInterface;
-use Everywhere\Api\Contract\Integration\EventSourceInterface;
-use Everywhere\Api\Contract\Integration\IntegrationInterface;
+use Iola\Api\Contract\App\EventManagerInterface;
+use Iola\Api\Contract\Integration\EventSourceInterface;
+use Iola\Api\Contract\Integration\IntegrationInterface;
 
 $app;
 

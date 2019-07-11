@@ -1,10 +1,9 @@
 <?php
 
-namespace Everywhere\Api\Schema\Resolvers;
+namespace Iola\Api\Schema\Resolvers;
 
-use Everywhere\Api\Contract\Integration\AvatarRepositoryInterface;
-use Everywhere\Api\Schema\CompositeResolver;
-use Everywhere\Api\Schema\IDObject;
+use Iola\Api\Contract\Integration\AvatarRepositoryInterface;
+use Iola\Api\Schema\CompositeResolver;
 
 class AvatarMutationResolver extends CompositeResolver
 {

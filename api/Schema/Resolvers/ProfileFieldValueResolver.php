@@ -1,20 +1,13 @@
 <?php
 
-namespace Everywhere\Api\Schema\Resolvers;
+namespace Iola\Api\Schema\Resolvers;
 
-use Everywhere\Api\Contract\Integration\ProfileRepositoryInterface;
-use Everywhere\Api\Contract\Schema\ContextInterface;
-use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
-use Everywhere\Api\Contract\Schema\DataLoaderInterface;
-use Everywhere\Api\Contract\Schema\IDObjectInterface;
-use Everywhere\Api\Entities\ProfileField;
-use Everywhere\Api\Entities\ProfileFieldValue;
-use Everywhere\Api\Schema\CompositeResolver;
-use Everywhere\Api\Schema\EntityResolver;
-use GraphQL\Error\InvariantViolation;
-use GraphQL\Executor\Values;
-use GraphQL\Type\Definition\ResolveInfo;
-use GraphQL\Utils\Utils;
+use Iola\Api\Contract\Integration\ProfileRepositoryInterface;
+use Iola\Api\Contract\Schema\DataLoaderFactoryInterface;
+use Iola\Api\Contract\Schema\DataLoaderInterface;
+use Iola\Api\Entities\ProfileField;
+use Iola\Api\Entities\ProfileFieldValue;
+use Iola\Api\Schema\EntityResolver;
 
 class ProfileFieldValueResolver extends EntityResolver
 {

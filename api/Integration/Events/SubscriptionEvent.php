@@ -1,11 +1,9 @@
 <?php
 
-namespace Everywhere\Api\Integration\Events;
+namespace Iola\Api\Integration\Events;
 
-
-use alroniks\dtms\DateTime;
-use Everywhere\Api\App\Event;
-use Everywhere\Api\Contract\Integration\Events\SubscriptionEventInterface;
+use Iola\Api\App\Event;
+use Iola\Api\Contract\Integration\Events\SubscriptionEventInterface;
 
 class SubscriptionEvent extends Event implements SubscriptionEventInterface
 {

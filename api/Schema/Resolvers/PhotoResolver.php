@@ -1,15 +1,13 @@
 <?php
 
-namespace Everywhere\Api\Schema\Resolvers;
+namespace Iola\Api\Schema\Resolvers;
 
-use Everywhere\Api\Contract\Integration\PhotoRepositoryInterface;
-use Everywhere\Api\Contract\Schema\ConnectionFactoryInterface;
-use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
-use Everywhere\Api\Contract\Schema\DataLoaderInterface;
-use Everywhere\Api\Contract\Schema\ContextInterface;
-use Everywhere\Api\Entities\Photo;
-use Everywhere\Api\Schema\EntityResolver;
-use GraphQL\Type\Definition\ResolveInfo;
+use Iola\Api\Contract\Integration\PhotoRepositoryInterface;
+use Iola\Api\Contract\Schema\ConnectionFactoryInterface;
+use Iola\Api\Contract\Schema\DataLoaderFactoryInterface;
+use Iola\Api\Contract\Schema\DataLoaderInterface;
+use Iola\Api\Entities\Photo;
+use Iola\Api\Schema\EntityResolver;
 
 class PhotoResolver extends EntityResolver
 {

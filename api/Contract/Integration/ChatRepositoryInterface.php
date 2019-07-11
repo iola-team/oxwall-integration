@@ -1,9 +1,9 @@
 <?php
 
-namespace Everywhere\Api\Contract\Integration;
+namespace Iola\Api\Contract\Integration;
 
-use Everywhere\Api\Entities\Chat;
-use Everywhere\Api\Entities\Message;
+use Iola\Api\Entities\Chat;
+use Iola\Api\Entities\Message;
 
 interface ChatRepositoryInterface
 {

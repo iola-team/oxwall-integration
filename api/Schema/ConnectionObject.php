@@ -1,10 +1,9 @@
 <?php
 
-namespace Everywhere\Api\Schema;
+namespace Iola\Api\Schema;
 
-use Everywhere\Api\Contract\Schema\ConnectionObjectInterface;
+use Iola\Api\Contract\Schema\ConnectionObjectInterface;
 use GraphQL\Error\InvariantViolation;
-use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\Utils\Utils;
 
 class ConnectionObject implements ConnectionObjectInterface

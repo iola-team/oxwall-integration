@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: skambalin
- * Date: 19.10.17
- * Time: 18.05
- */
 
-namespace Everywhere\Api\Entities;
+namespace Iola\Api\Entities;
 
 
 class User extends AbstractEntity

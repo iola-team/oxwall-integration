@@ -1,10 +1,9 @@
 <?php
 
-namespace Everywhere\Api\Schema;
+namespace Iola\Api\Schema;
 
-use Everywhere\Api\Contract\App\EventManagerInterface;
-use Everywhere\Api\Contract\Integration\Events\SubscriptionEventInterface;
-use Everywhere\Api\Contract\Schema\SubscriptionFactoryInterface;
+use Iola\Api\Contract\App\EventManagerInterface;
+use Iola\Api\Contract\Schema\SubscriptionFactoryInterface;
 use GraphQL\Executor\Promise\PromiseAdapter;
 
 class SubscriptionFactory implements SubscriptionFactoryInterface

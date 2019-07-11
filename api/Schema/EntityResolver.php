@@ -1,17 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: skambalin
- * Date: 20.10.17
- * Time: 18.05
- */
 
-namespace Everywhere\Api\Schema;
+namespace Iola\Api\Schema;
 
-use Everywhere\Api\Contract\Entities\EntityInterface;
-use Everywhere\Api\Contract\Schema\ContextInterface;
-use Everywhere\Api\Contract\Schema\DataLoaderInterface;
-use Everywhere\Api\Contract\Schema\IDObjectInterface;
+use Iola\Api\Contract\Entities\EntityInterface;
+use Iola\Api\Contract\Schema\ContextInterface;
+use Iola\Api\Contract\Schema\DataLoaderInterface;
+use Iola\Api\Contract\Schema\IDObjectInterface;
 use GraphQL\Error\InvariantViolation;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Utils\Utils;

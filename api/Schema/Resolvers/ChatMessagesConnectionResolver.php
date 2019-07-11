@@ -1,15 +1,15 @@
 <?php
 
-namespace Everywhere\Api\Schema\Resolvers;
+namespace Iola\Api\Schema\Resolvers;
 
-use Everywhere\Api\Schema\Relay\ConnectionResolver;
-use Everywhere\Api\Contract\Schema\Relay\EdgeFactoryInterface;
-use Everywhere\Api\Contract\Schema\ConnectionFactoryInterface;
-use Everywhere\Api\Contract\Schema\ConnectionObjectInterface;
-use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
-use Everywhere\Api\Contract\Schema\DataLoaderInterface;
-use Everywhere\Api\Contract\Schema\IDObjectInterface;
-use Everywhere\Api\Contract\Integration\ChatRepositoryInterface;
+use Iola\Api\Schema\Relay\ConnectionResolver;
+use Iola\Api\Contract\Schema\Relay\EdgeFactoryInterface;
+use Iola\Api\Contract\Schema\ConnectionFactoryInterface;
+use Iola\Api\Contract\Schema\ConnectionObjectInterface;
+use Iola\Api\Contract\Schema\DataLoaderFactoryInterface;
+use Iola\Api\Contract\Schema\DataLoaderInterface;
+use Iola\Api\Contract\Schema\IDObjectInterface;
+use Iola\Api\Contract\Integration\ChatRepositoryInterface;
 
 class ChatMessagesConnectionResolver extends ConnectionResolver
 {

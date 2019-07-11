@@ -1,10 +1,10 @@
 <?php
 
-namespace Everywhere\Oxwall\Integration\Repositories;
+namespace Iola\Oxwall\Repositories;
 
-use Everywhere\Api\Contract\Integration\UserRepositoryInterface;
-use Everywhere\Api\Entities\Avatar;
-use Everywhere\Api\Entities\User;
+use Iola\Api\Contract\Integration\UserRepositoryInterface;
+use Iola\Api\Entities\Avatar;
+use Iola\Api\Entities\User;
 use OW;
 
 class UserRepository implements UserRepositoryInterface

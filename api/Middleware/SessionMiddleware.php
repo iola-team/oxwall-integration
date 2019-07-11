@@ -1,11 +1,11 @@
 <?php
 
-namespace Everywhere\Api\Middleware;
+namespace Iola\Api\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Everywhere\Api\Contract\Integration\UserRepositoryInterface;
-use Everywhere\Api\Contract\Auth\AuthenticationServiceInterface;
+use Iola\Api\Contract\Integration\UserRepositoryInterface;
+use Iola\Api\Contract\Auth\AuthenticationServiceInterface;
 
 /**
  * TODO: Not an optimal solution, try to find a better one

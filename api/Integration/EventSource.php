@@ -1,12 +1,12 @@
 <?php
 
-namespace Everywhere\Api\Integration;
+namespace Iola\Api\Integration;
 
-use Everywhere\Api\App\EventManager;
-use Everywhere\Api\Contract\Integration\Events\SubscriptionEventInterface;
-use Everywhere\Api\Contract\Integration\EventSourceInterface;
-use Everywhere\Api\Contract\Integration\SubscriptionRepositoryInterface;
-use Everywhere\Api\Integration\Events\SubscriptionEvent;
+use Iola\Api\App\EventManager;
+use Iola\Api\Contract\Integration\Events\SubscriptionEventInterface;
+use Iola\Api\Contract\Integration\EventSourceInterface;
+use Iola\Api\Contract\Integration\SubscriptionRepositoryInterface;
+use Iola\Api\Integration\Events\SubscriptionEvent;
 use League\Event\Emitter;
 use League\Event\EventInterface;
 use League\Event\ListenerAcceptor;

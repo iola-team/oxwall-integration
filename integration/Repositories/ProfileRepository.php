@@ -1,12 +1,12 @@
 <?php
 
-namespace Everywhere\Oxwall\Integration\Repositories;
+namespace Iola\Oxwall\Repositories;
 
-use Everywhere\Api\Contract\Integration\ProfileRepositoryInterface;
-use Everywhere\Api\Entities\AccountType;
-use Everywhere\Api\Entities\ProfileField;
-use Everywhere\Api\Entities\ProfileFieldSection;
-use Everywhere\Api\Entities\ProfileFieldValue;
+use Iola\Api\Contract\Integration\ProfileRepositoryInterface;
+use Iola\Api\Entities\AccountType;
+use Iola\Api\Entities\ProfileField;
+use Iola\Api\Entities\ProfileFieldSection;
+use Iola\Api\Entities\ProfileFieldValue;
 
 class ProfileRepository implements ProfileRepositoryInterface
 {

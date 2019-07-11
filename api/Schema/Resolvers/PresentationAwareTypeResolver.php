@@ -1,10 +1,9 @@
 <?php
 
-namespace Everywhere\Api\Schema\Resolvers;
+namespace Iola\Api\Schema\Resolvers;
 
-use Everywhere\Api\Contract\Schema\AbstractTypeResolverInterface;
-use Everywhere\Api\Contract\Schema\ContextInterface;
-use Everywhere\Api\Entities\ProfileField;
+use Iola\Api\Contract\Schema\AbstractTypeResolverInterface;
+use Iola\Api\Contract\Schema\ContextInterface;
 use GraphQL\Executor\Values;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;

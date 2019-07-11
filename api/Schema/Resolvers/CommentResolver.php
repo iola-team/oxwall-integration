@@ -1,10 +1,11 @@
 <?php
-namespace Everywhere\Api\Schema\Resolvers;
 
-use Everywhere\Api\Contract\Integration\CommentRepositoryInterface;
-use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
-use Everywhere\Api\Entities\Comment;
-use Everywhere\Api\Schema\EntityResolver;
+namespace Iola\Api\Schema\Resolvers;
+
+use Iola\Api\Contract\Integration\CommentRepositoryInterface;
+use Iola\Api\Contract\Schema\DataLoaderFactoryInterface;
+use Iola\Api\Entities\Comment;
+use Iola\Api\Schema\EntityResolver;
 
 class CommentResolver extends EntityResolver
 {

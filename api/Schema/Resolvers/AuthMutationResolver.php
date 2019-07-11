@@ -1,14 +1,13 @@
 <?php
 
-namespace Everywhere\Api\Schema\Resolvers;
+namespace Iola\Api\Schema\Resolvers;
 
-use GraphQL\Error\UserError;
-use Everywhere\Api\Contract\Auth\AuthenticationServiceInterface;
-use Everywhere\Api\Contract\Auth\IdentityServiceInterface;
-use Everywhere\Api\Contract\Auth\TokenBuilderInterface;
-use Everywhere\Api\Contract\Schema\ContextInterface;
-use Everywhere\Api\Schema\CompositeResolver;
-use Everywhere\Api\Contract\Integration\UserRepositoryInterface;
+use Iola\Api\Contract\Auth\AuthenticationServiceInterface;
+use Iola\Api\Contract\Auth\IdentityServiceInterface;
+use Iola\Api\Contract\Auth\TokenBuilderInterface;
+use Iola\Api\Contract\Schema\ContextInterface;
+use Iola\Api\Schema\CompositeResolver;
+use Iola\Api\Contract\Integration\UserRepositoryInterface;
 
 class AuthMutationResolver extends CompositeResolver
 {

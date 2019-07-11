@@ -1,12 +1,11 @@
 <?php
 
-namespace Everywhere\Api\Schema\Resolvers;
+namespace Iola\Api\Schema\Resolvers;
 
-use Everywhere\Api\Contract\Integration\PhotoRepositoryInterface;
-use Everywhere\Api\Entities\Photo;
-use Everywhere\Api\Schema\CompositeResolver;
-use Everywhere\Api\Schema\IDObject;
-use Everywhere\Api\Contract\Schema\Relay\EdgeFactoryInterface;
+use Iola\Api\Contract\Integration\PhotoRepositoryInterface;
+use Iola\Api\Entities\Photo;
+use Iola\Api\Schema\CompositeResolver;
+use Iola\Api\Contract\Schema\Relay\EdgeFactoryInterface;
 
 class PhotoMutationResolver extends CompositeResolver
 {

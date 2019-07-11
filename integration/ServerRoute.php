@@ -1,20 +1,23 @@
 <?php
 
-namespace Everywhere\Oxwall;
+namespace Iola\Oxwall;
 
+use UTIL_String;
+use OW_Route;
 
-class RootRoute extends \OW_Route
+class ServerRoute extends OW_Route
 {
     const PATH_ATTR = "path";
+    const ROUTE_NAME = "iola.api";
 
-    public function __construct($routeName, $baseUrl)
+    public function __construct($baseUrl)
     {
-        parent::__construct($routeName, $baseUrl, RootController::class, 'index');
+        parent::__construct(self::ROUTE_NAME, $baseUrl, ServerController::class, 'index');
     }
 
     public function match($uri) {
         $uri = strtoupper(
-            \UTIL_String::removeFirstAndLastSlashes(
+            UTIL_String::removeFirstAndLastSlashes(
                 trim($uri)
             )
         );

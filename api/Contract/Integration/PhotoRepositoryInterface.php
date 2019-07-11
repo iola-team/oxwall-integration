@@ -1,15 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: skambalin
- * Date: 21.10.17
- * Time: 17.03
- */
 
-namespace Everywhere\Api\Contract\Integration;
+namespace Iola\Api\Contract\Integration;
 
-use Everywhere\Api\Entities\Photo;
-use Everywhere\Api\Entities\Comment;
+use Iola\Api\Entities\Photo;
+use Iola\Api\Entities\Comment;
 
 interface PhotoRepositoryInterface
 {

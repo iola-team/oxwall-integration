@@ -1,8 +1,8 @@
 <?php
 
-namespace Everywhere\Api\Contract\Integration;
+namespace Iola\Api\Contract\Integration;
 
-use Everywhere\Api\Contract\App\EventManagerInterface;
+use Iola\Api\Contract\App\EventManagerInterface;
 
 interface IntegrationInterface
 {

@@ -1,13 +1,13 @@
 <?php
 
-namespace Everywhere\Api\Middleware;
+namespace Iola\Api\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Everywhere\Api\Contract\Schema\ContextInterface;
-use Everywhere\Api\Contract\App\EventManagerInterface;
-use Everywhere\Api\App\Events\BeforeRequestEvent;
-use Everywhere\Api\App\Events\AfterRequestEvent;
+use Iola\Api\Contract\Schema\ContextInterface;
+use Iola\Api\Contract\App\EventManagerInterface;
+use Iola\Api\App\Events\BeforeRequestEvent;
+use Iola\Api\App\Events\AfterRequestEvent;
 
 class RequestTrackingMiddleware
 {

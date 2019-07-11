@@ -1,6 +1,6 @@
 <?php
 
-namespace Everywhere\Api\Contract\Schema;
+namespace Iola\Api\Contract\Schema;
 
 interface SubscriptionInterface
 {

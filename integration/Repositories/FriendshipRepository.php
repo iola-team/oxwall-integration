@@ -1,9 +1,9 @@
 <?php
 
-namespace Everywhere\Oxwall\Integration\Repositories;
+namespace Iola\Oxwall\Repositories;
 
-use Everywhere\Api\Contract\Integration\FriendshipRepositoryInterface;
-use Everywhere\Api\Entities\Friendship;
+use Iola\Api\Contract\Integration\FriendshipRepositoryInterface;
+use Iola\Api\Entities\Friendship;
 
 class FriendshipRepository implements FriendshipRepositoryInterface
 {

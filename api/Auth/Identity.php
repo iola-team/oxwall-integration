@@ -1,6 +1,6 @@
 <?php
 
-namespace Everywhere\Api\Auth;
+namespace Iola\Api\Auth;
 
 class Identity
 {

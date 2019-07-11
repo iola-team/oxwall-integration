@@ -1,22 +1,18 @@
 <?php
 
-namespace Everywhere\Api\Schema\TypeConfigDecorators;
+namespace Iola\Api\Schema\TypeConfigDecorators;
 
-use Everywhere\Api\Contract\Schema\IDFactoryInterface;
-use Everywhere\Api\Contract\Schema\IDObjectInterface;
-use Everywhere\Api\Contract\Schema\ObjectTypeResolverInterface;
-use Everywhere\Api\Contract\Schema\TypeConfigDecoratorInterface;
-use Everywhere\Api\Schema\AbstractTypeConfigDecorator as TypeConfigDecorator;
+use Iola\Api\Contract\Schema\IDFactoryInterface;
+use Iola\Api\Contract\Schema\IDObjectInterface;
+use Iola\Api\Contract\Schema\ObjectTypeResolverInterface;
+use Iola\Api\Schema\AbstractTypeConfigDecorator as TypeConfigDecorator;
 use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\Error\InvariantViolation;
-use GraphQL\Language\AST\Node;
 use GraphQL\Language\AST\NodeKind;
 use GraphQL\Type\Definition\IDType;
 use GraphQL\Type\Definition\InputObjectType;
-use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
-use GraphQL\Type\Definition\WrappingType;
 use GraphQL\Utils\Utils;
 
 class ObjectTypeConfigDecorator extends TypeConfigDecorator

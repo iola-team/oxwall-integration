@@ -1,6 +1,6 @@
 <?php
 
-namespace Everywhere\Api\Contract\Schema\Relay;
+namespace Iola\Api\Contract\Schema\Relay;
 
 interface EdgeFactoryInterface
 {
