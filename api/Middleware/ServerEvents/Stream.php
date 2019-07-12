@@ -1,8 +1,6 @@
 <?php
 
-namespace Everywhere\Api\Middleware\ServerEvents;
-
-use Psr\Http\Message\StreamInterface;
+namespace Iola\Api\Middleware\ServerEvents;
 
 class Stream implements EventStreamInterface
 {

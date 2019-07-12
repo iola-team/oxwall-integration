@@ -1,8 +1,8 @@
 <?php
 
-namespace Everywhere\Api\Auth;
+namespace Iola\Api\Auth;
 
-use Everywhere\Api\Contract\Auth\IdentityServiceInterface;
+use Iola\Api\Contract\Auth\IdentityServiceInterface;
 
 class IdentityService implements IdentityServiceInterface
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace Everywhere\Api\Schema\Resolvers;
+namespace Iola\Api\Schema\Resolvers;
 
-use Everywhere\Api\Contract\Integration\ChatRepositoryInterface;
-use Everywhere\Api\Contract\Schema\ConnectionFactoryInterface;
-use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
-use Everywhere\Api\Entities\Chat;
-use Everywhere\Api\Schema\EntityResolver;
+use Iola\Api\Contract\Integration\ChatRepositoryInterface;
+use Iola\Api\Contract\Schema\ConnectionFactoryInterface;
+use Iola\Api\Contract\Schema\DataLoaderFactoryInterface;
+use Iola\Api\Entities\Chat;
+use Iola\Api\Schema\EntityResolver;
 
 class ChatResolver extends EntityResolver
 {

@@ -1,26 +1,14 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: skambalin
- * Date: 19.10.17
- * Time: 15.16
- */
 
-namespace Everywhere\Api\Schema\Resolvers;
+namespace Iola\Api\Schema\Resolvers;
 
-use Everywhere\Api\Contract\Integration\ConfigRepositoryInterface;
-use Everywhere\Api\Contract\Integration\UserRepositoryInterface;
-use Everywhere\Api\Contract\Integration\ProfileRepositoryInterface;
-use Everywhere\Api\Contract\Schema\ConnectionFactoryInterface;
-use Everywhere\Api\Contract\Schema\ContextInterface;
-use Everywhere\Api\Contract\Schema\ObjectResolverInterface;
-use Everywhere\Api\Contract\Schema\ResolverInterface;
-use Everywhere\Api\Entities\User;
-use Everywhere\Api\Schema\CompositeResolver;
-use Everywhere\Api\Schema\ConnectionObject;
-use Everywhere\Api\Schema\ConnectionResult;
-use GraphQL\Type\Definition\ResolveInfo;
-use Everywhere\Api\Contract\Schema\IDObjectInterface;
+use Iola\Api\Contract\Integration\ConfigRepositoryInterface;
+use Iola\Api\Contract\Integration\UserRepositoryInterface;
+use Iola\Api\Contract\Integration\ProfileRepositoryInterface;
+use Iola\Api\Contract\Schema\ConnectionFactoryInterface;
+use Iola\Api\Contract\Schema\ContextInterface;
+use Iola\Api\Schema\CompositeResolver;
+use Iola\Api\Contract\Schema\IDObjectInterface;
 
 class QueryResolver extends CompositeResolver
 {

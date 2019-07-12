@@ -1,6 +1,6 @@
 <?php
 
-namespace Everywhere\Api\Entities;
+namespace Iola\Api\Entities;
 
 class Subscription extends AbstractEntity
 {

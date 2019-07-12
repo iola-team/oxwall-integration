@@ -1,8 +1,8 @@
 <?php
-namespace Everywhere\Oxwall\Integration\Repositories;
+namespace Iola\Oxwall\Repositories;
 
-use Everywhere\Api\Contract\Integration\CommentRepositoryInterface;
-use Everywhere\Api\Entities\Comment;
+use Iola\Api\Contract\Integration\CommentRepositoryInterface;
+use Iola\Api\Entities\Comment;
 
 class CommentRepository implements CommentRepositoryInterface
 {

@@ -1,12 +1,11 @@
 <?php
 
-namespace Everywhere\Api\Schema;
+namespace Iola\Api\Schema;
 
-use Everywhere\Api\Contract\App\EventManagerInterface;
-use Everywhere\Api\Contract\Integration\Events\SubscriptionEventInterface;
-use Everywhere\Api\Contract\Schema\ContextInterface;
-use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
-use Everywhere\Api\Contract\Schema\IDFactoryInterface;
+use Iola\Api\Contract\App\EventManagerInterface;
+use Iola\Api\Contract\Integration\Events\SubscriptionEventInterface;
+use Iola\Api\Contract\Schema\ContextInterface;
+use Iola\Api\Contract\Schema\DataLoaderFactoryInterface;
 use GraphQL\Executor\Promise\PromiseAdapter;
 use Overblog\DataLoader\DataLoader;
 use Overblog\PromiseAdapter\Adapter\WebonyxGraphQLSyncPromiseAdapter;

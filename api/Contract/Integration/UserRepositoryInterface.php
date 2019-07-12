@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: skambalin
- * Date: 19.10.17
- * Time: 16.24
- */
 
-namespace Everywhere\Api\Contract\Integration;
+namespace Iola\Api\Contract\Integration;
 
 interface UserRepositoryInterface extends AuthRepositoryInterface
 {

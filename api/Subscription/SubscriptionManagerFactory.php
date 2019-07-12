@@ -1,10 +1,10 @@
 <?php
 
-namespace Everywhere\Api\Subscription;
+namespace Iola\Api\Subscription;
 
-use Everywhere\Api\Contract\App\EventManagerInterface;
-use Everywhere\Api\Contract\Schema\ContextInterface;
-use Everywhere\Api\Contract\Subscription\SubscriptionManagerFactoryInterface;
+use Iola\Api\Contract\App\EventManagerInterface;
+use Iola\Api\Contract\Schema\ContextInterface;
+use Iola\Api\Contract\Subscription\SubscriptionManagerFactoryInterface;
 use GraphQL\Server\ServerConfig;
 
 class SubscriptionManagerFactory implements SubscriptionManagerFactoryInterface

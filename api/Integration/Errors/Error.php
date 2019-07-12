@@ -1,8 +1,8 @@
 <?php
 
-namespace Everywhere\Api\Integration\Errors;
+namespace Iola\Api\Integration\Errors;
 
-use Everywhere\Api\Contract\Integration\Errors\ErrorInterface;
+use Iola\Api\Contract\Integration\Errors\ErrorInterface;
 use GraphQL\Error\UserError;
 
 class Error extends UserError implements ErrorInterface

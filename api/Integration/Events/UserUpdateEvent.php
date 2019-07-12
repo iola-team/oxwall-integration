@@ -1,6 +1,6 @@
 <?php
 
-namespace Everywhere\Api\Integration\Events;
+namespace Iola\Api\Integration\Events;
 
 class UserUpdateEvent extends SubscriptionEvent
 {

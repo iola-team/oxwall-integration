@@ -1,6 +1,6 @@
 <?php
 
-namespace Everywhere\Api\Middleware;
+namespace Iola\Api\Middleware;
 
 use GraphQL\Error\InvariantViolation;
 use GraphQL\Server\RequestError;
@@ -12,7 +12,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * The code is copied from https://github.com/Ecodev/graphql-upload since we have to support php 5.6, at least for now.
  * TODO: Remove this copy-past when it will be possible
  *
- * @package Everywhere\Api\Middleware
+ * @package Iola\Api\Middleware
  */
 class UploadMiddleware
 {

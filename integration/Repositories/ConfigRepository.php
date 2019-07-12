@@ -1,8 +1,8 @@
 <?php
 
-namespace Everywhere\Oxwall\Integration\Repositories;
+namespace Iola\Oxwall\Repositories;
 
-use Everywhere\Api\Contract\Integration\ConfigRepositoryInterface;
+use Iola\Api\Contract\Integration\ConfigRepositoryInterface;
 use OW;
 use OW_Config;
 

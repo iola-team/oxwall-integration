@@ -1,6 +1,6 @@
 <?php
 
-namespace Everywhere\Api\Middleware\ServerEvents;
+namespace Iola\Api\Middleware\ServerEvents;
 
 use Psr\Http\Message\StreamInterface;
 

@@ -1,17 +1,16 @@
 <?php
 
-namespace Everywhere\Api\Schema\Resolvers;
+namespace Iola\Api\Schema\Resolvers;
 
-use Everywhere\Api\Contract\Integration\ProfileRepositoryInterface;
-use Everywhere\Api\Contract\Schema\ContextInterface;
-use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
-use Everywhere\Api\Contract\Schema\DataLoaderInterface;
-use Everywhere\Api\Contract\Schema\IDFactoryInterface;
-use Everywhere\Api\Entities\ProfileField;
-use Everywhere\Api\Schema\CompositeResolver;
-use Everywhere\Api\Schema\IDObject;
+use Iola\Api\Contract\Integration\ProfileRepositoryInterface;
+use Iola\Api\Contract\Schema\ContextInterface;
+use Iola\Api\Contract\Schema\DataLoaderFactoryInterface;
+use Iola\Api\Contract\Schema\DataLoaderInterface;
+use Iola\Api\Contract\Schema\IDFactoryInterface;
+use Iola\Api\Entities\ProfileField;
+use Iola\Api\Schema\CompositeResolver;
+use Iola\Api\Schema\IDObject;
 use GraphQL\Error\InvariantViolation;
-use GraphQL\Executor\Promise\Promise;
 use GraphQL\Executor\Values;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;

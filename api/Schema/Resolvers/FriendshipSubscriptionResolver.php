@@ -1,15 +1,15 @@
 <?php
 
-namespace Everywhere\Api\Schema\Resolvers;
+namespace Iola\Api\Schema\Resolvers;
 
-use Everywhere\Api\Schema\SubscriptionResolver;
-use Everywhere\Api\Contract\Schema\SubscriptionFactoryInterface;
+use Iola\Api\Schema\SubscriptionResolver;
+use Iola\Api\Contract\Schema\SubscriptionFactoryInterface;
 
-use Everywhere\Api\Integration\Events\FriendshipAddedEvent;
-use Everywhere\Api\Integration\Events\FriendshipUpdatedEvent;
-use Everywhere\Api\Integration\Events\FriendshipDeletedEvent;
-use Everywhere\Api\Contract\Integration\FriendshipRepositoryInterface;
-use Everywhere\Api\Contract\Schema\Relay\EdgeFactoryInterface;
+use Iola\Api\Integration\Events\FriendshipAddedEvent;
+use Iola\Api\Integration\Events\FriendshipUpdatedEvent;
+use Iola\Api\Integration\Events\FriendshipDeletedEvent;
+use Iola\Api\Contract\Integration\FriendshipRepositoryInterface;
+use Iola\Api\Contract\Schema\Relay\EdgeFactoryInterface;
 
 class FriendshipSubscriptionResolver extends SubscriptionResolver
 {

@@ -1,17 +1,17 @@
 <?php
 
-namespace Everywhere\Api\Schema\Resolvers;
+namespace Iola\Api\Schema\Resolvers;
 
-use Everywhere\Api\Contract\Integration\ChatRepositoryInterface;
-use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
-use Everywhere\Api\Contract\Schema\DataLoaderInterface;
-use Everywhere\Api\Contract\Schema\SubscriptionFactoryInterface;
-use Everywhere\Api\Entities\Message;
-use Everywhere\Api\Integration\Events\MessageAddedEvent;
-use Everywhere\Api\Integration\Events\MessageUpdatedEvent;
-use Everywhere\Api\Schema\IDObject;
-use Everywhere\Api\Schema\SubscriptionResolver;
-use Everywhere\Api\Contract\Schema\Relay\EdgeFactoryInterface;
+use Iola\Api\Contract\Integration\ChatRepositoryInterface;
+use Iola\Api\Contract\Schema\DataLoaderFactoryInterface;
+use Iola\Api\Contract\Schema\DataLoaderInterface;
+use Iola\Api\Contract\Schema\SubscriptionFactoryInterface;
+use Iola\Api\Entities\Message;
+use Iola\Api\Integration\Events\MessageAddedEvent;
+use Iola\Api\Integration\Events\MessageUpdatedEvent;
+use Iola\Api\Schema\IDObject;
+use Iola\Api\Schema\SubscriptionResolver;
+use Iola\Api\Contract\Schema\Relay\EdgeFactoryInterface;
 
 class MessageSubscriptionResolver extends SubscriptionResolver
 {

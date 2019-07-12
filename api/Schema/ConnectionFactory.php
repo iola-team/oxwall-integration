@@ -1,10 +1,9 @@
 <?php
 
-namespace Everywhere\Api\Schema;
+namespace Iola\Api\Schema;
 
-use Everywhere\Api\Contract\Schema\ConnectionFactoryInterface;
-use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
-use GraphQL\Executor\Promise\PromiseAdapter;
+use Iola\Api\Contract\Schema\ConnectionFactoryInterface;
+use Iola\Api\Contract\Schema\DataLoaderFactoryInterface;
 
 class ConnectionFactory implements ConnectionFactoryInterface
 {

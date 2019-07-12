@@ -1,8 +1,8 @@
 <?php
 
-namespace Everywhere\Oxwall\Integration\Repositories;
+namespace Iola\Oxwall\Repositories;
 
-use Everywhere\Api\Contract\Integration\ReportRepositoryInterface;
+use Iola\Api\Contract\Integration\ReportRepositoryInterface;
 
 class ReportRepository implements ReportRepositoryInterface
 {

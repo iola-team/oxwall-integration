@@ -1,17 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: skambalin
- * Date: 28.10.17
- * Time: 14.51
- */
 
-namespace Everywhere\Api\Middleware;
+namespace Iola\Api\Middleware;
 
-use Everywhere\Api\Auth\Identity;
-use Everywhere\Api\Contract\Auth\IdentityServiceInterface;
-use Everywhere\Api\Contract\Auth\IdentityStorageInterface;
-use Everywhere\Api\Contract\Auth\TokenBuilderInterface;
+use Iola\Api\Contract\Auth\IdentityServiceInterface;
+use Iola\Api\Contract\Auth\IdentityStorageInterface;
+use Iola\Api\Contract\Auth\TokenBuilderInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Middleware\JwtAuthentication;

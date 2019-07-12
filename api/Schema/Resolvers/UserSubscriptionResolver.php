@@ -1,11 +1,11 @@
 <?php
 
-namespace Everywhere\Api\Schema\Resolvers;
+namespace Iola\Api\Schema\Resolvers;
 
-use Everywhere\Api\Contract\Schema\SubscriptionFactoryInterface;
-use Everywhere\Api\Integration\Events\UserUpdateEvent;
-use Everywhere\Api\Schema\IDObject;
-use Everywhere\Api\Schema\SubscriptionResolver;
+use Iola\Api\Contract\Schema\SubscriptionFactoryInterface;
+use Iola\Api\Integration\Events\UserUpdateEvent;
+use Iola\Api\Schema\IDObject;
+use Iola\Api\Schema\SubscriptionResolver;
 
 class UserSubscriptionResolver extends SubscriptionResolver
 {

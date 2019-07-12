@@ -1,17 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: skambalin
- * Date: 28.10.17
- * Time: 16.36
- */
 
-namespace Everywhere\Api\Auth;
+namespace Iola\Api\Auth;
 
-
-use Everywhere\Api\Contract\Auth\AuthenticationAdapterInterface;
-use Everywhere\Api\Contract\Auth\IdentityServiceInterface;
-use Everywhere\Api\Contract\Integration\AuthRepositoryInterface;
+use Iola\Api\Contract\Auth\AuthenticationAdapterInterface;
+use Iola\Api\Contract\Auth\IdentityServiceInterface;
+use Iola\Api\Contract\Integration\AuthRepositoryInterface;
 use Zend\Authentication\Adapter\Callback;
 
 class AuthenticationAdapter extends Callback implements AuthenticationAdapterInterface

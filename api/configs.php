@@ -1,6 +1,6 @@
 <?php
 
-namespace Everywhere\Api;
+namespace Iola\Api;
 
 return [
     "displayErrorDetails" => true,

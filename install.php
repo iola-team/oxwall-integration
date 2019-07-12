@@ -1,10 +1,10 @@
 <?php
 
-$esapiPlugin = OW::getPluginManager()->getPlugin("esapi");
+$iolaPlugin = OW::getPluginManager()->getPlugin("iola");
 $dbPrefix = OW_DB_PREFIX;
 
 $sql = [
-    "CREATE TABLE IF NOT EXISTS `{$dbPrefix}esapi_subscription_event` (
+    "CREATE TABLE IF NOT EXISTS `{$dbPrefix}iola_subscription_event` (
       `id` int(11) NOT NULL AUTO_INCREMENT,
       `name` varchar(100) NOT NULL,
       `timeOffset` bigint(20) NULL,
@@ -13,7 +13,7 @@ $sql = [
       KEY `timeOffset` (`timeOffset`)
     ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;",
 
-    "CREATE TABLE IF NOT EXISTS `{$dbPrefix}esapi_subscription` (
+    "CREATE TABLE IF NOT EXISTS `{$dbPrefix}iola_subscription` (
       `id` int(11) NOT NULL AUTO_INCREMENT,
       `streamId` varchar(255) NOT NULL,
       `query` text NOT NULL,
@@ -31,6 +31,13 @@ foreach ( $sql as $query ) {
     }
 }
 
+OW::getPluginManager()->addPluginSettingsRouteName("iola", "iola.admin-settings");
+BOL_LanguageService::getInstance()->importPrefixFromZip(__DIR__ . "/langs.zip", "iola");
+
+/**
+ * Apply install patches
+ */
+require_once __DIR__ . "/patches/install.php";
 
 /**
  * The code below makes sure that the plugin will always init before other non-system plugins
@@ -54,21 +61,6 @@ OW::getDbo()->update(
     "UPDATE `{$dbPrefix}base_plugin` SET `id`=:toId WHERE `id`=:fromId",
     [
         "toId" => $firstNonSystemPluginId,
-        "fromId" => $esapiPlugin->getDto()->getId()
+        "fromId" => $iolaPlugin->getDto()->getId()
     ]
 );
-
-/**
- * Apply install patches
- */
-require_once __DIR__ . "/patches/install.php";
-
-
-
-
-
-
-
-
-
-

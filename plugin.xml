@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <plugin>
     <name>iola Backend</name>
-    <key>esapi</key>
+    <key>iola</key>
     <description>Backend for iola application</description>
     <author>Sergey Kambalin</author>
     <authorEmail>hello@iola.app</authorEmail>

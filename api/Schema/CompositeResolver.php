@@ -1,8 +1,8 @@
 <?php
 
-namespace Everywhere\Api\Schema;
+namespace Iola\Api\Schema;
 
-use Everywhere\Api\Contract\Schema\ContextInterface;
+use Iola\Api\Contract\Schema\ContextInterface;
 use GraphQL\Type\Definition\ResolveInfo;
 
 class CompositeResolver extends AbstractResolver

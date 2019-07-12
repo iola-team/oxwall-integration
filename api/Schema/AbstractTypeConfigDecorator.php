@@ -1,8 +1,8 @@
 <?php
 
-namespace Everywhere\Api\Schema;
+namespace Iola\Api\Schema;
 
-use Everywhere\Api\Contract\Schema\TypeConfigDecoratorInterface;
+use Iola\Api\Contract\Schema\TypeConfigDecoratorInterface;
 use GraphQL\Language\AST\Node;
 
 abstract class AbstractTypeConfigDecorator implements TypeConfigDecoratorInterface

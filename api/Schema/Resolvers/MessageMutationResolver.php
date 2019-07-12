@@ -1,12 +1,12 @@
 <?php
 
-namespace Everywhere\Api\Schema\Resolvers;
+namespace Iola\Api\Schema\Resolvers;
 
-use Everywhere\Api\Contract\Integration\ChatRepositoryInterface;
-use Everywhere\Api\Entities\Message;
-use Everywhere\Api\Schema\CompositeResolver;
-use Everywhere\Api\Schema\IDObject;
-use Everywhere\Api\Schema\Relay\EdgeFactory;
+use Iola\Api\Contract\Integration\ChatRepositoryInterface;
+use Iola\Api\Entities\Message;
+use Iola\Api\Schema\CompositeResolver;
+use Iola\Api\Schema\IDObject;
+use Iola\Api\Schema\Relay\EdgeFactory;
 
 class MessageMutationResolver extends CompositeResolver
 {

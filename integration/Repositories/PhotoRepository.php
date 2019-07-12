@@ -1,10 +1,10 @@
 <?php
 
-namespace Everywhere\Oxwall\Integration\Repositories;
+namespace Iola\Oxwall\Repositories;
 
-use Everywhere\Api\Contract\Integration\PhotoRepositoryInterface;
-use Everywhere\Api\Entities\Photo;
-use Everywhere\Oxwall\Integration\Integration;
+use Iola\Api\Contract\Integration\PhotoRepositoryInterface;
+use Iola\Api\Entities\Photo;
+use Iola\Oxwall\Integration\Integration;
 use Psr\Http\Message\UploadedFileInterface;
 
 class PhotoRepository implements PhotoRepositoryInterface

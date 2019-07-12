@@ -21,8 +21,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Everywhere\\Api\\": "api/",
-            "Everywhere\\Oxwall\\": "src/"
+            "Iola\\Api\\": "api/",
+            "Iola\\Oxwall\\": "integration/"
         }
     }
 }

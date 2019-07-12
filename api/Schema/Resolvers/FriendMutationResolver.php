@@ -1,11 +1,11 @@
 <?php
 
-namespace Everywhere\Api\Schema\Resolvers;
+namespace Iola\Api\Schema\Resolvers;
 
-use Everywhere\Api\Schema\CompositeResolver;
-use Everywhere\Api\Contract\Integration\FriendshipRepositoryInterface;
-use Everywhere\Api\Entities\Friendship;
-use Everywhere\Api\Contract\Schema\Relay\EdgeFactoryInterface;
+use Iola\Api\Schema\CompositeResolver;
+use Iola\Api\Contract\Integration\FriendshipRepositoryInterface;
+use Iola\Api\Entities\Friendship;
+use Iola\Api\Contract\Schema\Relay\EdgeFactoryInterface;
 
 class FriendMutationResolver extends CompositeResolver
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Everywhere\Api\Contract\Auth;
+namespace Iola\Api\Contract\Auth;
 
-use Everywhere\Api\Auth\Identity;
+use Iola\Api\Auth\Identity;
 
 interface IdentityServiceInterface
 {

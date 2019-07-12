@@ -1,9 +1,9 @@
 <?php
 
-namespace Everywhere\Api\Schema\Resolvers;
+namespace Iola\Api\Schema\Resolvers;
 
-use Everywhere\Api\Schema\CompositeResolver;
-use Everywhere\Api\Contract\Integration\ReportRepositoryInterface;
+use Iola\Api\Schema\CompositeResolver;
+use Iola\Api\Contract\Integration\ReportRepositoryInterface;
 
 class ReportMutationResolver extends CompositeResolver
 {

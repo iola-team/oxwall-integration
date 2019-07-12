@@ -1,14 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: skambalin
- * Date: 30.10.17
- * Time: 16.22
- */
 
-namespace Everywhere\Api\Auth;
+namespace Iola\Api\Auth;
 
-use Everywhere\Api\Contract\Auth\TokenBuilderInterface;
+use Iola\Api\Contract\Auth\TokenBuilderInterface;
 use Firebase\JWT\JWT;
 
 class TokenBuilder implements TokenBuilderInterface

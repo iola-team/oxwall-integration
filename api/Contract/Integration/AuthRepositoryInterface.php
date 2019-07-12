@@ -1,7 +1,6 @@
 <?php
 
-namespace Everywhere\Api\Contract\Integration;
-
+namespace Iola\Api\Contract\Integration;
 
 interface AuthRepositoryInterface
 {

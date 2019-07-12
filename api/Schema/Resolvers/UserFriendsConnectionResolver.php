@@ -1,14 +1,14 @@
 <?php
 
-namespace Everywhere\Api\Schema\Resolvers;
+namespace Iola\Api\Schema\Resolvers;
 
-use Everywhere\Api\Schema\Relay\ConnectionResolver;
-use Everywhere\Api\Contract\Schema\Relay\EdgeFactoryInterface;
-use Everywhere\Api\Contract\Schema\ConnectionObjectInterface;
-use Everywhere\Api\Contract\Integration\FriendshipRepositoryInterface;
-use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
-use Everywhere\Api\Contract\Schema\IDObjectInterface;
-use Everywhere\Api\Entities\Friendship;
+use Iola\Api\Schema\Relay\ConnectionResolver;
+use Iola\Api\Contract\Schema\Relay\EdgeFactoryInterface;
+use Iola\Api\Contract\Schema\ConnectionObjectInterface;
+use Iola\Api\Contract\Integration\FriendshipRepositoryInterface;
+use Iola\Api\Contract\Schema\DataLoaderFactoryInterface;
+use Iola\Api\Contract\Schema\IDObjectInterface;
+use Iola\Api\Entities\Friendship;
 
 class UserFriendsConnectionResolver extends ConnectionResolver
 {

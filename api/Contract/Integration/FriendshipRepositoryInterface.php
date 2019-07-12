@@ -1,8 +1,8 @@
 <?php
 
-namespace Everywhere\Api\Contract\Integration;
+namespace Iola\Api\Contract\Integration;
 
-use Everywhere\Api\Entities\Friendship;
+use Iola\Api\Entities\Friendship;
 
 interface FriendshipRepositoryInterface
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Everywhere\Oxwall\Integration\Repositories;
+namespace Iola\Oxwall\Repositories;
 
-use Everywhere\Api\Contract\Integration\ChatRepositoryInterface;
-use Everywhere\Api\Entities\Chat;
-use Everywhere\Api\Entities\Message;
+use Iola\Api\Contract\Integration\ChatRepositoryInterface;
+use Iola\Api\Entities\Chat;
+use Iola\Api\Entities\Message;
 
 class ChatRepository implements ChatRepositoryInterface
 {

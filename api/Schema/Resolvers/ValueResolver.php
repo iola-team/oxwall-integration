@@ -1,12 +1,10 @@
 <?php
 
-namespace Everywhere\Api\Schema\Resolvers;
+namespace Iola\Api\Schema\Resolvers;
 
-use Everywhere\Api\Contract\Schema\ScalarTypeResolverInterface;
-use GraphQL\Error\InvariantViolation;
-use GraphQL\Language\AST\StringValueNode;
+use Iola\Api\Contract\Schema\ScalarTypeResolverInterface;
 use GraphQL\Language\AST\ValueNode;
-use GraphQL\Utils\Utils;
+use GraphQL\Language\AST\Node;
 
 class ValueResolver implements ScalarTypeResolverInterface
 {
@@ -32,7 +30,7 @@ class ValueResolver implements ScalarTypeResolverInterface
     }
 
     /**
-     * @param \GraphQL\Language\AST\Node $ast
+     * @param Node $ast
      *
      * @return mixed|void
      */

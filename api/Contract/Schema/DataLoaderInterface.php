@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: skambalin
- * Date: 24.10.17
- * Time: 18.09
- */
 
-namespace Everywhere\Api\Contract\Schema;
+namespace Iola\Api\Contract\Schema;
 
 use GraphQL\Executor\Promise\Promise;
 

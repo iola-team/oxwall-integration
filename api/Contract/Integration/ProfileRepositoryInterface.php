@@ -1,11 +1,11 @@
 <?php
 
-namespace Everywhere\Api\Contract\Integration;
+namespace Iola\Api\Contract\Integration;
 
-use Everywhere\Api\Entities\AccountType;
-use Everywhere\Api\Entities\ProfileField;
-use Everywhere\Api\Entities\ProfileFieldSection;
-use Everywhere\Api\Entities\ProfileFieldValue;
+use Iola\Api\Entities\AccountType;
+use Iola\Api\Entities\ProfileField;
+use Iola\Api\Entities\ProfileFieldSection;
+use Iola\Api\Entities\ProfileFieldValue;
 
 interface ProfileRepositoryInterface
 {

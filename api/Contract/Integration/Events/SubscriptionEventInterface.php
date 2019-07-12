@@ -1,8 +1,8 @@
 <?php
 
-namespace Everywhere\Api\Contract\Integration\Events;
+namespace Iola\Api\Contract\Integration\Events;
 
-use Everywhere\Api\Contract\App\EventInterface;
+use Iola\Api\Contract\App\EventInterface;
 
 interface SubscriptionEventInterface extends EventInterface
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Everywhere\Api\Contract\Integration;
+namespace Iola\Api\Contract\Integration;
 
-use Everywhere\Api\Entities\Subscription;
-use Everywhere\Api\Entities\SubscriptionEvent;
+use Iola\Api\Entities\Subscription;
+use Iola\Api\Entities\SubscriptionEvent;
 
 interface SubscriptionRepositoryInterface
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Everywhere\Api\App;
+namespace Iola\Api\App;
 
-use Everywhere\Api\Contract\App\EventInterface;
+use Iola\Api\Contract\App\EventInterface;
 use League\Event\Event as LeagueEvent;
 
 class Event extends LeagueEvent implements EventInterface

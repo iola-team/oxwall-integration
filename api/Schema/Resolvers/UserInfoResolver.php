@@ -1,19 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: skambalin
- * Date: 19.10.17
- * Time: 15.16
- */
 
-namespace Everywhere\Api\Schema\Resolvers;
+namespace Iola\Api\Schema\Resolvers;
 
-use Everywhere\Api\Contract\Integration\UserRepositoryInterface;
-use Everywhere\Api\Contract\Schema\ContextInterface;
-use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
-use Everywhere\Api\Contract\Schema\DataLoaderInterface;
-use Everywhere\Api\Entities\User;
-use Everywhere\Api\Schema\CompositeResolver;
+use Iola\Api\Contract\Integration\UserRepositoryInterface;
+use Iola\Api\Contract\Schema\ContextInterface;
+use Iola\Api\Contract\Schema\DataLoaderFactoryInterface;
+use Iola\Api\Contract\Schema\DataLoaderInterface;
+use Iola\Api\Entities\User;
+use Iola\Api\Schema\CompositeResolver;
 use GraphQL\Type\Definition\ResolveInfo;
 
 class UserInfoResolver extends CompositeResolver

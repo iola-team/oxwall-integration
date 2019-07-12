@@ -1,6 +1,6 @@
 <?php
 
-namespace Everywhere\Api\Middleware;
+namespace Iola\Api\Middleware;
 
 use Tuupola\Middleware\Cors;
 

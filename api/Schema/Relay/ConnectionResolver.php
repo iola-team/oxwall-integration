@@ -1,18 +1,12 @@
 <?php
 
-namespace Everywhere\Api\Schema\Relay;
+namespace Iola\Api\Schema\Relay;
 
-use Everywhere\Api\Contract\Integration\UserRepositoryInterface;
-use Everywhere\Api\Contract\Schema\ConnectionObjectInterface;
-use Everywhere\Api\Contract\Schema\ContextInterface;
-use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
-use Everywhere\Api\Contract\Schema\DataLoaderInterface;
-use Everywhere\Api\Contract\Schema\Relay\EdgeFactoryInterface;
-use Everywhere\Api\Entities\User;
-use Everywhere\Api\Schema\AbstractResolver;
-use Everywhere\Api\Schema\CompositeResolver;
+use Iola\Api\Contract\Schema\ConnectionObjectInterface;
+use Iola\Api\Contract\Schema\ContextInterface;
+use Iola\Api\Contract\Schema\Relay\EdgeFactoryInterface;
+use Iola\Api\Schema\CompositeResolver;
 use GraphQL\Error\InvariantViolation;
-use GraphQL\Executor\Promise\PromiseAdapter;
 use GraphQL\Type\Definition\ResolveInfo;
 
 class ConnectionResolver extends CompositeResolver

@@ -1,2 +1,2 @@
-/vendor
-/.idea
+client/node_modules
+vendor

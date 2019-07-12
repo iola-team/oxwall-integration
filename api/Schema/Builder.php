@@ -1,15 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: skambalin
- * Date: 19.10.17
- * Time: 14.37
- */
 
-namespace Everywhere\Api\Schema;
+namespace Iola\Api\Schema;
 
-use Everywhere\Api\Contract\Schema\BuilderInterface;
-use Everywhere\Api\Contract\Schema\TypeConfigDecoratorInterface;
+use Iola\Api\Contract\Schema\BuilderInterface;
+use Iola\Api\Contract\Schema\TypeConfigDecoratorInterface;
 use GraphQL\Type\Schema;
 use GraphQL\Utils\BuildSchema;
 

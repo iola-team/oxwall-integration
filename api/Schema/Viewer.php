@@ -1,9 +1,9 @@
 <?php
 
-namespace Everywhere\Api\Schema;
+namespace Iola\Api\Schema;
 
-use Everywhere\Api\Contract\Auth\AuthenticationServiceInterface;
-use Everywhere\Api\Contract\Schema\ViewerInterface;
+use Iola\Api\Contract\Auth\AuthenticationServiceInterface;
+use Iola\Api\Contract\Schema\ViewerInterface;
 
 class Viewer implements ViewerInterface
 {

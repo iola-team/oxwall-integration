@@ -1,11 +1,11 @@
 <?php
 
-namespace Everywhere\Api\Schema\Resolvers;
+namespace Iola\Api\Schema\Resolvers;
 
-use Everywhere\Api\Contract\Integration\FriendshipRepositoryInterface;
-use Everywhere\Api\Contract\Schema\DataLoaderFactoryInterface;
-use Everywhere\Api\Schema\EntityResolver;
-use Everywhere\Api\Entities\Friendship;
+use Iola\Api\Contract\Integration\FriendshipRepositoryInterface;
+use Iola\Api\Contract\Schema\DataLoaderFactoryInterface;
+use Iola\Api\Schema\EntityResolver;
+use Iola\Api\Entities\Friendship;
 
 class FriendshipResolver extends EntityResolver
 {

@@ -1,15 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: skambalin
- * Date: 19.10.17
- * Time: 18.21
- */
 
-namespace Everywhere\Api\App;
+namespace Iola\Api\App;
 
-use Everywhere\Api\Contract\App\ContainerInterface;
-use Everywhere\Api\Contract\Integration\IntegrationInterface;
+use Iola\Api\Contract\App\ContainerInterface;
+use Iola\Api\Contract\Integration\IntegrationInterface;
 
 class Container extends \Slim\Container implements ContainerInterface
 {

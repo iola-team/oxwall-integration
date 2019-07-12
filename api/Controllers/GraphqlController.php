@@ -1,6 +1,6 @@
 <?php
 
-namespace Everywhere\Api\Controllers;
+namespace Iola\Api\Controllers;
 
 use GraphQL\Server\ServerConfig;
 use GraphQL\Server\StandardServer;

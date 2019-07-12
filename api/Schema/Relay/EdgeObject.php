@@ -1,11 +1,10 @@
 <?php
 
-namespace Everywhere\Api\Schema\Relay;
+namespace Iola\Api\Schema\Relay;
 
-use Everywhere\Api\Contract\Schema\Relay\EdgeObjectInterface;
+use Iola\Api\Contract\Schema\Relay\EdgeObjectInterface;
 use GraphQL\Error\InvariantViolation;
 use GraphQL\Executor\Promise\Promise;
-use GraphQL\Utils;
 
 class EdgeObject implements EdgeObjectInterface, \ArrayAccess
 {
