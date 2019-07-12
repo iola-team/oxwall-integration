@@ -1,1 +1,7 @@
-console.log('Hello iola');
+class QQ extends HTMLElement {
+    constructor() {
+        super();
+
+        console.log('123');
+    }
+}
