@@ -24,12 +24,14 @@
     "progress-bar-webpack-plugin": "^1.12.1",
     "resolve-url-loader": "^3.1.0",
     "sass-loader": "^7.1.0",
+    "svelte-loader": "^2.13.4",
     "url-loader": "^2.0.1",
     "webpack": "^4.35.3",
     "webpack-cli": "^3.3.5",
     "webpack-notifier": "^1.8.0"
   },
   "dependencies": {
+    "svelte": "^3.6.7",
     "@babel/runtime": "^7.5.4",
     "@webcomponents/webcomponentsjs": "^2.2.10",
     "whatwg-fetch": "^3.0.0"

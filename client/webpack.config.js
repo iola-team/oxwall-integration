@@ -55,6 +55,17 @@ export default {
         exclude: /(node_modules)/,
       },
       {
+        test: /\.(html|svelte)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'svelte-loader',
+          options: {
+            emitCss: true,
+            customElement: true,
+          },
+        },
+      },
+      {
         test: /\.(sa|sc|c)ss$/,
         use: [
           { loader: MiniCssExtractPlugin.loader },
