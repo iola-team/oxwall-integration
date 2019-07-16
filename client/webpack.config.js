@@ -44,7 +44,7 @@ export default {
   },
 
   externals: {
-    "jquery": "jQuery",
+    jquery: 'jQuery',
   },
 
   module: {
@@ -64,7 +64,9 @@ export default {
       },
       {
         test: /\.(png|gif|jpg|svg|eot|svg|ttf|woff|woff2)$/,
-        use: 'url-loader?limit=20480&name=assets/[name]-[hash].[ext]',
+        use: [
+          'file-loader'
+        ],
       },
     ],
   },

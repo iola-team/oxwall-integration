@@ -422,8 +422,8 @@ function (_HTMLElement) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/grey/Work/Sparkle/www/oxwall/ow_plugins/oxwall-integration/client/src/index.scss */"./src/index.scss");
-module.exports = __webpack_require__(/*! /Users/grey/Work/Sparkle/www/oxwall/ow_plugins/oxwall-integration/client/src/index.js */"./src/index.js");
+__webpack_require__(/*! /Users/rroman/www/home/oxwall-1.8.4.1/ow_plugins/esapi/client/src/index.scss */"./src/index.scss");
+module.exports = __webpack_require__(/*! /Users/rroman/www/home/oxwall-1.8.4.1/ow_plugins/esapi/client/src/index.js */"./src/index.js");
 
 
 /***/ })
