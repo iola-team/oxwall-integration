@@ -1,2 +1,4 @@
+static
+!static/.gitkeep
 client/node_modules
 vendor

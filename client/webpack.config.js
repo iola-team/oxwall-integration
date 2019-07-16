@@ -81,7 +81,9 @@ export default {
       skipFirstNotification: true,
       alwaysNotify: true,
     }),
-    new CleanWebpackPlugin(),
+    new CleanWebpackPlugin({
+        cleanOnceBeforeBuildPatterns: ['**/*', '!.gitkeep'],
+    }),
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: JSON.stringify(process.env.NODE_ENV),
