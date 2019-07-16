@@ -16,17 +16,28 @@ const devMode = process.env.NODE_ENV !== 'production';
 
 export default {
   mode: process.env.NODE_ENV || 'development',
-  entry: [
-    'whatwg-fetch',
-    path.resolve(rootDir, './src/index.scss'),
-    path.resolve(rootDir, './src/index.js'),
-  ],
+  entry: {
+      iola: [
+        path.resolve(rootDir, './src/index.scss'),
+        path.resolve(rootDir, './src/index.js'),
+      ],
 
-  devtool: devMode ? 'source-map' : false,
+      vendor: [
+        'whatwg-fetch',
+
+        /**
+         * Web Components polyfill
+         */
+        '@webcomponents/webcomponentsjs/custom-elements-es5-adapter',
+        '@webcomponents/webcomponentsjs/webcomponents-loader',
+      ],
+  },
+
+  devtool: devMode ? 'source-map' : 'none',
 
   output: {
     path: staticDir,
-    filename: `iola.js`,
+    filename: `[name].js`,
     library: 'IOLA',
     libraryTarget: 'umd',
     umdNamedDefine: true,
@@ -63,7 +74,7 @@ export default {
   },
 
   plugins: [
-    new MiniCssExtractPlugin({ filename: 'iola.css' }),
+    new MiniCssExtractPlugin({ filename: '[name].css' }),
     new ProgressBarPlugin(),
     new WebpackNotifierPlugin({
       title: name,
