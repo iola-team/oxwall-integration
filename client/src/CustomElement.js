@@ -4,8 +4,6 @@ import { render, unmountComponentAtNode } from 'react-dom';
 
 import customElement from './utils/customElement';
 
-console.log('Custom Element')
-
 @customElement({
   tag: 'iola-custom',
   attrs: ['label'],

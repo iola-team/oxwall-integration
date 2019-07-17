@@ -47,9 +47,6 @@ export default (options = {}) => Component => {
     Object.assign(CustomElement.prototype, options.methods.reduce((methods, methodName) => ({
       ...methods,
       [methodName]: function (...args) {
-        console.log(this);
-        console.log(componentInstances[this]);
-
         return componentInstances.get(this)?.[methodName] ?.(...args);
       },
     }), {}));
