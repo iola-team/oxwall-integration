@@ -10,15 +10,15 @@ const extractAttrs = (attrs, element) => attrs.reduce((props, attrName) => {
 
 export default (options = {}) => Component => {
   const observedAttributes = options.attrs || [];
-  let shadowRoot = null;
-  let componentInstance = null;
+  const shadowRoots = new WeakMap();
+  const componentInstances = new WeakMap();
 
   const render = element => ReactDom.render(
     React.createElement(Component, extractAttrs(observedAttributes, element)),
-    shadowRoot,
+    shadowRoots.get(element),
     function () {
-      componentInstance = this;
-    }
+      componentInstances.set(element, this);
+    },
   );
 
   class CustomElement extends HTMLElement {
@@ -27,7 +27,7 @@ export default (options = {}) => Component => {
     constructor(...args) {
       super(...args);
 
-      shadowRoot = this.attachShadow({ mode: 'open' });
+      shadowRoots.set(this, this.attachShadow({ mode: 'open' }));
     }
 
     connectedCallback() {
@@ -39,14 +39,19 @@ export default (options = {}) => Component => {
     }
 
     disconnectedCallback() {
-      ReactDom.unmountComponentAtNode(shadowRoot);
+      ReactDom.unmountComponentAtNode(shadowRoots.get(this));
     }
   }
 
   if (options.methods) {
     Object.assign(CustomElement.prototype, options.methods.reduce((methods, methodName) => ({
       ...methods,
-      [methodName]: (...args) => componentInstance ?.[methodName] ?.(...args),
+      [methodName]: function (...args) {
+        console.log(this);
+        console.log(componentInstances[this]);
+
+        return componentInstances.get(this)?.[methodName] ?.(...args);
+      },
     }), {}));
   }
 

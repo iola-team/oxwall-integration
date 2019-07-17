@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { render, unmountComponentAtNode } from 'react-dom';
-import retargetEvents from 'react-shadow-dom-retarget-events';
 
 import customElement from './utils/customElement';
 
