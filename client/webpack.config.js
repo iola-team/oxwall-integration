@@ -64,9 +64,7 @@ export default {
       },
       {
         test: /\.(png|gif|jpg|svg|eot|svg|ttf|woff|woff2)$/,
-        use: [
-          'file-loader'
-        ],
+        use: 'url-loader?limit=20480&name=assets/[name]-[hash].[ext]',
       },
     ],
   },
