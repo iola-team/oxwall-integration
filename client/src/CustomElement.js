@@ -5,6 +5,8 @@ import retargetEvents from 'react-shadow-dom-retarget-events';
 
 import customElement from './utils/customElement';
 
+console.log('Custom Element')
+
 @customElement({
   tag: 'iola-custom',
   attrs: ['label'],
