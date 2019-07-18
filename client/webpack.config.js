@@ -44,7 +44,7 @@ export default {
   },
 
   externals: {
-    "jquery": "jQuery",
+    jquery: 'jQuery',
   },
 
   module: {
