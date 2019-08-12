@@ -1,4 +1,4 @@
-<div class="iola-appearance" id="{$ids.container}">
+<div class="iola-appearance" id="{$uniqId}">
     <div class="iola-options">
         <h3 class="iola-options-instructions ow_stdmargin">
             Here you can adjust the appearance of the app.
@@ -6,7 +6,7 @@
 
         <div class="iola-option iola-option-logo ow_stdmargin">
             <div class="iola-option-left">
-                <iola-image-picker id="{$ids.logoInput}"></iola-image-picker>
+                <iola-image-picker data-ref="logoInput"></iola-image-picker>
             </div>
 
             <div class="iola-option-right">
@@ -26,7 +26,7 @@
 
         <div class="iola-option iola-option-background ow_stdmargin">
             <div class="iola-option-left">
-                <iola-image-picker id="{$ids.backgroundInput}"></iola-image-picker>
+                <iola-image-picker data-ref="backgroundInput"></iola-image-picker>
             </div>
 
             <div class="iola-option-right">
@@ -46,24 +46,24 @@
 
         <div class="iola-option iola-option-primary-color ow_stdmargin">
             <div class="iola-option-left">
-                <iola-color-picker id="{$ids.primaryColorPicker}"></iola-color-picker>
+                <iola-color-picker data-ref="primaryColorPicker"></iola-color-picker>
             </div>
 
             <div class="iola-option-right">
                 <h3 class="ow_smallmargin">Primary color</h3>
-                <input type="text" id="{$ids.primaryColorInput}" />
+                <input type="text" data-ref="primaryColorInput" />
             </div>
         </div>
     </div>
     <div class="iola-preview">
-        <iola-app-preview id="{$ids.preview}" class="ow_stdmargin"></iola-app-preview>
+        <iola-app-preview data-ref="preview" class="ow_stdmargin"></iola-app-preview>
 
         <div class="iola-bottom-controls">
             <div class="iola-save-description ow_remark">
                 After you press the <b>Save</b> button, all of your users will see the app renewed.
             </div>
             <div class="ow_positive">
-                {decorator id=$ids.saveButton name="button" label="Save"}
+                {decorator extraString='data-ref="saveButton"' name="button" label="Save"}
             </div>
         </div>
     </div>

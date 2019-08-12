@@ -8,16 +8,20 @@ class Settings {
 
   state = {
     primaryColor: null,
+    backgroundUrl: null,
+    backgroundFile: null,
+    logoUrl: null,
+    logoFile: null,
   };
 
   constructor(options) {
-    this.container = $('#' + options.ids.container);
-    this.logoInput = $('#' + options.ids.logoInput);
-    this.backgroundInput = $('#' + options.ids.backgroundInput);
-    this.primaryColorPicker = $('#' + options.ids.primaryColorPicker);
-    this.primaryColorInput = $('#' + options.ids.primaryColorInput);
-    this.preview = $('#' + options.ids.preview);
-    this.saveButton = $('#' + options.ids.saveButton);
+    this.container = $('#' + options.uniqId);
+    this.logoInput = this.ref('logoInput');
+    this.backgroundInput = this.ref('backgroundInput');
+    this.primaryColorPicker = this.ref('primaryColorPicker');
+    this.primaryColorInput = this.ref('primaryColorInput');
+    this.preview = this.ref('preview')
+    this.saveButton = this.ref('saveButton');
 
     // Event listeners
 
@@ -38,6 +42,10 @@ class Settings {
     }));
 
     this.saveButton.click(() => (this.onSave(), false));
+  }
+
+  ref(name) {
+    return $(`[data-ref="${name}"]`, this.container);
   }
 
   setState(state) {

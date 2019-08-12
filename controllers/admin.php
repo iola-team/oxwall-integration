@@ -20,20 +20,11 @@ class IOLA_CTRL_Admin extends ADMIN_CTRL_Abstract
         $this->setPageTitle($language->text("iola", "settings_page_title"));
         $this->setPageHeading($language->text("iola", "settings_page_heading"));
 
-        $ids = [
-            "container" => uniqid(),
-            "logoInput" => uniqid(),
-            "backgroundInput" => uniqid(),
-            "primaryColorInput" => uniqid(),
-            "primaryColorPicker" => uniqid(),
-            "preview" => uniqid(),
-            "saveButton" => uniqid()
-        ];
-
-        $this->assign("ids", $ids);
+        $uniqId = uniqid('iola-');
+        $this->assign("uniqId", $uniqId);
 
         $options = [
-            "ids" => $ids
+            "uniqId" => $uniqId
         ];
 
         $js = UTIL_JsGenerator::newInstance()->callFunction(
