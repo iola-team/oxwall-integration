@@ -31,8 +31,19 @@ foreach ( $sql as $query ) {
     }
 }
 
+/**
+ * Configure the plugin settings page
+ */
 OW::getPluginManager()->addPluginSettingsRouteName("iola", "iola.admin-settings");
-BOL_LanguageService::getInstance()->importPrefixFromZip(__DIR__ . "/langs.zip", "iola");
+
+/**
+ * Import language dump
+ */
+try {
+    BOL_LanguageService::getInstance()->importPrefixFromZip(__DIR__ . "/langs.zip", "iola");    
+} catch ( Exception $e ) {
+    // Skip...
+}
 
 /**
  * Apply install patches
@@ -45,14 +56,14 @@ require_once __DIR__ . "/patches/install.php";
 $firstNonSystemPluginId = OW::getDbo()->queryForColumn(
     "SELECT id FROM `{$dbPrefix}base_plugin` WHERE `isSystem`=0 ORDER BY `id` LIMIT 1"
 );
-$maxSystemPluginId = OW::getDbo()->queryForColumn(
+$maxPluginId = OW::getDbo()->queryForColumn(
     "SELECT MAX(`id`) FROM `{$dbPrefix}base_plugin`"
 );
 
 OW::getDbo()->update(
     "UPDATE `{$dbPrefix}base_plugin` SET `id`=:toId WHERE `id`=:fromId",
     [
-        "toId" => $maxSystemPluginId + 1,
+        "toId" => $maxPluginId + 1,
         "fromId" => $firstNonSystemPluginId
     ]
 );
