@@ -31,6 +31,10 @@ OW::getRouter()->addRoute(
     new OW_Route("iola.admin-settings", "admin/plugins/iola", "IOLA_CTRL_Admin", "index")
 );
 
+OW::getRouter()->addRoute(
+    new OW_Route("iola.admin-settings-save", "admin/plugins/iola/save-settings", "IOLA_CTRL_Admin", "saveSettings")
+);
+
 /**
  * Init the plugin if all the requirements are met
  */

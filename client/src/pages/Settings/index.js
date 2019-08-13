@@ -12,6 +12,7 @@ class Settings {
     backgroundFile: null,
     logoUrl: null,
     logoFile: null,
+    inProgress: false,
   };
 
   constructor(options) {
@@ -21,7 +22,12 @@ class Settings {
     this.primaryColorPicker = this.ref('primaryColorPicker');
     this.primaryColorInput = this.ref('primaryColorInput');
     this.preview = this.ref('preview')
+    this.browseBackground = this.ref('browseBackground')
+    this.browseLogo = this.ref('browseLogo')
     this.saveButton = this.ref('saveButton');
+    this.saveResponderUrl = options.rsp.save;
+
+    this.setState(options.values || {});
 
     // Event listeners
 
@@ -41,7 +47,9 @@ class Settings {
       logoUrl: url, logoFile: file,
     }));
 
-    this.saveButton.click(() => (this.onSave(), false));
+    this.saveButton.click(e => (this.onSave(e), false));
+    this.browseLogo.click(e => (this.onBrowseLogoPress(e), false));
+    this.browseBackground.click(e => (this.onBrowseBackgroundPress(e), false));
   }
 
   ref(name) {
@@ -54,17 +62,55 @@ class Settings {
     requestAnimationFrame(() => this.render());
   }
 
-  onSave() {
-    console.log(this.state);
+  async onSave() {
+    const { primaryColor, backgroundFile, logoFile } = this.state;
+    const formData = new FormData();
+
+    if (primaryColor) {
+      formData.append('primaryColor', primaryColor);
+    }
+
+    if (backgroundFile) {
+      formData.append('background', backgroundFile)
+    }
+    
+    if (logoFile) {
+      formData.append('logo', logoFile)
+    }
+
+    this.setState({ inProgress: true });
+    const response = await fetch(this.saveResponderUrl, {
+      method: 'post',
+      body: formData,
+    })
+
+    const data = await response.json();
+   
+    data.info && OW.info(data.info);
+    data.error && OW.error(data.error);
+
+    this.setState({ inProgress: false });
+  }
+
+  onBrowseLogoPress() {
+    this.logoInput.get(0).open();
+  }
+
+  onBrowseBackgroundPress() {
+    this.backgroundInput.get(0).open();
   }
 
   render() {
-    const { primaryColor, backgroundUrl, logoUrl } = this.state;
+    const { primaryColor, backgroundUrl, logoUrl, inProgress } = this.state;
 
     this.primaryColorInput.val(primaryColor?.substring(1));
     this.primaryColorPicker.attr('value', primaryColor);
     this.preview.attr('background', backgroundUrl);
-    this.preview.attr('logo', backgroundUrl);
+    this.preview.attr('logo', logoUrl);
+    this.preview.attr('primary-color', primaryColor);
+
+    this.saveButton.get(0).disabled = inProgress;
+    this.saveButton[inProgress ? 'addClass': 'removeClass']('ow_inprogress');
   }
 }
 

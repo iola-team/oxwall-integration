@@ -1,69 +1,96 @@
 <div class="iola-appearance" id="{$uniqId}">
     <div class="iola-options">
         <h3 class="iola-options-instructions ow_stdmargin">
-            Here you can adjust the appearance of the app.
+            {text key="iola+appearance_settings_instruction"}
         </h3>
 
         <div class="iola-option iola-option-logo ow_stdmargin">
             <div class="iola-option-left">
-                <iola-image-picker data-ref="logoInput"></iola-image-picker>
+                <iola-image-picker 
+                    data-ref="logoInput"
+                    value="{$values.logoUrl}"
+                ></iola-image-picker>
             </div>
 
             <div class="iola-option-right">
                 <h3 class="iola-option-title">
-                    Icon
+                    {text key="iola+appearance_option_logo_title"}
                 </h3>
 
                 <div class="iola-option-description ow_smallmargin">
-                    Minimal size 96x96 px
+                    {text key="iola+appearance_option_logo_description"}
                 </div>
 
                 <div class="iola-option-info ow_remark">
-                    Drag and drop image (JPEG, PNG) or <a href="#">browse</a>
+                    {capture name="browseLogo"}
+                        <a data-ref="browseLogo" href="#">
+                            {text key="iola+browse_file_button_label"}
+                        </a>
+                    {/capture}
+
+                    {text key="iola+appearance_option_logo_info" browse=$smarty.capture.browseLogo}
                 </div>
             </div>
         </div>
 
         <div class="iola-option iola-option-background ow_stdmargin">
             <div class="iola-option-left">
-                <iola-image-picker data-ref="backgroundInput"></iola-image-picker>
+                <iola-image-picker 
+                    data-ref="backgroundInput" 
+                    value="{$values.backgroundUrl}"
+                ></iola-image-picker>
             </div>
 
             <div class="iola-option-right">
                 <h3 class="iola-option-title">
-                    Background
+                    {text key="iola+appearance_option_background_title"}
                 </h3>
 
                 <div class="iola-option-description ow_smallmargin">
-                    Minimal size 696x696 px
+                    {text key="iola+appearance_option_background_description"}
                 </div>
 
                 <div class="iola-option-info ow_remark">
-                    Drag and drop image (JPEG, PNG) or <a href="#">browse</a>
+                    {capture name="browseBackground"}
+                        <a data-ref="browseBackground" href="#">
+                            {text key="iola+browse_file_button_label"}
+                        </a>
+                    {/capture}
+
+                    {text key="iola+appearance_option_background_info" browse=$smarty.capture.browseBackground}
                 </div>
             </div>
         </div>
 
         <div class="iola-option iola-option-primary-color ow_stdmargin">
             <div class="iola-option-left">
-                <iola-color-picker data-ref="primaryColorPicker"></iola-color-picker>
+                <iola-color-picker 
+                    data-ref="primaryColorPicker" 
+                    value="{$values.primaryColor}"
+                ></iola-color-picker>
             </div>
 
             <div class="iola-option-right">
-                <h3 class="ow_smallmargin">Primary color</h3>
-                <input type="text" data-ref="primaryColorInput" />
+                <h3 class="ow_smallmargin">{text key="iola+appearance_option_primary_color_title"}</h3>
+                <input type="text" data-ref="primaryColorInput" value="{$values.primaryColor|replace:'#':''}" />
             </div>
         </div>
     </div>
     <div class="iola-preview">
-        <iola-app-preview data-ref="preview" class="ow_stdmargin"></iola-app-preview>
+        <iola-app-preview 
+            data-ref="preview" 
+            class="ow_stdmargin"
+            background="{$values.backgroundUrl}"
+            logo="{$values.logoUrl}"
+            primary-color="{$values.primaryColor}"
+        ></iola-app-preview>
 
         <div class="iola-bottom-controls">
             <div class="iola-save-description ow_remark">
-                After you press the <b>Save</b> button, all of your users will see the app renewed.
+                {text key="iola+appearance_settings_save_description"}
             </div>
             <div class="ow_positive">
-                {decorator extraString='data-ref="saveButton"' name="button" label="Save"}
+                {decorator extraString='data-ref="saveButton"' name="button" langLabel="iola+appearance_settings_save_label"}
             </div>
         </div>
     </div>
