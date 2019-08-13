@@ -1,0 +1,64 @@
+.iola-appearance {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  .iola-option {
+    $right-width: 100px;
+    display: flex;
+    margin-bottom: 30px;
+
+    .iola-option-left {
+      display: flex;
+      align-items: flex-end;
+      width: $right-width;
+      margin-right: 25px;
+
+      iola-image-picker {
+        width: 100%;
+        height: 100%;
+      }
+
+      iola-color-picker {
+        width: 100%;
+      }
+    }
+
+    &.iola-option-logo {
+      .iola-option-left {
+        height: $right-width;
+      }
+    }
+
+    &.iola-option-background {
+      .iola-option-left {
+        height: 160px;
+      }
+    }
+
+    &.iola-option-primary-color {
+      input {
+        text-transform: uppercase;
+      }
+    }
+
+    .iola-option-right {
+      .iola-option-description {
+        color: #5b646a;
+      }
+    }
+  }
+
+  .iola-preview {
+    width: 405px;
+  }
+}
+
+.iola-bottom-controls {
+  display: flex;
+  justify-content: flex-end;
+
+  .iola-save-description {
+    margin: 0 20px;
+  }
+}
