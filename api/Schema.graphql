@@ -169,9 +169,9 @@ input UserMessagesFilterInput {
 type Config {
     emailConfirmIsRequired: Boolean!
     userApproveIsRequired: Boolean!
-    backgroundUrl: String!
-    logoUrl: String!
-    primaryColor: String!
+    backgroundUrl: String
+    logoUrl: String
+    primaryColor: String
 }
 
 type User implements Node {

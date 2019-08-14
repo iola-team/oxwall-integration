@@ -27,14 +27,17 @@ class ConfigRepository implements ConfigRepositoryInterface
 
     public function getAll($args)
     {
+        $backgroundUrl = $this->service->getFileUrl("backgroundUrl");
+        $logoUrl = $this->service->getFileUrl("logoUrl");
         $configs = $this->service->getConfigs();
+        $primaryColor = $configs["primaryColor"];
 
         return [
             "emailConfirmIsRequired" => (boolean) $this->owConfig->getValue("base", "confirm_email"),
             "userApproveIsRequired" => (boolean) $this->owConfig->getValue("base", "mandatory_user_approve"),
-            "backgroundUrl" => (string) $this->service->getFileUrl("backgroundUrl"),
-            "logoUrl" => (string) $this->service->getFileUrl("logoUrl"),
-            "primaryColor" => (string) empty($configs["primaryColor"]) ? "#5259FF" : $configs["primaryColor"],
+            "backgroundUrl" => empty($backgroundUrl) ? null : $backgroundUrl,
+            "logoUrl" => empty($logoUrl) ? null : $logoUrl,
+            "primaryColor" => empty($primaryColor) ? null : $primaryColor,
         ];
     }
 }
