@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <plugin>
-    <name>iola Backend</name>
+    <name>iola</name>
     <key>iola</key>
-    <description>Backend for iola application</description>
+    <description>Adds iola application’s support</description>
     <author>Sergey Kambalin</author>
     <authorEmail>hello@iola.app</authorEmail>
     <developerKey>4de7d12343ccb157ece55b3ec3feadf5</developerKey>
