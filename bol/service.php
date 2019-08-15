@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @method static UTOOLS_BOL_UserService getInstance()
+ * @method static IOLA_CLASS_Plugin getInstance()
  */
 class IOLA_BOL_Service
 {

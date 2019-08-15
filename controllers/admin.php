@@ -7,22 +7,22 @@ class IOLA_CTRL_Admin extends ADMIN_CTRL_Abstract
      */
     protected $service;
 
+    /**
+     * @var IOLA_CLASS_Plugin
+     */
+    protected $plugin;
+
     public function __construct()
     {
         parent::__construct();
 
         $this->service = IOLA_BOL_Service::getInstance();
+        $this->plugin = IOLA_CLASS_Plugin::getInstance();
     }
 
     public function init()
     {
-        $plugin = OW::getPluginManager()->getPlugin("iola");
-        $build = $plugin->getDto()->build;
-        $staticUrl = $plugin->getStaticUrl();
-
-        OW::getDocument()->addScript($staticUrl . "vendor.js?" . $build);
-        OW::getDocument()->addScript($staticUrl . "iola.js?" . $build);
-        OW::getDocument()->addStyleSheet($staticUrl . "iola.css?" . $build);
+        $this->plugin->addStatic();
     }
 
     public function index()
@@ -32,6 +32,21 @@ class IOLA_CTRL_Admin extends ADMIN_CTRL_Abstract
         
         $this->setPageTitle($language->text("iola", "settings_page_title"));
         $this->setPageHeading($language->text("iola", "settings_page_heading"));
+
+        if (!$this->plugin->isReady()) {
+            $requirements = $this->plugin->getRequirements();
+            $this->assign("content", $language->text("iola", "admin_requirements_page_text", [
+                "friendsUrl" => $requirements["friends"],
+                "mailboxUrl" => $requirements["mailbox"],
+                "photoUrl" => $requirements["photo"]
+            ]));
+
+            $this->setTemplate(
+                $this->plugin->getPlugin()->getCtrlViewDir() . "admin_requirements.html"
+            );
+
+            return;
+        }
 
         $configs = $this->service->getConfigs();
         $uniqId = uniqid('iola-');

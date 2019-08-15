@@ -1,6 +1,8 @@
 <?php
 
-$iolaPlugin = OW::getPluginManager()->getPlugin("iola");
+require_once __DIR__ . "/classes/plugin.php";
+
+$iolaPlugin = IOLA_CLASS_Plugin::getInstance()->getPlugin();
 $dbPrefix = OW_DB_PREFIX;
 
 $sql = [
@@ -34,13 +36,16 @@ foreach ( $sql as $query ) {
 /**
  * Configure the plugin settings page
  */
-OW::getPluginManager()->addPluginSettingsRouteName("iola", "iola.admin-settings");
+OW::getPluginManager()->addPluginSettingsRouteName($iolaPlugin->getKey(), "iola.admin-settings");
 
 /**
  * Import language dump
  */
 try {
-    BOL_LanguageService::getInstance()->importPrefixFromZip(__DIR__ . "/langs.zip", "iola");    
+    BOL_LanguageService::getInstance()->importPrefixFromZip(
+        __DIR__ . "/langs.zip",
+        $iolaPlugin->getKey()
+    );
 } catch ( Exception $e ) {
     // Skip...
 }
