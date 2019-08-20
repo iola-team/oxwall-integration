@@ -87,4 +87,10 @@ interface UserRepositoryInterface extends AuthRepositoryInterface
      * @return mixed
      */
     public function getInfo($ids, array $args);
+
+    /**
+     * @param $userId
+     * @return boolean
+     */
+    public function delete($userId);
 }

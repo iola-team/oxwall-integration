@@ -48,6 +48,7 @@ use Iola\Api\Schema\Resolvers\ProfileFieldValueResolver;
 use Iola\Api\Schema\Resolvers\ProfileMutationResolver;
 use Iola\Api\Schema\Resolvers\UploadResolver;
 use Iola\Api\Schema\Resolvers\UserInfoResolver;
+use Iola\Api\Schema\Resolvers\UserMutationResolver;
 use Iola\Api\Schema\Resolvers\ProfileResolver;
 use Iola\Api\Schema\Resolvers\ValueResolver;
 use Iola\Api\Schema\SubscriptionFactory;
@@ -357,6 +358,12 @@ return [
         return new UserInfoResolver(
             $container->getIntegration()->getUserRepository(),
             $container[DataLoaderFactory::class]
+        );
+    },
+
+    UserMutationResolver::class => function(ContainerInterface $container) {
+        return new UserMutationResolver(
+            $container->getIntegration()->getUserRepository()
         );
     },
 

@@ -76,6 +76,7 @@ type Mutation {
 
     addFriend(input: AddFriendInput!): AddFriendPayload!
     deleteFriend(input: DeleteFriendInput!): DeleteFriendPayload!
+    deleteUser(id: ID!): Boolean
 
     addReport(input: ReportInput!): Boolean
 }

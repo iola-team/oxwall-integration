@@ -37,6 +37,7 @@ use Iola\Api\Schema\Resolvers\ChatMessagesConnectionResolver;
 use Iola\Api\Schema\Resolvers\ChatEdgeResolver;
 use Iola\Api\Schema\Resolvers\FriendshipSubscriptionResolver;
 use Iola\Api\Schema\Resolvers\ReportMutationResolver;
+use Iola\Api\Schema\Resolvers\UserMutationResolver;
 
 return [
     "path" => __DIR__ . "/Schema.graphql",
@@ -90,6 +91,7 @@ return [
             MessageMutationResolver::class,
             FriendMutationResolver::class,
             ReportMutationResolver::class,
+            UserMutationResolver::class,
         ],
 
         "Subscription" => [
