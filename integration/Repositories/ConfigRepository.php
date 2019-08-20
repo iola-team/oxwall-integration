@@ -36,7 +36,7 @@ class ConfigRepository implements ConfigRepositoryInterface
             "userApproveIsRequired" => (boolean) $this->owConfig->getValue("base", "mandatory_user_approve"),
             "backgroundUrl" => empty($backgroundUrl) ? null : $backgroundUrl,
             "logoUrl" => empty($logoUrl) ? null : $logoUrl,
-            "primaryColor" => empty($configs["primaryColor"]) ? "5259FF" : $configs["primaryColor"],
+            "primaryColor" => empty($configs["primaryColor"]) ? "#5259FF" : $configs["primaryColor"],
         ];
     }
 }
