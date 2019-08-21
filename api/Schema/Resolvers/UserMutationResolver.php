@@ -12,8 +12,9 @@ class UserMutationResolver extends CompositeResolver
         parent::__construct([
             "deleteUser" => function($root, $args) use ($userRepository) {
                 $userId = $args["id"]->getId();
+                $userRepository->delete($userId);
 
-                return $userRepository->delete($userId);
+                return ["deletedId" => $userId];
             }
         ]);
     }
