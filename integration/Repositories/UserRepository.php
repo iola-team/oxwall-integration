@@ -367,6 +367,8 @@ class UserRepository implements UserRepositoryInterface
 
     public function delete($userId)
     {
-        return $this->userService->deleteUser($userId, true);
+        $this->userService->deleteUser($userId, true);
+
+        return ["deletedId" => $userId];
     }
 }
