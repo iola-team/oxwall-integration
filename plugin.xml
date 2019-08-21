@@ -3,9 +3,9 @@
     <name>iola</name>
     <key>iola</key>
     <description>Adds iola application’s support</description>
-    <author>Sergey Kambalin</author>
+    <author>iola team</author>
     <authorEmail>hello@iola.app</authorEmail>
-    <developerKey>4de7d12343ccb157ece55b3ec3feadf5</developerKey>
+    <developerKey>8bd991d0c02bcd91a2b4321e98783f4d</developerKey>
     <build>1</build>
     <copyright>(C) 2019 iola team. All rights reserved.</copyright>
     <license>OSCL</license>
