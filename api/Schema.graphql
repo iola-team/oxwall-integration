@@ -73,6 +73,7 @@ type Mutation {
     saveProfileFieldValues(input: ProfileFieldSaveInput!): ProfileFieldSavePayload!
     addMessage(input: MessageInput!, after: Cursor, before: Cursor, at: Cursor): MessageCreatePayload!
     markMessagesAsRead(input: MarkMessagesAsReadInput!): [MessageUpdatePayload!]!
+    deleteUser(id: ID!): UserDeletePayload!
 
     addFriend(input: AddFriendInput!): AddFriendPayload!
     deleteFriend(input: DeleteFriendInput!): DeleteFriendPayload!
@@ -544,6 +545,10 @@ type MessageUpdatePayload {
 
 type UserUpdatePayload {
     user: User!
+}
+
+type UserDeletePayload implements DeletePayload {
+    deletedId: ID! @type(name: "User")
 }
 
 enum FriendshipStatus {
