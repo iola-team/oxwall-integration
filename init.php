@@ -27,7 +27,7 @@ if (IOLA_CLASS_Plugin::getInstance()->isReady()) {
     /**
      * API route
      */
-    OW::getRouter()->addRoute(new ServerRoute("everywhere/api"));
+    OW::getRouter()->addRoute(new ServerRoute("iola/api"));
 }
 
 IOLA_CLASS_Plugin::getInstance()->init();

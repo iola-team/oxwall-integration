@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.5.4",
-    "@iola/elements": "git+ssh://git@gitlab.com/thisissparkle/elements.git",
+    "@iola/elements": "git+ssh://git@gitlab.com/iola-team/elements.git",
     "@webcomponents/webcomponentsjs": "^2.2.10",
     "whatwg-fetch": "^3.0.0"
   }
