@@ -4,7 +4,7 @@ namespace Iola\Oxwall\Repositories;
 
 use Iola\Api\Contract\Integration\PhotoRepositoryInterface;
 use Iola\Api\Entities\Photo;
-use Iola\Oxwall\Integration\Integration;
+use Iola\Oxwall\Integration;
 use Psr\Http\Message\UploadedFileInterface;
 
 class PhotoRepository implements PhotoRepositoryInterface
