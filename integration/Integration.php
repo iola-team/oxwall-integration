@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: skambalin
- * Date: 19.10.17
- * Time: 17.37
- */
 
 namespace Iola\Oxwall;
 
