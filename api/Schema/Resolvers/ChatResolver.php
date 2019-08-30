@@ -42,7 +42,7 @@ class ChatResolver extends EntityResolver
             return $participantsLoader
                 ->load($chat->id)
                 ->then(function($participantIds) use($chat, $args, $context, $connectionFactory) {
-                    if (in_array($context->getViewer()->getUserId(), $participantIds)) {
+                    if (!in_array($context->getViewer()->getUserId(), $participantIds)) {
                         throw new PermissionError();
                     }
         
