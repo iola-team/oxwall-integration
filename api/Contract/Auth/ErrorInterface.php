@@ -1,5 +1,6 @@
 <?php
-namespace Iola\Api\Contract\Integration\Errors;
+
+namespace Iola\Api\Contract\Auth;
 
 use GraphQL\Error\ClientAware;
 
