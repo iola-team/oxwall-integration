@@ -2,7 +2,9 @@
 
 namespace Iola\Api\Schema\Resolvers;
 
+use Iola\Api\Auth\Errors\PermissionError;
 use Iola\Api\Contract\Integration\ChatRepositoryInterface;
+use Iola\Api\Contract\Schema\ContextInterface;
 use Iola\Api\Entities\Message;
 use Iola\Api\Schema\CompositeResolver;
 use Iola\Api\Schema\IDObject;
@@ -31,15 +33,20 @@ class MessageMutationResolver extends CompositeResolver
         $this->edgeFactory = $edgeFactory;
     }
 
-    public function addMessage($root, $args)
+    public function addMessage($root, $args, ContextInterface $context)
     {
         $input = $args["input"];
+        $userId = $input["userId"]->getId();
+
+        if ($userId !== $context->getViewer()->getUserId()) {
+            throw new PermissionError();
+        }
+
         $chatId = empty($input["chatId"]) ? null : $input["chatId"]->getId();
         $recipientIds = empty($input["recipientIds"]) ? null : array_map(function($idObject) {
             return $idObject->getId();
         }, $input["recipientIds"]);
 
-        $userId = $input["userId"]->getId();
         $messageId = $this->chatRepository->addMessage([
             "userId" => $input["userId"]->getId(),
             "content" => $input["content"],
@@ -66,14 +73,19 @@ class MessageMutationResolver extends CompositeResolver
         ];
     }
 
-    public function markMessagesAsRead($root, $args)
+    public function markMessagesAsRead($root, $args, ContextInterface $context)
     {
         $input = $args["input"];
+        $userId = $input["userId"]->getId();
+
+        if ($userId !== $context->getViewer()->getUserId()) {
+            throw new PermissionError();
+        }
+
         $messageIds = array_map(function(IDObject $idObject) {
             return $idObject->getId();
         }, $input["messageIds"]);
 
-        $userId = $input["userId"]->getId();
         $markedMessageIds = $this->chatRepository->markMessagesAsRead([
             "userId" => $userId,
             "messageIds" => $messageIds

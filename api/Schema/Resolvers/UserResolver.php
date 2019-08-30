@@ -10,6 +10,7 @@ use Iola\Api\Contract\Schema\DataLoaderInterface;
 use Iola\Api\Entities\User;
 use Iola\Api\Schema\EntityResolver;
 use GraphQL\Type\Definition\ResolveInfo;
+use Iola\Api\Auth\Errors\PermissionError;
 use Iola\Api\Contract\Integration\FriendshipRepositoryInterface;
 
 class UserResolver extends EntityResolver
@@ -157,12 +158,20 @@ class UserResolver extends EntityResolver
                 return $this->avatarLoader->load($user->id, $args);
 
             case "chat":
+                if ($user->id !== $context->getViewer()->getUserId()) {
+                    throw new PermissionError();
+                }
+
                 return $this->chatLoader->load($user->id, [
                     "id" => isset($args["id"]) ? $args["id"]->getId() : null,
                     "recipientId" => isset($args["recipientId"]) ? $args["recipientId"]->getId() : null,
                 ]);
 
             case "chats":
+                if ($user->id !== $context->getViewer()->getUserId()) {
+                    throw new PermissionError();
+                }
+
                 return $this->connectionFactory->create($user, $args);
 
             /**

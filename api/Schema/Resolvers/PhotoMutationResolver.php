@@ -2,7 +2,9 @@
 
 namespace Iola\Api\Schema\Resolvers;
 
+use Iola\Api\Auth\Errors\PermissionError;
 use Iola\Api\Contract\Integration\PhotoRepositoryInterface;
+use Iola\Api\Contract\Schema\ContextInterface;
 use Iola\Api\Entities\Photo;
 use Iola\Api\Schema\CompositeResolver;
 use Iola\Api\Contract\Schema\Relay\EdgeFactoryInterface;
@@ -14,9 +16,13 @@ class PhotoMutationResolver extends CompositeResolver
         EdgeFactoryInterface $edgeFactory
     ) {
         parent::__construct([
-            "addUserPhoto" => function($root, $args) use ($photoRepository, $edgeFactory) {
+            "addUserPhoto" => function($root, $args, ContextInterface $context) use ($photoRepository, $edgeFactory) {
                 $input = $args["input"];
                 $userId = $input["userId"]->getId();
+
+                if ($userId !== $context->getViewer()->getUserId()) {
+                    throw new PermissionError();
+                }
 
                 unset($input['userId']);
                 $photoId = $photoRepository->addUserPhoto($userId, $input);
@@ -28,9 +34,13 @@ class PhotoMutationResolver extends CompositeResolver
                 ];
             },
 
-            "addPhotoComment" => function($root, $args) use ($photoRepository) {
+            "addPhotoComment" => function($root, $args, ContextInterface $context) use ($photoRepository) {
                 $input = $args["input"];
                 $userId = $input["userId"]->getId();
+
+                if ($userId !== $context->getViewer()->getUserId()) {
+                    throw new PermissionError();
+                }
 
                 unset($input['userId']);
                 $commentId = $photoRepository->addComment($userId, $input);
@@ -41,13 +51,18 @@ class PhotoMutationResolver extends CompositeResolver
                 ];
             },
 
-            "deleteUserPhoto" => function($root, $args) use ($photoRepository) {
+            "deleteUserPhoto" => function($root, $args, ContextInterface $context) use ($photoRepository) {
                 $realId = $args["id"]->getId();
 
                 /**
                  * @var $photo Photo
                  */
                 $photo = $photoRepository->findByIds([$realId])[$realId];
+
+                if ($photo->userId !== $context->getViewer()->getUserId()) {
+                    throw new PermissionError();
+                }
+
                 $photoRepository->deleteByIds([
                     $photo->id
                 ]);

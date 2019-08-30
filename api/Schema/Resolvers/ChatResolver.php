@@ -2,8 +2,10 @@
 
 namespace Iola\Api\Schema\Resolvers;
 
+use Iola\Api\Auth\Errors\PermissionError;
 use Iola\Api\Contract\Integration\ChatRepositoryInterface;
 use Iola\Api\Contract\Schema\ConnectionFactoryInterface;
+use Iola\Api\Contract\Schema\ContextInterface;
 use Iola\Api\Contract\Schema\DataLoaderFactoryInterface;
 use Iola\Api\Entities\Chat;
 use Iola\Api\Schema\EntityResolver;
@@ -33,8 +35,19 @@ class ChatResolver extends EntityResolver
             return $participantsLoader->load($chat->id);
         });
 
-        $this->addFieldResolver("messages", function (Chat $chat, $args) use($connectionFactory) {
-            return $connectionFactory->create($chat->id, $args);
+        $this->addFieldResolver("messages", function (
+            Chat $chat, $args, ContextInterface $context
+        ) use($connectionFactory, $participantsLoader) {
+
+            return $participantsLoader
+                ->load($chat->id)
+                ->then(function($participantIds) use($chat, $args, $context, $connectionFactory) {
+                    if (in_array($context->getViewer()->getUserId(), $participantIds)) {
+                        throw new PermissionError();
+                    }
+        
+                    return $connectionFactory->create($chat->id, $args);
+                });
         });
     }
 }

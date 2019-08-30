@@ -14,6 +14,7 @@ use GraphQL\Error\InvariantViolation;
 use GraphQL\Executor\Values;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
+use Iola\Api\Auth\Errors\PermissionError;
 
 class ProfileMutationResolver extends CompositeResolver
 {
@@ -108,6 +109,10 @@ class ProfileMutationResolver extends CompositeResolver
         $userIdObject = $args["input"]["userId"];
         $userId = $userIdObject->getId();
         $values = $args["input"]["values"];
+
+        if ($userId !== $context->getViewer()->getUserId()) {
+            throw new PermissionError();
+        }
 
         $fieldIds = [];
 
