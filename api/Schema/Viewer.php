@@ -20,7 +20,7 @@ class Viewer implements ViewerInterface
     public function getUserId()
     {
         return $this->authService->hasIdentity()
-            ? $this->authService->getIdentity()->userId
+            ? (string) $this->authService->getIdentity()->userId
             : null;
     }
 

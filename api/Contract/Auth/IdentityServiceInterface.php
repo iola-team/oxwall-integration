@@ -7,7 +7,7 @@ use Iola\Api\Auth\Identity;
 interface IdentityServiceInterface
 {
     /**
-     * @param mixed $userId
+     * @param int|string $userId
      * @param int|null $issueTime
      * @param int|null $expirationTime
      *
