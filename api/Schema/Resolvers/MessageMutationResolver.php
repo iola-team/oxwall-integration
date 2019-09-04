@@ -48,7 +48,7 @@ class MessageMutationResolver extends CompositeResolver
         }, $input["recipientIds"]);
 
         $messageId = $this->chatRepository->addMessage([
-            "userId" => $input["userId"]->getId(),
+            "userId" => $userId,
             "content" => $input["content"],
             "chatId" => $chatId,
             "recipientIds" => $recipientIds,

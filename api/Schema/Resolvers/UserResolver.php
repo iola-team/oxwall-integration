@@ -158,7 +158,7 @@ class UserResolver extends EntityResolver
                 return $this->avatarLoader->load($user->id, $args);
 
             case "chat":
-                if ($user->id !== $context->getViewer()->getUserId()) {
+                if ((string) $user->id !== $context->getViewer()->getUserId()) {
                     throw new PermissionError();
                 }
 
@@ -168,7 +168,7 @@ class UserResolver extends EntityResolver
                 ]);
 
             case "chats":
-                if ($user->id !== $context->getViewer()->getUserId()) {
+                if ((string) $user->id !== $context->getViewer()->getUserId()) {
                     throw new PermissionError();
                 }
 
