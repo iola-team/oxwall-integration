@@ -10,7 +10,7 @@ interface ViewerInterface
     public function isAuthenticated();
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getUserId();
 }

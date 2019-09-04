@@ -5,7 +5,7 @@ namespace Iola\Api\Contract\Schema;
 interface IDObjectInterface
 {
     /**
-     * @return string|int
+     * @return string
      */
     public function getId();
 
@@ -20,7 +20,7 @@ interface IDObjectInterface
     public function getType();
 
     /**
-     * @return mixed
+     * @return string
      */
     public function __toString();
 }

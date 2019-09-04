@@ -22,7 +22,7 @@ class IdentityService implements IdentityServiceInterface
         }
 
         $identity = new Identity();
-        $identity->userId = $userId;
+        $identity->userId = (string) $userId;
         $identity->issueTime = (int) $issueTime ?: time();
         $identity->expirationTime = (int) $expirationTime ?: $identity->issueTime + $this->options["lifeTime"];
 

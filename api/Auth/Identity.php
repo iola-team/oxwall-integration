@@ -5,7 +5,7 @@ namespace Iola\Api\Auth;
 class Identity
 {
     /**
-     * @var int
+     * @var string
      */
     public $userId;
 

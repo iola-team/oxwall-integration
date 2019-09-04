@@ -20,7 +20,7 @@ class IDObject implements IDObjectInterface
 
     public function getId()
     {
-        return $this->id;
+        return (string) $this->id;
     }
 
     public function getGlobalId()
