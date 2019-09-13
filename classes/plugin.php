@@ -57,10 +57,11 @@ class IOLA_CLASS_Plugin
     {
         $build = $this->getPlugin()->getDto()->build;
         $staticUrl = $this->getPlugin()->getStaticUrl();
+        $gz = OW_DEV_MODE ? "" : ".gz";
 
-        OW::getDocument()->addScript($staticUrl . "vendor.js?" . $build);
-        OW::getDocument()->addScript($staticUrl . "iola.js?" . $build);
-        OW::getDocument()->addStyleSheet($staticUrl . "iola.css?" . $build);
+        OW::getDocument()->addScript($staticUrl . "vendor.js{$gz}?" . $build);
+        OW::getDocument()->addScript($staticUrl . "iola.js{$gz}?" . $build);
+        OW::getDocument()->addStyleSheet($staticUrl . "iola.css{$gz}?" . $build);
     }
 
     /**

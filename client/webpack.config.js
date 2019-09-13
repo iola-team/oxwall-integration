@@ -5,6 +5,7 @@ import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import WebpackNotifierPlugin from 'webpack-notifier';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import { CleanWebpackPlugin } from 'clean-webpack-plugin';
+import CompressionPlugin from 'compression-webpack-plugin';
 import path from 'path';
 
 import { name } from './package.json';
@@ -83,6 +84,12 @@ export default {
   },
 
   plugins: [
+    ...(devMode ? [] : [
+      /**
+       * Production only plugins
+       */
+      new CompressionPlugin(),
+    ]),
     new MiniCssExtractPlugin({ filename: '[name].css' }),
     new ProgressBarPlugin(),
     new WebpackNotifierPlugin({
