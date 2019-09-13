@@ -71,6 +71,15 @@ export default {
 
   optimization: {
     minimize: !devMode,
+    splitChunks: {
+      cacheGroups: {
+        commons: {
+          test: /[\\/]node_modules[\\/]/,
+          name: "vendor",
+          chunks: "initial",
+        },
+      },
+    },
   },
 
   plugins: [

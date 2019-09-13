@@ -1,0 +1,7 @@
+<iola-app-banner
+    class="iola-banner-widget"
+    {if $settings.showText}text="{$settings.text}"{/if}
+    {if !$settings.showLogo}has-logo="no"{/if}
+    {if !$settings.showIOS}has-ios="no"{/if}
+    {if !$settings.showAndroid}has-android="no"{/if}>
+</iola-app-banner>
