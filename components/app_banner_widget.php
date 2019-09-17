@@ -7,10 +7,15 @@ class IOLA_CMP_AppBannerWidget extends BASE_CLASS_Widget
         parent::__construct();
 
         $settings = $paramObj->customParamList;
+        $url = OW::getRequest()->buildUrlQueryString("https://iola.app/for-users", [
+            "site-url" => urlencode(OW_URL_HOME),
+            "site-name" => OW::getConfig()->getValue("base", "site_name")
+        ]);
 
+        $this->assign("url", $url);
         $this->assign("settings", array_merge($settings, [
             "text" => str_replace('"', "'", OW::getLanguage()->text("iola", "banner_widget_text", [
-                "moreUrl" => "https://iola.app/for-users"
+                "moreUrl" => $url
             ]))
         ]));
     }
