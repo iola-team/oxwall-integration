@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @method static IOLA_CLASS_Plugin getInstance()
+ * @method static IOLA_BOL_Service getInstance()
  */
 class IOLA_BOL_Service
 {
@@ -95,5 +95,16 @@ class IOLA_BOL_Service
         $dirPath = $this->plugin->getUserFilesDir();
 
         return empty($configs[$configName]) ? null : $dirPath . $configs[$configName];
+    }
+
+    public function isWidgetPlaced()
+    {
+        $widgetService = BOL_ComponentAdminService::getInstance();
+        $dashboardWidgets = $widgetService->findAllPositionList(BOL_ComponentAdminService::PLACE_DASHBOARD);
+        $indexWidgets = $widgetService->findAllPositionList(BOL_ComponentAdminService::PLACE_INDEX);
+        $widgetClass = IOLA_CMP_AppBannerWidget::class;
+
+        return isset($dashboardWidgets["dashboard-$widgetClass"])
+            || isset($indexWidgets["index-$widgetClass"]);
     }
 }

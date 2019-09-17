@@ -71,24 +71,44 @@ class IOLA_CLASS_Plugin
     protected function onCollectAdminNotifications($event)
     {
         $language = OW::getLanguage();
+        $router = OW::getRouter();
 
-        $event->add($language->text("iola", "admin_requirements_notification", [
-            "photoUrl" => $this->requiredPlugins["photo"],
-            "friendsUrl" => $this->requiredPlugins["friends"],
-            "mailboxUrl" => $this->requiredPlugins["mailbox"],
-            "settingsUrl" => OW::getRouter()->urlForRoute("iola.admin-settings")
-        ]));
+        /**
+         * Show requirements unmet notification
+         */
+        if (!$this->isReady()) {
+            $event->add($language->text("iola", "admin_requirements_notification", [
+                "photoUrl" => $this->requiredPlugins["photo"],
+                "friendsUrl" => $this->requiredPlugins["friends"],
+                "mailboxUrl" => $this->requiredPlugins["mailbox"],
+                "settingsUrl" => OW::getRouter()->urlForRoute("iola.admin-settings")
+            ]));
+        }
+
+        /**
+         * Show notification about the banner widget
+         */
+        if (!IOLA_BOL_Service::getInstance()->isWidgetPlaced())
+        {
+            $event->add($language->text("iola", "admin_setup_widget_notification", [
+                "iolaUrl" => $router->urlForRoute("iola.admin-settings"),
+                "mainUrl" => $router->urlForRoute("base_index"),
+                "dashboardUrl" => $router->urlForRoute("admin_pages_user_dashboard")
+            ]));
+        }
     }
 
     protected function limitedInit()
     {
-        OW::getEventManager()->bind("admin.add_admin_notification", function($event) {
-            $this->onCollectAdminNotifications($event);
-        });
+        
     }
 
     public function init()
     {
+        OW::getEventManager()->bind("admin.add_admin_notification", function($event) {
+            $this->onCollectAdminNotifications($event);
+        });
+
         /**
          * Run limited initialization if some of the plugin requirements are not met
          */
