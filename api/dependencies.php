@@ -84,9 +84,11 @@ use Iola\Api\Schema\Resolvers\ChatMessagesConnectionResolver;
 use Iola\Api\Schema\Resolvers\ChatEdgeResolver;
 use GraphQL\Validator\DocumentValidator;
 use GraphQL\Validator\Rules\NoUnusedVariables;
+use Iola\Api\Contract\PushNotifications\NotificationManagerInterface;
 use Iola\Api\Middleware\SessionMiddleware;
 use Iola\Api\Schema\Resolvers\FriendshipSubscriptionResolver;
 use Iola\Api\Middleware\RequestTrackingMiddleware;
+use Iola\Api\PushNotifications\NotificationManager;
 use Iola\Api\Schema\Resolvers\ReportMutationResolver;
 
 return [
@@ -309,6 +311,10 @@ return [
             $container[ContextInterface::class],
             $container[EventManagerInterface::class]
         );
+    },
+
+    NotificationManagerInterface::class => function(ContainerInterface $container) {
+        return new NotificationManager();
     },
 
     // Routes

@@ -6,11 +6,17 @@ use Iola\Api\Contract\App\EventManagerInterface;
 use Iola\Api\Contract\Integration\IntegrationInterface;
 use Iola\Api\Contract\Schema\ViewerInterface;
 
+use Iola\Api\App\Events\BeforeRequestEvent;
 use Iola\Api\Integration\Events\UserUpdateEvent;
 use Iola\Api\Integration\Events\MessageAddedEvent;
 use Iola\Api\Integration\Events\MessageUpdatedEvent;
 use Iola\Api\Integration\Events\CommentAddedEvent;
 use Iola\Api\Integration\Events\FriendshipUpdatedEvent;
+use Iola\Api\Integration\Events\FriendshipAddedEvent;
+use Iola\Api\Integration\Events\FriendshipDeletedEvent;
+
+use Iola\Oxwall\Authenticator;
+use Iola\Oxwall\AuthAdapter;
 
 use Iola\Oxwall\Repositories\ConfigRepository;
 use Iola\Oxwall\Repositories\AvatarRepository;
@@ -25,11 +31,6 @@ use Iola\Oxwall\Repositories\ReportRepository;
 
 use OW;
 use OW_Event;
-use Iola\Api\Integration\Events\FriendshipAddedEvent;
-use Iola\Api\Integration\Events\FriendshipDeletedEvent;
-use Iola\Api\App\Events\BeforeRequestEvent;
-use Iola\Oxwall\Authenticator;
-use Iola\Oxwall\AuthAdapter;
 
 class Integration implements IntegrationInterface
 {

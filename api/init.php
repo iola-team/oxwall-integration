@@ -8,6 +8,7 @@ namespace Iola\Api;
 use Iola\Api\Contract\App\EventManagerInterface;
 use Iola\Api\Contract\Integration\EventSourceInterface;
 use Iola\Api\Contract\Integration\IntegrationInterface;
+use Iola\Api\Contract\PushNotifications\NotificationManagerInterface;
 
 $app;
 
@@ -22,6 +23,11 @@ $integration = $container[IntegrationInterface::class];
  * @var $eventManager EventManagerInterface
  */
 $eventManager = $container[EventManagerInterface::class];
+
+/**
+ * Listen for push notification events
+ */
+$eventManager->useListenerProvider($container[NotificationManagerInterface::class]);
 
 /**
  * Listen to all subscription events and add them to shared event source
