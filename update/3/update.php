@@ -10,5 +10,5 @@ Updater::getLanguageService()->importPrefixFromZip(dirname(__FILE__) . DS . "lan
  */
 $widgetService = Updater::getWidgetService();
 $widget = $widgetService->addWidget("IOLA_CMP_AppBannerWidget", false);
-$placeWidget = $widgetService->addWidgetToPlace($widget, BOL_ComponentService::PLACE_DASHBOARD);
-$widgetPlace = $widgetService->addWidgetToPlace($widget, BOL_ComponentService::PLACE_INDEX);
+$widgetService->addWidgetToPlace($widget, BOL_ComponentService::PLACE_DASHBOARD);
+$widgetService->addWidgetToPlace($widget, BOL_ComponentService::PLACE_INDEX);
