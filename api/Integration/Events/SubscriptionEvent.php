@@ -23,9 +23,4 @@ class SubscriptionEvent extends Event implements SubscriptionEventInterface
     {
         return $this->data;
     }
-
-    public function getTime()
-    {
-
-    }
 }

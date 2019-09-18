@@ -26,8 +26,6 @@ class SubscriptionFactory implements SubscriptionFactoryInterface
 
     public function create($eventNames, callable $filter = null, callable $resolve = null)
     {
-
-
         return new Subscription(
             is_string($eventNames) ? [$eventNames]: $eventNames,
             $filter,
