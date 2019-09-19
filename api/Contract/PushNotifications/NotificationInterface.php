@@ -2,7 +2,7 @@
 
 namespace Iola\Api\Contract\PushNotifications;
 
-interface NotificationEventInterface
+interface NotificationInterface
 {
-
+    
 }

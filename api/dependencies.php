@@ -88,7 +88,9 @@ use Iola\Api\Contract\PushNotifications\NotificationManagerInterface;
 use Iola\Api\Middleware\SessionMiddleware;
 use Iola\Api\Schema\Resolvers\FriendshipSubscriptionResolver;
 use Iola\Api\Middleware\RequestTrackingMiddleware;
+use Iola\Api\PushNotifications\Handlers\MessageAddedHandler;
 use Iola\Api\PushNotifications\NotificationManager;
+use Iola\Api\PushNotifications\Pushers\AppCenterPusher;
 use Iola\Api\Schema\Resolvers\ReportMutationResolver;
 
 return [
@@ -313,8 +315,26 @@ return [
         );
     },
 
+    // Push Notifications
     NotificationManagerInterface::class => function(ContainerInterface $container) {
-        return new NotificationManager();
+        return new NotificationManager(
+            $container->getSettings()["notifications"],
+            $container[PromiseAdapter::class],
+            function($className) use($container) {
+                return $container->has($className) ? $container[$className] : null;
+            }
+        );
+    },
+
+    AppCenterPusher::class => function(ContainerInterface $container) {
+        return new AppCenterPusher();
+    },
+
+    MessageAddedHandler::class => function(ContainerInterface $container) {
+        return new MessageAddedHandler(
+            $container->getIntegration()->getChatRepository(),
+            $container[DataLoaderFactory::class]
+        );
     },
 
     // Routes
