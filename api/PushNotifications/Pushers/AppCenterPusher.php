@@ -8,7 +8,6 @@ class AppCenterPusher implements NotificationPusherInterface
 {
    public function push(array $deviceIds, $notification)
    {
-       printVar($deviceIds);
        printVar($notification);
    }
 }

@@ -35,6 +35,21 @@ class MessageAddedHandler implements NotificationHandlerInterface
         });
     }
 
+    private function createNotificationForMessage($userId, Message $message)
+    {
+        /**
+         * Do not send notification to message sender
+         */
+        if ($message->userId == $userId) {
+            return null;
+        }
+
+        return new Notification(
+            $message->content["text"],
+            "You have a new message"
+        );
+    }
+
     public function shouldHandleEvent($event)
     {
         return $event instanceof MessageAddedEvent;
@@ -60,8 +75,8 @@ class MessageAddedHandler implements NotificationHandlerInterface
     {
         $messageId = $event->getMessageId();
         
-        return $this->messageLoader->load($messageId)->then(function(Message $message) {
-            return new Notification();
+        return $this->messageLoader->load($messageId)->then(function(Message $message) use($userId) {
+            return $this->createNotificationForMessage($userId, $message);
         });
     }
 }

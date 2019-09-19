@@ -3,6 +3,7 @@
 namespace Iola\Api\PushNotifications;
 
 use GraphQL\Executor\Promise\Adapter\SyncPromiseAdapter;
+use GraphQL\Executor\Promise\Promise;
 use League\Event\ListenerAcceptorInterface;
 use Iola\Api\Contract\App\EventInterface;
 use Iola\Api\Contract\PushNotifications\NotificationManagerInterface;
@@ -34,6 +35,15 @@ class NotificationManager implements NotificationManagerInterface
     }
 
     /**
+     * @param mixed $value
+     * @return Promise
+     */
+    private function toPromse($value)
+    {
+        return $this->promiseAdapter->createFulfilled($value);
+    }
+
+    /**
      * @param EventInterface $event
      * @return void
      */
@@ -42,32 +52,22 @@ class NotificationManager implements NotificationManagerInterface
         $notifications = [];
         $handlerPromises = [];
         foreach ($this->handlers as $handler) {
-            $shouldHandle = $this->promiseAdapter->createFulfilled(
-                $handler->shouldHandleEvent($event)
-            );
-
+            $shouldHandle = $this->toPromse($handler->shouldHandleEvent($event));
             $userIds = $shouldHandle->then(function($should) use($handler, $event) {
-                if (!$should) {
-                    return [];
-                }
-
-                return $this->promiseAdapter->createFulfilled(
-                    $handler->getTargetUserIds($event)
-                );
+                return $should ? $this->toPromse($handler->getTargetUserIds($event)) : [];
             });
 
             $handlerPromises[] = $userIds->then(function($userIds) use($handler, $event, &$notifications) {
                 $promises = [];
 
                 foreach ($userIds as $userId) {
-                    $notifications[$userId] = isset($notifications[$userId]) 
-                        ? $notifications[$userId]
-                        : [];
-    
-                    $promises[] = $this->promiseAdapter->createFulfilled(
-                        $handler->createNotification($userId, $event)
-                    )->then(function($notification) use(&$notifications, $userId) {
+                    $createPromise = $this->toPromse($handler->createNotification($userId, $event));
+                    $promises[] = $createPromise->then(function($notification) use(&$notifications, $userId) {
                         if ($notification) {
+                            $notifications[$userId] = isset($notifications[$userId]) 
+                                ? $notifications[$userId]
+                                : [];
+
                             $notifications[$userId][] = $notification;
                         }
                     });
@@ -87,19 +87,19 @@ class NotificationManager implements NotificationManagerInterface
         $deviceIds = $this->getDeviceIds($userIds);
 
         foreach ($this->pushers as $pusher) {
-            foreach ($notifications as $userId => $notification) {
+            foreach ($notifications as $userId => $notifications) {
                 if (empty($deviceIds[$userId])) {
                     continue;
                 }
 
-                $pusher->push($deviceIds[$userId], $notification);
+                $pusher->push($deviceIds[$userId], $notifications);
             }
         }
     }
 
     protected function getDeviceIds($userIds)
     {
-        $deviceIds = array_fill_keys($userIds, ['test-device']);
+        $deviceIds = array_fill_keys($userIds, []);
 
         return $deviceIds;
     }
