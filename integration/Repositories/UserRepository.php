@@ -5,9 +5,6 @@ namespace Iola\Oxwall\Repositories;
 use Iola\Api\Contract\Integration\UserRepositoryInterface;
 use Iola\Api\Entities\User;
 use OW;
-use OW_Event;
-use OW_EventManager;
-use BOL_UserBlockDao;
 
 class UserRepository implements UserRepositoryInterface
 {
