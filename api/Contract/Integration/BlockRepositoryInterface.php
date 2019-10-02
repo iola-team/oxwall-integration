@@ -25,7 +25,7 @@ interface BlockRepositoryInterface
      * @param string $blockUserId
      * @return boolean[]
      */
-    public function isBlockedByUserIds($userIds, $blockUserId);
+    public function isBlockedByUserIds($userIds, $byUserId);
 
     /**
      * @param string|int $userId
