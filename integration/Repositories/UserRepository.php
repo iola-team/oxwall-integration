@@ -3,9 +3,11 @@
 namespace Iola\Oxwall\Repositories;
 
 use Iola\Api\Contract\Integration\UserRepositoryInterface;
-use Iola\Api\Entities\Avatar;
 use Iola\Api\Entities\User;
 use OW;
+use OW_Event;
+use OW_EventManager;
+use BOL_UserBlockDao;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -368,5 +370,34 @@ class UserRepository implements UserRepositoryInterface
     public function delete($userId)
     {
         return $this->userService->deleteUser($userId, true);
+    }
+
+    public function blockUser($userId, $blockUserId)
+    {
+        $dto = new BOL_UserBlock();
+
+        $dto->userId = $userId;
+        $dto->blockedUserId = $blockUserId;
+        BOL_UserBlockDao::getInstance()->save($dto);
+
+        $event = new OW_Event(OW_EventManager::ON_USER_BLOCK, [
+            'userId' => $userId,
+            'blockedUserId' => $userId
+        ]);
+
+        OW::getEventManager()->trigger($event);
+    }
+
+    public function unBlockUser($userId, $blockedUserId)
+    {
+        $dto = BOL_UserBlockDao::getInstance()->findBlockedUser($userId, $blockedUserId);
+        BOL_UserBlockDao::getInstance()->delete($dto);
+
+        $event = new OW_Event(OW_EventManager::ON_USER_UNBLOCK, [
+            'userId' => $userId,
+            'blockedUserId' => $blockedUserId
+        ]);
+
+        OW::getEventManager()->trigger($event);
     }
 }

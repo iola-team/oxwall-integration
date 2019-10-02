@@ -87,6 +87,7 @@ use GraphQL\Validator\Rules\NoUnusedVariables;
 use Iola\Api\Middleware\SessionMiddleware;
 use Iola\Api\Schema\Resolvers\FriendshipSubscriptionResolver;
 use Iola\Api\Middleware\RequestTrackingMiddleware;
+use Iola\Api\Schema\Resolvers\BlockMutationResolver;
 use Iola\Api\Schema\Resolvers\ReportMutationResolver;
 
 return [
@@ -341,7 +342,7 @@ return [
     UserResolver::class => function(ContainerInterface $container) {
         return new UserResolver(
             $container->getIntegration()->getUserRepository(),
-            $container->getIntegration()->getFriendshipRepository(),
+            $container->getIntegration()->getBlockRepository(),
 
             $container[DataLoaderFactory::class],
             $container[ConnectionFactoryInterface::class]
@@ -562,5 +563,11 @@ return [
         return new ReportMutationResolver(
             $container->getIntegration()->getReportRepository()
         );
-    }
+    },
+
+    BlockMutationResolver::class => function(ContainerInterface $container) {
+        return new BlockMutationResolver(
+            $container->getIntegration()->getBlockRepository()
+        );
+    }    
 ];

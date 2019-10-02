@@ -74,11 +74,32 @@ type Mutation {
     addMessage(input: MessageInput!, after: Cursor, before: Cursor, at: Cursor): MessageCreatePayload!
     markMessagesAsRead(input: MarkMessagesAsReadInput!): [MessageUpdatePayload!]!
     deleteUser(id: ID!): UserDeletePayload!
+    blockUser(input: BlockUserInput): BlockUserPayload!
+    unBlockUser(input: UnBlockUserInput): UnBlockUserPayload!
 
     addFriend(input: AddFriendInput!): AddFriendPayload!
     deleteFriend(input: DeleteFriendInput!): DeleteFriendPayload!
-
     addReport(input: ReportInput!): Boolean
+}
+
+input BlockUserInput {
+    userId: ID!
+    blockUserId: ID!
+}
+
+input UnBlockUserInput {
+    userId: ID!
+    blockedUserId: ID!
+}
+
+type BlockUserPayload {
+    user: User!
+    blockedUser: User!
+}
+
+type UnBlockUserPayload {
+    user: User!
+    unBlockedUser: User!
 }
 
 enum ReportReason {
@@ -183,6 +204,7 @@ type User implements Node {
     isOnline: Boolean!
     isApproved: Boolean!
     isEmailVerified: Boolean!
+    isBlocked(by: ID!): Boolean!
 
     info: UserInfo!
     profile: Profile!
@@ -194,6 +216,7 @@ type User implements Node {
     photos(first: Int, after: Cursor, last: Int, before: Cursor): UserPhotoConnection!
     chats(first: Int, after: Cursor, last: Int, before: Cursor): UserChatsConnection!
     messages(filter: UserMessagesFilterInput, first: Int, after: Cursor, last: Int, before: Cursor): UserMessagesConnection!
+    blockedUsers(first: Int, after: Cursor, last: Int, before: Cursor): UserConnection!
 }
 
 type UserInfo {
