@@ -93,18 +93,4 @@ interface UserRepositoryInterface extends AuthRepositoryInterface
      * @return boolean
      */
     public function delete($userId);
-
-    /**
-     * @param string|int $userId
-     * @param string|int $blockUserId
-     * @return boolean
-     */
-    public function blockUser($userId, $blockUserId);
-
-    /**
-     * @param string|int $userId
-     * @param string|int $blockedUserId
-     * @return boolean
-     */
-    public function unBlockUser($userId, $blockedUserId);
 }
