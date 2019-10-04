@@ -51,11 +51,21 @@ class BlockRepository implements BlockRepositoryInterface
         return $out;
     }
 
-    public function isBlockedByUserIds($userIds, $byUserId)
+    public function isBlockedByUser($userIds, $byUserId)
     {
         $out = [];
         foreach ($userIds as $userId) {
             $out[$userId] = $this->userService->isBlocked($userId, $byUserId);
+        }
+        
+        return $out;
+    }
+
+    public function hasBlockedUser($userIds, $blockUserId)
+    {
+        $out = [];
+        foreach ($userIds as $userId) {
+            $out[$userId] = $this->userService->isBlocked($blockUserId, $userId);
         }
         
         return $out;

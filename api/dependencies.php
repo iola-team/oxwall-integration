@@ -448,6 +448,7 @@ return [
     ChatResolver::class => function(ContainerInterface $container) {
         return new ChatResolver(
             $container->getIntegration()->getChatRepository(),
+            $container->getIntegration()->getBlockRepository(),
             $container[DataLoaderFactory::class],
             $container[ConnectionFactoryInterface::class]
         );

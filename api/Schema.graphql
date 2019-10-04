@@ -488,6 +488,7 @@ input ChatMessagesFilterInput {
 type Chat implements Node {
     id: ID!
     user: User!
+    isBlocked(for: ID!): Boolean!
     participants: [User]!
     messages(filter: ChatMessagesFilterInput, first: Int, after: Cursor, last: Int, before: Cursor): ChatMessagesConnection!
 }

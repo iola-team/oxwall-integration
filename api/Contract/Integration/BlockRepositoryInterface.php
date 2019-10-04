@@ -22,10 +22,17 @@ interface BlockRepositoryInterface
 
     /**
      * @param string[] $userIds
+     * @param string $byUserId
+     * @return boolean[]
+     */
+    public function isBlockedByUser($userIds, $byUserId);
+
+    /**
+     * @param string[] $userIds
      * @param string $blockUserId
      * @return boolean[]
      */
-    public function isBlockedByUserIds($userIds, $byUserId);
+    public function hasBlockedUser($userIds, $blockUserId);
 
     /**
      * @param string|int $userId

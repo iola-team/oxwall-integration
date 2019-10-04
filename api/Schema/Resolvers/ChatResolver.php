@@ -3,6 +3,7 @@
 namespace Iola\Api\Schema\Resolvers;
 
 use Iola\Api\Auth\Errors\PermissionError;
+use Iola\Api\Contract\Integration\BlockRepositoryInterface;
 use Iola\Api\Contract\Integration\ChatRepositoryInterface;
 use Iola\Api\Contract\Schema\ConnectionFactoryInterface;
 use Iola\Api\Contract\Schema\ContextInterface;
@@ -14,6 +15,7 @@ class ChatResolver extends EntityResolver
 {
     public function __construct(
         ChatRepositoryInterface $chatRepository,
+        BlockRepositoryInterface $blockRepository,
         DataLoaderFactoryInterface $loaderFactory,
         ConnectionFactoryInterface $connectionFactory
     ) {
@@ -27,12 +29,26 @@ class ChatResolver extends EntityResolver
             return $chatRepository->findChatsParticipantIds($ids);
         });
 
+        $blockedForLoader = $loaderFactory->create(function($userIds, $args) use($blockRepository) {
+            return $blockRepository->hasBlockedUser($userIds, $args["for"]->getId());
+        });
+
         $this->addFieldResolver("user", function(Chat $chat) {
             return $chat->userId;
         });
 
         $this->addFieldResolver("participants", function (Chat $chat) use($participantsLoader) {
             return $participantsLoader->load($chat->id);
+        });
+
+        $this->addFieldResolver("isBlocked", function(Chat $chat, $args) use($participantsLoader, $blockedForLoader) {
+            return $participantsLoader->load($chat->id)
+                ->then(function($participantIds) use($args, $blockedForLoader) {
+                    return $blockedForLoader->loadMany($participantIds, $args)
+                        ->then(function($blockedList) {
+                            return count(array_filter($blockedList)) > 0;
+                        });
+                });
         });
 
         $this->addFieldResolver("messages", function (
