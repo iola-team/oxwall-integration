@@ -27,6 +27,7 @@ use Iola\Oxwall\Repositories\PhotoRepository;
 use Iola\Oxwall\Repositories\CommentRepository;
 use Iola\Oxwall\Repositories\FriendshipRepository;
 use Iola\Oxwall\Repositories\ReportRepository;
+use Iola\Oxwall\Repositories\BlockRepository;
 
 use OW;
 use OW_Event;
@@ -117,6 +118,10 @@ class Integration implements IntegrationInterface
                 $params["senderId"], $params["recipientId"]
             );
 
+            if (!$friendshipDto) {
+                return;
+            }
+
             $events->emit(
                 new FriendshipDeletedEvent(
                     $params["senderId"],
@@ -206,5 +211,10 @@ class Integration implements IntegrationInterface
     public function getReportRepository()
     {
         return new ReportRepository();
+    }
+
+    public function getBlockRepository()
+    {
+        return new BlockRepository();
     }
 }

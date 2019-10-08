@@ -8,7 +8,6 @@
 namespace Iola\Oxwall\Repositories;
 
 use Iola\Api\Contract\Integration\UserRepositoryInterface;
-use Iola\Api\Entities\Avatar;
 use Iola\Api\Entities\User;
 use OW;
 

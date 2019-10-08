@@ -65,4 +65,9 @@ interface IntegrationInterface
      * @return ReportRepositoryInterface
      */
     public function getReportRepository();
+
+    /**
+     * @return BlockRepositoryInterface
+     */
+    public function getBlockRepository();
 }

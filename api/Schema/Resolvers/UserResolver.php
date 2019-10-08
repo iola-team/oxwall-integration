@@ -16,7 +16,7 @@ use Iola\Api\Entities\User;
 use Iola\Api\Schema\EntityResolver;
 use GraphQL\Type\Definition\ResolveInfo;
 use Iola\Api\Auth\Errors\PermissionError;
-use Iola\Api\Contract\Integration\FriendshipRepositoryInterface;
+use Iola\Api\Contract\Integration\BlockRepositoryInterface;
 
 class UserResolver extends EntityResolver
 {
@@ -66,6 +66,21 @@ class UserResolver extends EntityResolver
     protected $infoLoader;
 
     /**
+     * @var DataLoaderInterface
+     */
+    protected $blocksLoader;
+
+    /**
+     * @var DataLoaderInterface
+     */
+    protected $blocksCountLoader;
+
+    /**
+     * @var DataLoaderInterface
+     */
+    protected $isBlockedLoader;
+
+    /**
      * @var ConnectionFactoryInterface
      */
     protected $connectionFactory;
@@ -73,7 +88,7 @@ class UserResolver extends EntityResolver
     public function __construct(
         // Repositories
         UserRepositoryInterface $userRepository,
-        FriendshipRepositoryInterface $friendshipRepository,
+        BlockRepositoryInterface $blockRepository,
 
         // Factories
         DataLoaderFactoryInterface $loaderFactory,
@@ -118,6 +133,18 @@ class UserResolver extends EntityResolver
         $this->chatLoader = $loaderFactory->create(function($ids, $args, $context) use($userRepository) {
             return $userRepository->findChat($ids, $args);
         });
+
+        $this->blocksLoader = $loaderFactory->create(function($ids, $args) use($blockRepository) {
+            return $blockRepository->findByUserIds($ids, $args);
+        });
+
+        $this->blocksCountLoader = $loaderFactory->create(function($ids, $args) use($blockRepository) {
+            return $blockRepository->countByUserIds($ids, $args);
+        });
+
+        $this->isBlockedLoader = $loaderFactory->create(function($ids, $args) use($blockRepository) {
+            return $blockRepository->isBlockedByUser($ids, $args["by"]->getId());
+        });
     }
 
     /**
@@ -140,6 +167,9 @@ class UserResolver extends EntityResolver
 
             case "isEmailVerified":
                 return $this->isEmailVerifiedLoader->load($user->id, $args);
+
+            case "isBlocked":
+                return $this->isBlockedLoader->load($user->id, $args);
 
             case "friends":
                 return $this->connectionFactory->create($user, $args);
@@ -185,6 +215,18 @@ class UserResolver extends EntityResolver
             case "info":
             case "profile":
                 return $user;
+
+            case "blockedUsers":
+                return $this->connectionFactory->create(
+                    $user,
+                    $args,
+                    function($args) use($user) {
+                        return $this->blocksLoader->load($user->id, $args);
+                    },
+                    function($args) use($user) {
+                        return $this->blocksCountLoader->load($user->id, $args);
+                    }
+                );
 
             default:
                 return parent::resolveField($user, $fieldName, $args, $context, $info);

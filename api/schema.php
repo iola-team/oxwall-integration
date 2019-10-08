@@ -12,6 +12,7 @@ use Iola\Api\Schema\Resolvers\AccountTypeResolver;
 use Iola\Api\Schema\Resolvers\AuthMutationResolver;
 use Iola\Api\Schema\Resolvers\AvatarMutationResolver;
 use Iola\Api\Schema\Resolvers\AvatarResolver;
+use Iola\Api\Schema\Resolvers\BlockMutationResolver;
 use Iola\Api\Schema\Resolvers\ChatResolver;
 use Iola\Api\Schema\Resolvers\CursorResolver;
 use Iola\Api\Schema\Resolvers\DateResolver;
@@ -98,6 +99,7 @@ return [
             FriendMutationResolver::class,
             ReportMutationResolver::class,
             UserMutationResolver::class,
+            BlockMutationResolver::class
         ],
 
         "Subscription" => [
