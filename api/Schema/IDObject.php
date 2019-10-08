@@ -37,4 +37,9 @@ class IDObject implements IDObjectInterface
     {
         return $this->getGlobalId();
     }
+
+    public function jsonSerialize()
+    {
+        return $this->getGlobalId();
+    }
 }

@@ -1,8 +1,9 @@
 <?php
 
 namespace Iola\Api\Contract\Schema;
+use JsonSerializable;
 
-interface IDObjectInterface
+interface IDObjectInterface extends JsonSerializable
 {
     /**
      * @return string
