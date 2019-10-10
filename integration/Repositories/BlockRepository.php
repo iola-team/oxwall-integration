@@ -93,7 +93,7 @@ class BlockRepository implements BlockRepositoryInterface
         OW::getEventManager()->trigger($event);
     }
 
-    public function unBlockUser($userId, $blockedUserId)
+    public function unblockUser($userId, $blockedUserId)
     {
         $dto = $this->userBlockDao->findBlockedUser($userId, $blockedUserId);
         $this->userBlockDao->delete($dto);
