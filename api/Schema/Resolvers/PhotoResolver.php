@@ -8,7 +8,6 @@
 namespace Iola\Api\Schema\Resolvers;
 
 use Iola\Api\Contract\Integration\PhotoRepositoryInterface;
-use Iola\Api\Contract\Integration\BlockRepositoryInterface;
 use Iola\Api\Contract\Schema\ConnectionFactoryInterface;
 use Iola\Api\Contract\Schema\DataLoaderFactoryInterface;
 use Iola\Api\Contract\Schema\DataLoaderInterface;
@@ -39,7 +38,6 @@ class PhotoResolver extends EntityResolver
 
     public function __construct(
         PhotoRepositoryInterface $photoRepository,
-        BlockRepositoryInterface $blockRepository,
         DataLoaderFactoryInterface $loaderFactory,
         ConnectionFactoryInterface $connectionFactory
     ) {
@@ -87,10 +85,6 @@ class PhotoResolver extends EntityResolver
                     return $this->commentsCountsLoader->load($photo->id, $args);
                 }
             );
-        });
-
-        $this->addFieldResolver("isBlocked", function(Photo $photo, $args) {
-            return $this->isBlockedLoader->load($photo->userId, $args);
         });
     }
 }
