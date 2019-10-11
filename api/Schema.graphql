@@ -79,7 +79,7 @@ type Mutation {
     markMessagesAsRead(input: MarkMessagesAsReadInput!): [MessageUpdatePayload!]!
     deleteUser(id: ID!): UserDeletePayload!
     blockUser(input: BlockUserInput): BlockUserPayload!
-    unBlockUser(input: UnBlockUserInput): UnBlockUserPayload!
+    unblockUser(input: UnblockUserInput): UnblockUserPayload!
 
     addFriend(input: AddFriendInput!): AddFriendPayload!
     deleteFriend(input: DeleteFriendInput!): DeleteFriendPayload!
@@ -91,7 +91,7 @@ input BlockUserInput {
     blockUserId: ID!
 }
 
-input UnBlockUserInput {
+input UnblockUserInput {
     userId: ID!
     blockedUserId: ID!
 }
@@ -101,9 +101,9 @@ type BlockUserPayload {
     blockedUser: User!
 }
 
-type UnBlockUserPayload {
+type UnblockUserPayload {
     user: User!
-    unBlockedUser: User!
+    unblockedUser: User!
 }
 
 enum ReportReason {
@@ -209,6 +209,7 @@ type User implements Node {
     isApproved: Boolean!
     isEmailVerified: Boolean!
     isBlocked(by: ID!): Boolean!
+    hasBlocked(id: ID!): Boolean!
 
     info: UserInfo!
     profile: Profile!

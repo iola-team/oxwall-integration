@@ -46,5 +46,5 @@ interface BlockRepositoryInterface
      * @param string|int $blockedUserId
      * @return boolean
      */
-    public function unBlockUser($userId, $blockedUserId);
+    public function unblockUser($userId, $blockedUserId);
 }

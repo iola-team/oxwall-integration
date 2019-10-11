@@ -30,7 +30,7 @@ class BlockMutationResolver extends CompositeResolver
             ];
         });
 
-        $this->addFieldResolver("unBlockUser", function($root, $args, ContextInterface $context) use($blockRepository) {
+        $this->addFieldResolver("unblockUser", function($root, $args, ContextInterface $context) use($blockRepository) {
             $input = $args["input"];
             $userId = $input["userId"]->getId();
             $blockedUserId = $input["blockedUserId"]->getId();
@@ -39,11 +39,11 @@ class BlockMutationResolver extends CompositeResolver
                 throw new PermissionError();
             }
 
-            $blockRepository->unBlockUser($userId, $blockedUserId);
+            $blockRepository->unblockUser($userId, $blockedUserId);
 
             return [
                 "user" => $userId,
-                "unBlockedUser" => $blockedUserId
+                "unblockedUser" => $blockedUserId
             ];
         });
     }

@@ -145,6 +145,10 @@ class UserResolver extends EntityResolver
         $this->isBlockedLoader = $loaderFactory->create(function($ids, $args) use($blockRepository) {
             return $blockRepository->isBlockedByUser($ids, $args["by"]->getId());
         });
+
+        $this->hasBlockedLoader = $loaderFactory->create(function($ids, $args) use($blockRepository) {
+            return $blockRepository->hasBlockedUser($ids, $args["id"]->getId());
+        });
     }
 
     /**
@@ -170,6 +174,9 @@ class UserResolver extends EntityResolver
 
             case "isBlocked":
                 return $this->isBlockedLoader->load($user->id, $args);
+
+            case "hasBlocked":
+                return $this->hasBlockedLoader->load($user->id, $args);
 
             case "friends":
                 return $this->connectionFactory->create($user, $args);
