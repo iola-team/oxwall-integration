@@ -389,7 +389,6 @@ return [
     PhotoResolver::class => function(ContainerInterface $container) {
         return new PhotoResolver(
             $container->getIntegration()->getPhotoRepository(),
-            $container->getIntegration()->getBlockRepository(),
             $container[DataLoaderFactory::class],
             $container[ConnectionFactoryInterface::class]
         );

@@ -209,6 +209,7 @@ type User implements Node {
     isApproved: Boolean!
     isEmailVerified: Boolean!
     isBlocked(by: ID!): Boolean!
+    hasBlocked(for: ID!): Boolean!
 
     info: UserInfo!
     profile: Profile!
@@ -436,7 +437,6 @@ type Photo implements Node {
     url(size: PhotoSize = MEDIUM): String!
     caption: String
     createdAt: Date!
-    isBlocked(for: ID!): Boolean!
 
     user: User!
     comments(first: Int, after: Cursor, last: Int, before: Cursor): PhotoCommentsConnection!
