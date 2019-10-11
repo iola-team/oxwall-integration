@@ -209,7 +209,7 @@ type User implements Node {
     isApproved: Boolean!
     isEmailVerified: Boolean!
     isBlocked(by: ID!): Boolean!
-    hasBlocked(for: ID!): Boolean!
+    hasBlocked(id: ID!): Boolean!
 
     info: UserInfo!
     profile: Profile!

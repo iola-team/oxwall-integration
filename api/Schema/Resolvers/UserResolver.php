@@ -147,7 +147,7 @@ class UserResolver extends EntityResolver
         });
 
         $this->hasBlockedLoader = $loaderFactory->create(function($ids, $args) use($blockRepository) {
-            return $blockRepository->hasBlockedUser($ids, $args["for"]->getId());
+            return $blockRepository->hasBlockedUser($ids, $args["id"]->getId());
         });
     }
 
