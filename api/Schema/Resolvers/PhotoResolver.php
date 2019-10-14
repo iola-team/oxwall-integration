@@ -60,10 +60,6 @@ class PhotoResolver extends EntityResolver
             return $photoRepository->getUrls($ids, $args);
         });
 
-        $this->isBlockedLoader = $loaderFactory->create(function($ids, $args) use($blockRepository) {
-            return $blockRepository->hasBlockedUser($ids, $args["for"]->getId());
-        });
-
         // Resolvers
 
         $this->addFieldResolver("user", function(Photo $photo) {
