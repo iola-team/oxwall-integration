@@ -11,4 +11,5 @@ npm run release;
 cd ..
 
 rm -rf ./client
+rm ./README.md
 rm ./release.sh
